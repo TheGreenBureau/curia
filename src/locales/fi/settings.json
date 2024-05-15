@@ -1,0 +1,13 @@
+{
+  "modeTitle": "Väriavaruus",
+  "colorTitle": "Värit",
+  "uiTitle": "Ulkoasu",
+  "listingsLocationTitle": "Juttuluetteloiden sijainti",
+  "listingsLocationDescription": "Tässä voit valita kansiosijainnin, josta juttuluetteloita etsitään ja johon ne tallennetaan.",
+  "locationDefault": "Oletussijainti",
+  "chooseLocation": "Valitse sijainti",
+  "chooseDefaultLocation": "Aseta oletussijaintiin",
+  "listingsDeleteTitle": "Poista juttuluetteloita",
+  "year": "Vuosi",
+  "day": "Päivä"
+}

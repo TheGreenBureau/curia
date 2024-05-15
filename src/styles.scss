@@ -1,0 +1,22 @@
+@use "./scss/fonts.scss";
+
+body {
+  * {
+    box-sizing: border-box;
+  }
+
+  margin: 0;
+  width: 100%;
+  background-color: var(--sy-background);
+  font-family: var(--sy-font-family);
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--sy-font-secondary);
+    text-transform: uppercase;
+  }
+}

@@ -1,0 +1,17 @@
+[data-theme="light"] {
+  --icon-button-hover-color: var(--sy-base-08);
+}
+
+[data-theme="dark"] {
+  --icon-button-hover-color: var(--sy-primary-300);
+}
+
+.icon-button {
+  color: inherit;
+  transition: var(--sy-transition-time);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--icon-button-hover-color);
+  }
+}

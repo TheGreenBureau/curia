@@ -1,0 +1,10 @@
+{
+  "plaintiff": "Kantaja",
+  "defendant": "Vastaaja",
+  "injured": "Asianomistaja",
+  "injuredRepresentative": "Asianomistajan edustaja",
+  "witness": "Todistaja",
+  "expert": "Asiantuntija",
+  "counselor": "Avustaja",
+  "trustee": "Edunvalvoja"
+}

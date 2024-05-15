@@ -1,0 +1,17 @@
+{
+  "mainTitle": "Tervetuloa Curiaan!",
+  "introduction": "Aloita luomalla uusi tai valitsemalla aiemmin luotu juttuluettelo.",
+  "createListing": "Luo uusi",
+  "openListing": "Avaa",
+  "recentlyOpened": "Viimeisimmät juttuluettelot",
+  "noRecentListings": "Ei juttuluetteloita",
+  "noSaved": "Ei tallennettuja juttuluetteloita",
+  "openDescription": "Avaa aikaisempi, tallennettu juttuluettelo tai tuo luettelo tiedostosta.",
+  "savedTitle": "Tallennetut juttuluettelot",
+  "importTitle": "Tuo tiedostosta",
+  "importButton": "Tuo",
+  "newDescription": "Valitse uuden juttuluettelon päivämäärä ja tuomioistuin.",
+  "newTitle": "Juttuluettelon tunnus",
+  "createButton": "Luo",
+  "settingsTitle": "Asetukset ja hallinnointi"
+}

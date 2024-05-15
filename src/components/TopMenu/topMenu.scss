@@ -1,0 +1,56 @@
+[data-theme="light"] {
+  --top-menu-background-color: var(--sy-base-03);
+  --top-menu-border-color: var(--sy-base-06);
+}
+
+[data-theme="dark"] {
+  --top-menu-background-color: var(--sy-base-11);
+  --top-menu-border-color: var(--sy-base-10);
+}
+
+.top-menu {
+  height: 70px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  background-color: var(--top-menu-background-color);
+
+  h1 {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 1rem;
+    padding: 0;
+    font-size: 30px;
+    font-family: "Teko";
+    font-weight: 700;
+  }
+
+  .main-logo {
+    margin-left: 1rem;
+    height: 80%;
+    transition: 0.5s;
+    cursor: pointer;
+
+    &:hover {
+      transform: rotate(360deg);
+      filter: drop-shadow(3px 4px 0.2rem black);
+    }
+  }
+
+  .sections-container {
+    display: flex;
+    flex-direction: row;
+    margin-left: 2rem;
+  }
+
+  .theme-container {
+    margin-left: auto;
+    margin-right: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}

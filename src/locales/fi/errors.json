@@ -1,0 +1,11 @@
+{
+  "databaseOpen": "Juttuluetteloa ei voitu avata",
+  "databaseDelete": "Juttuluetteloa ei voitu poistaa",
+  "databaseJsonCreate": "Juttuluettelotiedostoa ei voitu kirjoittaa",
+  "databaseJsonOpen": "Juttuluetteloa ei voitu avata",
+  "databaseJsonDelete": "Juttuluetteloa ei voitu poistaa",
+  "databaseRecent": "Viimeisimpiä juttuluetteloita ei voitu lukea",
+  "databaseWrongFileType": "Valittu tiedosto on väärää tiedostotyyppiä",
+  "databaseImportFail": "Valittua tiedostoa ei voitu avata",
+  "configCreate": "Konfiguraatiotiedostoa ei voitu luoda"
+}
