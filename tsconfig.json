@@ -11,8 +11,18 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "useUnknownInCatchVariables": true,
     "jsx": "react-jsx",
     "paths": {
+      "@state/*": ["src/renderer/state/*"],
+      "@components/*": ["src/renderer/components/*"],
+      "@locales/*": ["src/locales/*"],
+      "@img/*": ["src/img/*"],
+      "@configuration": ["src/main/configuration/index.ts"],
+      "@paths": ["src/main/configuration/paths.ts"],
+      "@database/*": ["src/main/database/*"],
+      "@common/*": ["src/common/*"],
+      "@hooks/*": ["src/hooks/*"],
       "*": ["node_modules/*", "src/@types/*"]
     }
   },

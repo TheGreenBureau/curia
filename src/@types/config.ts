@@ -1,13 +1,15 @@
+import { Language } from "@common/dataUtils";
+import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
 import { StaffMember } from "data/Persons";
 
 export type Defaults = {
-  courtId?: string;
-  officeId?: string;
-  departmentId?: string;
-  roomId?: string;
-  presiding?: StaffMember;
-  secretary?: StaffMember;
-  break?: Date;
+  court: DropdownOption | null;
+  office: DropdownOption | null;
+  department: DropdownOption | null;
+  room: DropdownOption | null;
+  presiding: StaffMember | null;
+  secretary: StaffMember | null;
+  break: Date | null;
 };
 
 export interface AppConfig {
@@ -16,4 +18,5 @@ export interface AppConfig {
   readonly dbDirectory: string;
   readonly defaults: Defaults;
   readonly fileNameDateStart: "year" | "day";
+  readonly language: Language;
 }

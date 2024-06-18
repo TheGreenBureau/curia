@@ -10,6 +10,7 @@ import peoplePositions from "../locales/fi/peoplePositions.json";
 import defendantSummonsType from "../locales/fi/defendantSummonsTypes.json";
 import genericSummonsTypes from "../locales/fi/genericSummonsTypes.json";
 import summonsStatus from "../locales/fi/summonsStatus.json";
+import listings from "@locales/fi/listings.json";
 
 const resources = {
   tabs,
@@ -24,6 +25,7 @@ const resources = {
   defendantSummonsType,
   genericSummonsTypes,
   summonsStatus,
+  listings,
 } as const;
 
 export default resources;

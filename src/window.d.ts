@@ -1,7 +1,7 @@
-import type { DatabaseAPI } from "./preload";
+import type { ApplicationAPI } from "app/api";
 
 declare global {
   interface Window {
-    api: DatabaseAPI;
+    api: ApplicationAPI;
   }
 }

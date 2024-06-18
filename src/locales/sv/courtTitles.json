@@ -1,0 +1,17 @@
+{
+  "judge": "Käräjätuomari",
+  "notary": "Käräjänotaari",
+  "president": "Laamanni",
+  "secretary": "Käräjäsihteeri",
+  "layman": "Lautamies",
+  "laymanSenior": "Herastuomari",
+  "appealsJudge": "Hovioikeudenneuvos",
+  "appealsReferendary": "Esittelijä",
+  "appealsPresident": "Hovioikeuden presidentti",
+  "appealsSecretary": "Hovioikeuden sihteeri",
+  "appealsNotary": "Notaari",
+  "supremeJudge": "Oikeusneuvos",
+  "supremeReferendary": "Esittelijä",
+  "supremePresident": "Korkeimman oikeuden presidentti",
+  "supremeSecretary": "Korkeimman oikeuden sihteeri"
+}

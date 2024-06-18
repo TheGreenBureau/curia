@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
-import attachHandles from "./api/mainHandles";
-import { createDatabaseDirectory } from "./database";
+import { attachConfigHandles } from "@configuration";
+import { attachDatabaseHandles } from "./main/database";
+import { createDatabaseDirectory } from "./main/database";
 import { fi } from "date-fns/locale";
 import { setDefaultOptions } from "date-fns";
 setDefaultOptions({
@@ -39,7 +40,8 @@ const createWindow = (): void => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
-  attachHandles();
+  attachConfigHandles();
+  attachDatabaseHandles();
   createWindow();
 });
 

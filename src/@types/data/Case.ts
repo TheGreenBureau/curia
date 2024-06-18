@@ -14,6 +14,7 @@ export type Case = {
   prosecutorCaseNumber: string;
   matter: string;
   time: Date;
+  type: "criminal" | "civil";
   presiding?: StaffMember;
   members?: StaffMember[];
   prosecutors?: Prosecutor[];

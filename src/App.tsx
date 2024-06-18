@@ -1,7 +1,7 @@
 import "./i18n";
 import { createRoot } from "react-dom/client";
 import { SyTheme } from "@purplebureau/sy-react";
-import { MainView } from "./components/Views/MainView";
+import { MainView } from "@components/Views/MainView";
 import {
   SquarePlus,
   FolderOpen,
@@ -10,6 +10,7 @@ import {
   Settings,
 } from "lucide";
 import { registerIcons } from "@purplebureau/sy-react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 registerIcons({
   SquarePlus,
@@ -19,11 +20,15 @@ registerIcons({
   Settings,
 });
 
+const queryClient = new QueryClient();
+
 const app = document.getElementById("app");
 const root = createRoot(app);
 
 root.render(
   <SyTheme>
-    <MainView />
+    <QueryClientProvider client={queryClient}>
+      <MainView />
+    </QueryClientProvider>
   </SyTheme>
 );

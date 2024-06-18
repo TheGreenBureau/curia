@@ -9,5 +9,19 @@
   "chooseDefaultLocation": "Aseta oletussijaintiin",
   "listingsDeleteTitle": "Poista juttuluetteloita",
   "year": "Vuosi",
-  "day": "Päivä"
+  "day": "Päivä",
+  "defaultsTitle": "Oletustiedot",
+  "defaultsDescription": "Tähän voit syöttää tiedot, jotka oletusarvoisesti annetaan uusille juttuluetteloille ja jutuille.",
+  "courtTitle": "Tuomioistuin",
+  "courtNameTitle": "Nimi",
+  "officeTitle": "Kanslia",
+  "departmentTitle": "Osasto",
+  "roomTitle": "Sali",
+  "presidingTitle": "Puheenjohtaja",
+  "presidingDefaultNameTitle": "Nimi",
+  "presidingDefaultTitleTitle": "Virkanimike",
+  "secretaryTitle": "Pöytäkirjanpitäjä",
+  "secretaryDefaultNameTitle": "Nimi",
+  "secretaryDefaultTitleTitle": "Virkanimike",
+  "default": "Oletus"
 }

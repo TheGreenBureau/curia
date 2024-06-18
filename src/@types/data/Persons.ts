@@ -1,8 +1,4 @@
-import courtTitles from "../../locales/fi/courtTitles.json";
-import prosecutorTitles from "../../locales/fi/prosecutorTitles.json";
-import defendantSummonsTypes from "../../locales/fi/defendantSummonsTypes.json";
-import genericSummonsTypes from "../../locales/fi/genericSummonsTypes.json";
-import summonsStatus from "../../locales/fi/summonsStatus.json";
+import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
 
 type PersonBase = {
   id: string;
@@ -16,11 +12,11 @@ export type Trustee = PersonBase & {
 };
 
 export type StaffMember = PersonBase & {
-  title: keyof typeof courtTitles;
+  title?: DropdownOption;
 };
 
 export type Prosecutor = PersonBase & {
-  title?: keyof typeof prosecutorTitles;
+  title?: DropdownOption;
 };
 
 export type Plaintiff = PersonBase;
@@ -28,8 +24,8 @@ export type Plaintiff = PersonBase;
 export type Defendant = PersonBase & {
   counselor?: Counselor;
   trustee?: Trustee;
-  summonsType?: keyof typeof defendantSummonsTypes;
-  summonsStatus?: keyof typeof summonsStatus;
+  summonsType?: DropdownOption;
+  summonsStatus?: DropdownOption;
 };
 
 export type InjuredRepresentative = PersonBase;
@@ -39,17 +35,17 @@ export type Injured = PersonBase & {
   representative?: InjuredRepresentative;
   trustee?: Trustee;
   hasDemands?: boolean;
-  summonsType?: keyof typeof genericSummonsTypes;
-  summonsStatus?: keyof typeof summonsStatus;
+  summonsType?: DropdownOption;
+  summonsStatus?: DropdownOption;
 };
 
 export type Witness = PersonBase & {
-  summonsType?: keyof typeof genericSummonsTypes;
-  summonsStatus?: keyof typeof summonsStatus;
+  summonsType?: DropdownOption;
+  summonsStatus?: DropdownOption;
 };
 
 export type Expert = PersonBase & {
   title?: string;
-  summonsType?: keyof typeof genericSummonsTypes;
-  summonsStatus?: keyof typeof summonsStatus;
+  summonsType?: DropdownOption;
+  summonsStatus?: DropdownOption;
 };
