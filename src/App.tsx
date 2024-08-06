@@ -8,6 +8,13 @@ import {
   CircleArrowLeft,
   Import,
   Settings,
+  Frown,
+  Check,
+  Save,
+  Eye,
+  Download,
+  GripVertical,
+  Plus,
 } from "lucide";
 import { registerIcons } from "@purplebureau/sy-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -18,6 +25,13 @@ registerIcons({
   CircleArrowLeft,
   Import,
   Settings,
+  Frown,
+  Check,
+  Save,
+  Eye,
+  Download,
+  GripVertical,
+  Plus,
 });
 
 const queryClient = new QueryClient();

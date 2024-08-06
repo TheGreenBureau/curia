@@ -1,6 +1,7 @@
 import type { ConfigHandles } from "@configuration";
 import type { DatabaseHandles } from "@database/index";
 import { Defaults } from "config";
+import { Court } from "data/Court";
 import {
   Listing,
   ListingCore,
@@ -45,6 +46,7 @@ export type DatabaseAPI = {
   refreshDatabases: Action<void>;
   clearRecents: Action<void>;
   getRecents: Action<ListingCore[]>;
+  getCourt: ActionWithArg<Court | null, string | null | undefined>;
 };
 
 export type ApplicationAPI = ConfigAPI & DatabaseAPI;

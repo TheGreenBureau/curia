@@ -7,24 +7,25 @@ import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
 import { useEffect } from "react";
 import { Defaults } from "config";
 
-type CourtInfoSelector = (selection: DropdownOption | null) => void;
+type CourtInfoValues = {
+  court: DropdownOption | null;
+  office: DropdownOption | null;
+  department: DropdownOption | null;
+  room: DropdownOption | null;
+};
 
 type CourtInfoProps = {
   courtId: string | null;
-  onCourtSelect: CourtInfoSelector;
-  onOfficeSelect?: CourtInfoSelector;
-  onDepartmentSelect?: CourtInfoSelector;
-  onRoomSelect?: CourtInfoSelector;
+  onChange: (values: CourtInfoValues) => void;
   defaults?: Defaults;
+  showTitle?: boolean;
 };
 
 export function CourtInfo({
   courtId,
-  onCourtSelect,
-  onOfficeSelect,
-  onDepartmentSelect,
-  onRoomSelect,
+  onChange,
   defaults,
+  showTitle,
 }: CourtInfoProps) {
   const {
     data: courtOptions,
@@ -50,6 +51,7 @@ export function CourtInfo({
   }, [defaults]);
 
   const {
+    selected: selectedCourt,
     text: courtText,
     handleChange: courtChange,
     handleBlur: courtSelect,
@@ -57,44 +59,74 @@ export function CourtInfo({
   } = useDropdown({
     opts: {
       onBlurMutator: (selection: DropdownOption) => {
-        onCourtSelect(selection);
         setOfficeValue(null);
         setDepartmentValue(null);
         setRoomValue(null);
+
+        onChange({
+          court: selection,
+          office: null,
+          department: null,
+          room: null,
+        });
       },
     },
   });
 
   const {
+    selected: selectedOffice,
     text: officeText,
     handleChange: officeChange,
     handleBlur: officeSelect,
     setValue: setOfficeValue,
   } = useDropdown({
     opts: {
-      onBlurMutator: onOfficeSelect,
+      onBlurMutator: (selected) => {
+        onChange({
+          court: selectedCourt,
+          office: selected,
+          department: selectedDepartment,
+          room: selectedRoom,
+        });
+      },
     },
   });
 
   const {
+    selected: selectedDepartment,
     text: departmentText,
     handleChange: departmentChange,
     handleBlur: departmentSelect,
     setValue: setDepartmentValue,
   } = useDropdown({
     opts: {
-      onBlurMutator: onDepartmentSelect,
+      onBlurMutator: (selected) => {
+        onChange({
+          court: selectedCourt,
+          office: selectedOffice,
+          department: selected,
+          room: selectedRoom,
+        });
+      },
     },
   });
 
   const {
+    selected: selectedRoom,
     text: roomText,
     handleChange: roomChange,
     handleBlur: roomSelect,
     setValue: setRoomValue,
   } = useDropdown({
     opts: {
-      onBlurMutator: onRoomSelect,
+      onBlurMutator: (selected) => {
+        onChange({
+          court: selectedCourt,
+          office: selectedOffice,
+          department: selectedDepartment,
+          room: selected,
+        });
+      },
     },
   });
 
@@ -102,7 +134,7 @@ export function CourtInfo({
 
   return (
     <>
-      <h4>{t("settings:courtTitle")}</h4>
+      {showTitle !== false && <h4>{t("settings:courtTitle")}</h4>}
       <SyDropdown
         options={courts}
         value={courtText}

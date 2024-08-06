@@ -10,7 +10,6 @@ import {
   getCourt,
   getCourtDetail,
   getCourtDetailAsOptions,
-  getCourtFirstDetail,
   getCourtsAsOptions,
 } from "@common/courts/query";
 import { StaffMember } from "data/Persons";

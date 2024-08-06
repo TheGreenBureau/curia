@@ -13,13 +13,12 @@ export type Trustee = PersonBase & {
 
 export type StaffMember = PersonBase & {
   title?: DropdownOption;
+  presiding?: boolean;
 };
 
-export type Prosecutor = PersonBase & {
+export type Plaintiff = PersonBase & {
   title?: DropdownOption;
 };
-
-export type Plaintiff = PersonBase;
 
 export type Defendant = PersonBase & {
   counselor?: Counselor;
@@ -30,7 +29,12 @@ export type Defendant = PersonBase & {
 
 export type InjuredRepresentative = PersonBase;
 
-export type Injured = PersonBase & {
+export type OtherPerson = PersonBase & {
+  type: "injured" | "witness" | "expert";
+};
+
+export type Injured = OtherPerson & {
+  type: "injured";
   counselor?: Counselor;
   representative?: InjuredRepresentative;
   trustee?: Trustee;
@@ -39,12 +43,14 @@ export type Injured = PersonBase & {
   summonsStatus?: DropdownOption;
 };
 
-export type Witness = PersonBase & {
+export type Witness = OtherPerson & {
+  type: "witness";
   summonsType?: DropdownOption;
   summonsStatus?: DropdownOption;
 };
 
-export type Expert = PersonBase & {
+export type Expert = OtherPerson & {
+  type: "expert";
   title?: string;
   summonsType?: DropdownOption;
   summonsStatus?: DropdownOption;

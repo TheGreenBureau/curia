@@ -9,4 +9,5 @@ export const QUERY_KEYS = {
   createListing: "createListing",
   listListings: "listListings",
   fileNameStart: "fileNameStart",
+  getCourt: "getCourt",
 } as const;

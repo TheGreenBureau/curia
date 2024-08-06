@@ -2,7 +2,7 @@ import { getCourt } from "@common/courts/query";
 import { courtNotFoundText } from "@common/courts/utils";
 import { getOrderedDate } from "@common/dates/format";
 import { TableFilter } from "@purplebureau/sy-react/dist/@types/Table";
-import { ListingCore } from "data/Listing";
+import { ListingCore, ListingHeaders } from "data/Listing";
 
 export const formattedListingName = (
   db: ListingCore,
@@ -12,20 +12,20 @@ export const formattedListingName = (
     return courtNotFoundText(db.creationDate, fileNameDateStart);
   }
 
-  let fileName = `${db.court.content} ${getOrderedDate(
+  let fileName = `${db.court.content} | ${getOrderedDate(
     db.date,
     fileNameDateStart
   )}`;
 
   if (db.room) {
-    fileName = `${fileName} ${db.room}`;
+    fileName = `${fileName} | ${db.room.content}`;
   }
 
   return fileName;
 };
 
 const filterListing = (
-  filter: TableFilter,
+  filter: TableFilter<ListingHeaders>,
   listings: ListingCore[],
   filterFunction: (listing: ListingCore) => boolean
 ) => {
@@ -36,7 +36,7 @@ const filterListing = (
 
 export const filterForQuery = (
   infos: ListingCore[],
-  filters: TableFilter[],
+  filters: TableFilter<ListingHeaders>[],
   fileNameStart: "year" | "day" = "day",
   lang: string
 ): ListingCore[] => {

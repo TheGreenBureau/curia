@@ -3,6 +3,8 @@ import { Case } from "./Case";
 import {
   SortDirection,
   TableFilter,
+  TableHeaderInfo,
+  TableHeaderInfos,
 } from "@purplebureau/sy-react/dist/@types/Table";
 
 export type ListingCore = {
@@ -34,9 +36,9 @@ export type ListingQueryArgs = {
   limit: number;
   page: number;
   fileNameStart: "year" | "day";
-  filters?: TableFilter[];
+  filters?: TableFilter<ListingHeaders>[];
   sortDirection?: SortDirection;
-  sortingHeader?: string;
+  sortingHeader?: keyof ListingHeaders;
   refresh?: boolean;
 };
 
@@ -46,4 +48,13 @@ export type ListingResult = {
   limit: number;
   page: number;
   data: ListingCore[];
+  noListingsInDirectory?: boolean;
+};
+
+export type ListingHeaders = {
+  court: TableHeaderInfo;
+  date: TableHeaderInfo;
+  department: TableHeaderInfo;
+  room: TableHeaderInfo;
+  creation: TableHeaderInfo;
 };

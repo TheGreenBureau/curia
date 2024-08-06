@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@common/queryKeys";
 import { CourtInfo } from "@components/CourtInfo";
 import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
+import { Defaults } from "config";
 
 type WelcomeNewViewProps = {
   onClickBack: () => void;
@@ -16,10 +17,15 @@ type WelcomeNewViewProps = {
 
 export function WelcomeNewView({ onClickBack }: WelcomeNewViewProps) {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [court, setCourt] = useState<DropdownOption | null>(null);
-  const [office, setOffice] = useState<DropdownOption | null>(null);
-  const [department, setDepartment] = useState<DropdownOption | null>(null);
-  const [room, setRoom] = useState<DropdownOption | null>(null);
+  const [selections, setSelections] = useState<Defaults>({
+    court: null,
+    office: null,
+    department: null,
+    room: null,
+    presiding: null,
+    secretary: null,
+    break: null,
+  });
 
   const queryClient = useQueryClient();
 
@@ -29,16 +35,18 @@ export function WelcomeNewView({ onClickBack }: WelcomeNewViewProps) {
   });
 
   useEffect(() => {
-    setCourt(defaults?.court ?? null);
-    setOffice(defaults?.office ?? null);
-    setDepartment(defaults?.department ?? null);
-    setRoom(defaults?.room ?? null);
+    if (defaults) {
+      setSelections(defaults);
+    }
   }, [defaults]);
 
   const { mutate: createListing } = useMutation({
     mutationFn: window.api.createDatabase,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.currentListing] });
+    onSuccess: async () => {
+      await window.api.refreshDatabases();
+      await queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.currentListing],
+      });
     },
   });
 
@@ -57,11 +65,11 @@ export function WelcomeNewView({ onClickBack }: WelcomeNewViewProps) {
       id: uuidv4(),
       creationDate: new Date(),
       date: selectedDate,
-      court: court,
-      office: office,
-      department: department,
-      room: room,
-      break: defaults?.break ? defaults.break : undefined,
+      court: selections.court,
+      office: selections.office,
+      department: selections.department,
+      room: selections.room,
+      break: selections?.break ? selections.break : undefined,
     };
 
     createListing(newListing);
@@ -73,17 +81,14 @@ export function WelcomeNewView({ onClickBack }: WelcomeNewViewProps) {
       <>
         <div className={"choices-container"}>
           <CourtInfo
-            courtId={court?.id ?? null}
-            defaults={defaults}
-            onCourtSelect={(selected) => {
-              setCourt(selected);
-              setOffice(null);
-              setDepartment(null);
-              setRoom(null);
+            courtId={selections?.court?.id ?? null}
+            defaults={selections}
+            onChange={(values) => {
+              setSelections({
+                ...selections,
+                ...values,
+              });
             }}
-            onOfficeSelect={(selected) => setOffice(selected)}
-            onDepartmentSelect={(selected) => setDepartment(selected)}
-            onRoomSelect={(selected) => setRoom(selected)}
           />
           <SyDatepicker
             date={selectedDate}
@@ -96,7 +101,12 @@ export function WelcomeNewView({ onClickBack }: WelcomeNewViewProps) {
         <SyButton
           style={{ width: "100%" }}
           containerStyle={{ width: "100%" }}
-          disabled={Boolean(!court || !office || !department || !room)}
+          disabled={Boolean(
+            !selections?.court ||
+              !selections?.office ||
+              !selections?.department ||
+              !selections?.room
+          )}
           className={"button"}
           onClick={handleCreateClick}
         >

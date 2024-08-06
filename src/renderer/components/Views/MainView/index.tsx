@@ -10,6 +10,12 @@ export function MainView() {
   });
 
   return (
-    <div>{currentListing && isSuccess ? <ListingView /> : <Welcome />}</div>
+    <div>
+      {currentListing && isSuccess ? (
+        <ListingView currentListing={currentListing} />
+      ) : (
+        <Welcome />
+      )}
+    </div>
   );
 }

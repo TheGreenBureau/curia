@@ -3,29 +3,23 @@ import { QUERY_KEYS } from "@common/queryKeys";
 import { useTranslation } from "react-i18next";
 import { useDropdown } from "@hooks/useDropdown";
 import { SyDropdown, SyTextbox } from "@purplebureau/sy-react";
-import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Defaults } from "config";
 import { useTextbox } from "@hooks/useTextbox";
+import { StaffMember } from "data/Persons";
+import { v4 as uuidv4 } from "uuid";
 
-type OfficerTitleSelector = (selection: DropdownOption) => void;
-type OfficerNameChange = (value: string) => void;
+type OfficerInfoValues = {
+  presiding: StaffMember | null;
+  secretary: StaffMember | null;
+};
 
 type OfficerInfoProps = {
-  onPresidingNameChange: OfficerNameChange;
-  onPresidingTitleChange: OfficerTitleSelector;
-  onSecretaryNameChange: OfficerNameChange;
-  onSecretaryTitleChange: OfficerTitleSelector;
+  onChange: (values: OfficerInfoValues) => void;
   defaults?: Defaults;
 };
 
-export function OfficerInfo({
-  onPresidingNameChange,
-  onPresidingTitleChange,
-  onSecretaryNameChange,
-  onSecretaryTitleChange,
-  defaults,
-}: OfficerInfoProps) {
+export function OfficerInfo({ onChange, defaults }: OfficerInfoProps) {
   const {
     data: titleOptions,
     isPending,
@@ -37,6 +31,13 @@ export function OfficerInfo({
     placeholderData: keepPreviousData,
   });
 
+  const [presiding, setPresiding] = useState<StaffMember | null>(
+    defaults?.presiding ?? null
+  );
+  const [secretary, setSecretary] = useState<StaffMember | null>(
+    defaults?.secretary ?? null
+  );
+
   const courtTitles = titleOptions?.courtTitles ?? [];
 
   useEffect(() => {
@@ -44,6 +45,8 @@ export function OfficerInfo({
     setSecretaryName(defaults?.secretary?.name ?? "");
     setPresidingTitle(defaults?.presiding?.title ?? null);
     setSecretaryTitle(defaults?.secretary?.title ?? null);
+    setPresiding(defaults?.presiding ?? null);
+    setSecretary(defaults?.secretary ?? null);
   }, [defaults]);
 
   const {
@@ -53,7 +56,18 @@ export function OfficerInfo({
     setValue: setPresidingName,
   } = useTextbox({
     opts: {
-      onBlurMutator: onPresidingNameChange,
+      onBlurMutator: (value) => {
+        const pres: StaffMember = {
+          id: presiding?.id ?? uuidv4(),
+          name: value,
+          title: presiding?.title ?? null,
+        };
+        setPresiding(pres);
+        onChange({
+          presiding: pres,
+          secretary: secretary,
+        });
+      },
     },
   });
 
@@ -64,7 +78,18 @@ export function OfficerInfo({
     setValue: setSecretaryName,
   } = useTextbox({
     opts: {
-      onBlurMutator: onSecretaryNameChange,
+      onBlurMutator: (value) => {
+        const secr: StaffMember = {
+          id: secretary?.id ?? uuidv4(),
+          name: value,
+          title: secretary?.title ?? null,
+        };
+        setSecretary(secr);
+        onChange({
+          presiding: presiding,
+          secretary: secr,
+        });
+      },
     },
   });
 
@@ -75,7 +100,20 @@ export function OfficerInfo({
     setValue: setPresidingTitle,
   } = useDropdown({
     opts: {
-      onBlurMutator: onPresidingTitleChange,
+      onBlurMutator: (selection) => {
+        const pres: StaffMember = {
+          id: presiding?.id ?? uuidv4(),
+          name: presiding?.name ?? "",
+          title: selection,
+        };
+
+        setPresiding(pres);
+
+        onChange({
+          presiding: pres,
+          secretary: secretary,
+        });
+      },
       allowCustomText: true,
     },
   });
@@ -87,7 +125,20 @@ export function OfficerInfo({
     setValue: setSecretaryTitle,
   } = useDropdown({
     opts: {
-      onBlurMutator: onSecretaryTitleChange,
+      onBlurMutator: (selected) => {
+        const secr: StaffMember = {
+          id: secretary?.id ?? uuidv4(),
+          name: secretary?.name ?? "",
+          title: selected,
+        };
+
+        setSecretary(secr);
+
+        onChange({
+          presiding: presiding,
+          secretary: secr,
+        });
+      },
       allowCustomText: true,
     },
   });

@@ -1,6 +1,11 @@
-import { Listing, ListingCore, ListingResult } from "data/Listing";
+import {
+  Listing,
+  ListingCore,
+  ListingHeaders,
+  ListingResult,
+} from "data/Listing";
 import writeFileAtomic from "write-file-atomic";
-import { jsonTypeParse } from "@common/dataUtils";
+import { jsonTypeParse, sortDates, sortStrings } from "@common/dataUtils";
 import { DBEXT, RECENT } from "@paths";
 import { getConfig } from "@configuration";
 import path from "path";
@@ -10,8 +15,9 @@ import { formattedListingName } from "@common/listings/utils";
 import { ListingQueryArgs } from "data/Listing";
 import { filterForQuery } from "@common/listings/utils";
 import { attachHandles } from "../ipc";
-import { databaseChannel } from "@common/channels";
 import { DatabaseAPI } from "app/api";
+import { SortDirection } from "@purplebureau/sy-react/dist/@types/Table";
+import { getCourt } from "@common/courts/query";
 
 let currentListing: Listing | null = null;
 
@@ -135,6 +141,39 @@ const refreshData = async () => {
   cachedInfos = await filesAsInfos(files);
 };
 
+const sortListings = (
+  listings: ListingCore[] | undefined | null,
+  sortDirection: SortDirection,
+  sortingHeader?: keyof ListingHeaders
+) => {
+  if (!sortingHeader || !listings || listings.length === 0) return listings;
+
+  switch (sortingHeader) {
+    case "court":
+      return [...listings].sort((a, b) =>
+        sortStrings(a.court?.content, b.court?.content, sortDirection)
+      );
+    case "creation":
+      return [...listings].sort((a, b) =>
+        sortDates(a.creationDate, b.creationDate, sortDirection)
+      );
+    case "date":
+      return [...listings].sort((a, b) =>
+        sortDates(a.date, b.date, sortDirection)
+      );
+    case "department":
+      return [...listings].sort((a, b) =>
+        sortStrings(a.department?.content, b.department?.content, sortDirection)
+      );
+    case "room":
+      return [...listings].sort((a, b) =>
+        sortStrings(a.room?.content, b.room?.content, sortDirection)
+      );
+    default:
+      return listings;
+  }
+};
+
 const databaseHandles: DatabaseAPI = {
   createDatabase: async (listing: Listing) => {
     try {
@@ -241,11 +280,28 @@ const databaseHandles: DatabaseAPI = {
     sortingHeader,
     refresh,
   }: ListingQueryArgs): Promise<ListingResult> => {
+    const config = await getConfig();
+    if (!infoPath || infoPath !== config.dbDirectory) {
+      infoPath = config.dbDirectory;
+      await refreshData();
+    }
+
     if (!cachedInfos || refresh) {
       await refreshData();
     }
 
-    const { language } = await getConfig();
+    if (cachedInfos.length === 0) {
+      return {
+        fileCount: 0,
+        pageCount: 0,
+        limit: limit,
+        page: page,
+        data: [],
+        noListingsInDirectory: true,
+      };
+    }
+
+    const { language } = config;
 
     const filtered = filterForQuery(
       cachedInfos,
@@ -253,7 +309,7 @@ const databaseHandles: DatabaseAPI = {
       fileNameStart,
       language
     );
-    const sorted = filtered;
+    const sorted = sortListings(filtered, sortDirection, sortingHeader);
 
     const startIndex = (page - 1) * limit;
     const excludedEndIndex = page * limit;
@@ -282,6 +338,15 @@ const databaseHandles: DatabaseAPI = {
   },
   getRecents: async () => {
     return await listRecent();
+  },
+  getCourt: async (courtId: string | null | undefined) => {
+    if (!courtId) return null;
+
+    const { language } = await getConfig();
+
+    const court = getCourt(courtId, language);
+
+    return court;
   },
 };
 

@@ -1,12 +1,4 @@
-import {
-  Defendant,
-  Expert,
-  Injured,
-  Plaintiff,
-  Prosecutor,
-  StaffMember,
-  Witness,
-} from "./Persons";
+import { Defendant, OtherPerson, Plaintiff, StaffMember } from "./Persons";
 
 export type Case = {
   id: string;
@@ -15,12 +7,8 @@ export type Case = {
   matter: string;
   time: Date;
   type: "criminal" | "civil";
-  presiding?: StaffMember;
-  members?: StaffMember[];
-  prosecutors?: Prosecutor[];
-  plaintiffs?: Plaintiff[];
-  defendants?: Defendant[];
-  injured?: Injured[];
-  witnesses?: Witness[];
-  experts?: Expert[];
+  members: StaffMember[];
+  plaintiffs: Plaintiff[];
+  defendants: Defendant[];
+  other: OtherPerson[];
 };

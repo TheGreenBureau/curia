@@ -1,4 +1,6 @@
 import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
+import { SortDirection } from "@purplebureau/sy-react/dist/@types/Table";
+import { compareAsc, compareDesc } from "date-fns";
 
 export type Language = string;
 
@@ -95,4 +97,52 @@ export const jsonTypeParse = <T>(str: string) => {
 
 export const setAllNull = <T>(obj: T) => {
   Object.keys(obj).forEach((key) => (obj[key as keyof T] = null));
+};
+
+export const sortDates = (
+  a: Date | undefined | null,
+  b: Date | undefined | null,
+  direction: SortDirection
+) => {
+  if (!a && !b) return 0;
+
+  switch (direction) {
+    case "asc":
+      return compareAsc(a, b);
+    default:
+      return compareDesc(a, b);
+  }
+};
+
+export const sortStrings = (
+  a: string | undefined | null,
+  b: string | undefined | null,
+  direction: SortDirection
+) => {
+  if (a === b || (!a && !b)) return 0;
+
+  if (!a) {
+    switch (direction) {
+      case "asc":
+        return 1;
+      default:
+        return -1;
+    }
+  }
+
+  if (!b) {
+    switch (direction) {
+      case "asc":
+        return -1;
+      default:
+        return 1;
+    }
+  }
+
+  switch (direction) {
+    case "asc":
+      return a < b ? -1 : 1;
+    default:
+      return a < b ? 1 : -1;
+  }
 };

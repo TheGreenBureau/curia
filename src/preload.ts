@@ -31,6 +31,7 @@ const databaseApi: ApplicationAPI = {
   refreshDatabases: createIpc("refreshDatabases"),
   clearRecents: createIpc("clearRecents"),
   getRecents: createIpc("getRecents"),
+  getCourt: createIpc("getCourt"),
 };
 
 contextBridge.exposeInMainWorld("api", databaseApi);
