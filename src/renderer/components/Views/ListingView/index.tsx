@@ -1,42 +1,36 @@
 import { QUERY_KEYS } from "@common/queryKeys";
 import { CourtInfo } from "@components/CourtInfo";
-import { SideMenu } from "@components/SideMenu";
 import { TopMenu } from "@components/TopMenu";
-import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Defaults } from "config";
 import { Case } from "data/Case";
 import { Listing } from "data/Listing";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { v4 as uuidv4 } from "uuid";
 
 import "./listingView.scss";
-import {
-  SyButton,
-  SyDatepicker,
-  SyLucide,
-  SyModal,
-} from "@purplebureau/sy-react";
-import { OfficerInfo } from "@components/OfficerInfo";
+import { SyDatepicker } from "@purplebureau/sy-react";
 import { ListingTable } from "./ListingTable";
+import { produce } from "immer";
 
 type ListingViewProps = {
   currentListing: Listing;
 };
 
 export function ListingView({ currentListing }: ListingViewProps) {
-  const [unsavedChanges, setUnsavedChanges] = useState(false);
-  const [date, setDate] = useState<Date | null>(currentListing.date);
-
-  const [selections, setSelections] = useState<Defaults>({
-    court: currentListing.court,
-    office: currentListing.office,
-    department: currentListing.department,
-    room: currentListing.room,
+  const [selections, setSelections] = useState({
     presiding: null,
     secretary: null,
     break: null,
   });
+
+  const queryClient = useQueryClient();
 
   const { data: defaults } = useQuery({
     queryKey: [QUERY_KEYS.defaults],
@@ -46,7 +40,6 @@ export function ListingView({ currentListing }: ListingViewProps) {
   useEffect(() => {
     if (defaults) {
       setSelections({
-        ...selections,
         presiding: defaults.presiding,
         secretary: defaults.secretary,
         break: defaults.break,
@@ -54,16 +47,19 @@ export function ListingView({ currentListing }: ListingViewProps) {
     }
   }, [defaults]);
 
-  const [cases, setCases] = useState<Case[]>(currentListing.cases ?? []);
-
   const { data: court } = useQuery({
     queryKey: [QUERY_KEYS.getCourt, selections],
-    queryFn: async () => await window.api.getCourt(selections.court?.id),
+    queryFn: async () => await window.api.getCourt(currentListing.court?.id),
     placeholderData: keepPreviousData,
   });
 
   const { mutate: updateListing } = useMutation({
     mutationFn: window.api.updateDatabase,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.currentListing],
+      });
+    },
   });
 
   const { t } = useTranslation();
@@ -72,19 +68,8 @@ export function ListingView({ currentListing }: ListingViewProps) {
     <div>
       <TopMenu
         court={court}
-        room={selections.room}
-        date={date}
-        unsavedChanges={unsavedChanges}
-        onSaveChanges={() => {
-          updateListing({
-            id: currentListing.id,
-            creationDate: currentListing.creationDate,
-            date: date,
-            cases: cases,
-            ...selections,
-          });
-          setUnsavedChanges(false);
-        }}
+        room={currentListing?.room}
+        date={currentListing?.date}
       />
       <div className="listing-content">
         <div className="row">
@@ -94,21 +79,35 @@ export function ListingView({ currentListing }: ListingViewProps) {
           <div className="column">
             <CourtInfo
               showTitle={false}
-              courtId={selections?.court?.id ?? null}
-              defaults={selections}
+              courtId={currentListing?.court?.id ?? null}
+              values={{
+                court: currentListing?.court ?? null,
+                department: currentListing?.department ?? null,
+                office: currentListing?.office ?? null,
+                room: currentListing?.room ?? null,
+              }}
               onChange={(values) => {
-                setUnsavedChanges(true);
-                setSelections({
-                  ...selections,
-                  ...values,
-                });
+                if (!currentListing) return;
+
+                updateListing(
+                  produce(currentListing, (draft) => {
+                    draft.cases = draft.cases ?? [];
+                    draft.court = values.court;
+                    draft.department = values.department;
+                    draft.office = values.office;
+                    draft.room = values.room;
+                  })
+                );
               }}
             />
             <SyDatepicker
-              date={date}
+              date={currentListing?.date}
               onChange={(date) => {
-                setDate(date);
-                setUnsavedChanges(true);
+                updateListing(
+                  produce(currentListing, (draft) => {
+                    draft.date = date;
+                  })
+                );
               }}
               buttonStyle={{ width: "100%" }}
             />
@@ -116,7 +115,7 @@ export function ListingView({ currentListing }: ListingViewProps) {
         </div>
       </div>
       <div className="listing-content">
-        <ListingTable cases={cases} />
+        <ListingTable cases={currentListing?.cases ?? []} />
       </div>
     </div>
   );

@@ -6,12 +6,12 @@ import { SyDropdown, SyTextbox } from "@purplebureau/sy-react";
 import { useEffect, useState } from "react";
 import { Defaults } from "config";
 import { useTextbox } from "@hooks/useTextbox";
-import { StaffMember } from "data/Persons";
+import { Officer } from "data/Persons";
 import { v4 as uuidv4 } from "uuid";
 
 type OfficerInfoValues = {
-  presiding: StaffMember | null;
-  secretary: StaffMember | null;
+  presiding: Officer | null;
+  secretary: Officer | null;
 };
 
 type OfficerInfoProps = {
@@ -31,10 +31,10 @@ export function OfficerInfo({ onChange, defaults }: OfficerInfoProps) {
     placeholderData: keepPreviousData,
   });
 
-  const [presiding, setPresiding] = useState<StaffMember | null>(
+  const [presiding, setPresiding] = useState<Officer | null>(
     defaults?.presiding ?? null
   );
-  const [secretary, setSecretary] = useState<StaffMember | null>(
+  const [secretary, setSecretary] = useState<Officer | null>(
     defaults?.secretary ?? null
   );
 
@@ -57,7 +57,8 @@ export function OfficerInfo({ onChange, defaults }: OfficerInfoProps) {
   } = useTextbox({
     opts: {
       onBlurMutator: (value) => {
-        const pres: StaffMember = {
+        const pres: Officer = {
+          type: "presiding",
           id: presiding?.id ?? uuidv4(),
           name: value,
           title: presiding?.title ?? null,
@@ -79,7 +80,8 @@ export function OfficerInfo({ onChange, defaults }: OfficerInfoProps) {
   } = useTextbox({
     opts: {
       onBlurMutator: (value) => {
-        const secr: StaffMember = {
+        const secr: Officer = {
+          type: "secretary",
           id: secretary?.id ?? uuidv4(),
           name: value,
           title: secretary?.title ?? null,
@@ -101,7 +103,8 @@ export function OfficerInfo({ onChange, defaults }: OfficerInfoProps) {
   } = useDropdown({
     opts: {
       onBlurMutator: (selection) => {
-        const pres: StaffMember = {
+        const pres: Officer = {
+          type: "presiding",
           id: presiding?.id ?? uuidv4(),
           name: presiding?.name ?? "",
           title: selection,
@@ -126,7 +129,8 @@ export function OfficerInfo({ onChange, defaults }: OfficerInfoProps) {
   } = useDropdown({
     opts: {
       onBlurMutator: (selected) => {
-        const secr: StaffMember = {
+        const secr: Officer = {
+          type: "secretary",
           id: secretary?.id ?? uuidv4(),
           name: secretary?.name ?? "",
           title: selected,

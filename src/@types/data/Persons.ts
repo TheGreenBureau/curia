@@ -5,53 +5,25 @@ type PersonBase = {
   name: string;
 };
 
-export type Counselor = PersonBase;
+export const officerTypes = [
+  "presiding",
+  "secretary",
+  "member",
+  "prosecutor",
+] as const;
+export type OfficerType = (typeof officerTypes)[number];
 
-export type Trustee = PersonBase & {
-  title?: string;
-};
-
-export type StaffMember = PersonBase & {
-  title?: DropdownOption;
-  presiding?: boolean;
-};
-
-export type Plaintiff = PersonBase & {
+export type Officer = PersonBase & {
+  type: OfficerType;
   title?: DropdownOption;
 };
 
-export type Defendant = PersonBase & {
-  counselor?: Counselor;
-  trustee?: Trustee;
-  summonsType?: DropdownOption;
-  summonsStatus?: DropdownOption;
-};
-
-export type InjuredRepresentative = PersonBase;
-
-export type OtherPerson = PersonBase & {
-  type: "injured" | "witness" | "expert";
-};
-
-export type Injured = OtherPerson & {
-  type: "injured";
-  counselor?: Counselor;
-  representative?: InjuredRepresentative;
-  trustee?: Trustee;
+export type Civilian = PersonBase & {
+  type: "defendant" | "injured" | "witness" | "expert" | "plaintiff";
+  counselor?: string;
+  trustee?: string;
+  representative?: string;
   hasDemands?: boolean;
-  summonsType?: DropdownOption;
-  summonsStatus?: DropdownOption;
-};
-
-export type Witness = OtherPerson & {
-  type: "witness";
-  summonsType?: DropdownOption;
-  summonsStatus?: DropdownOption;
-};
-
-export type Expert = OtherPerson & {
-  type: "expert";
-  title?: string;
   summonsType?: DropdownOption;
   summonsStatus?: DropdownOption;
 };

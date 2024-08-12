@@ -17,14 +17,14 @@ type CourtInfoValues = {
 type CourtInfoProps = {
   courtId: string | null;
   onChange: (values: CourtInfoValues) => void;
-  defaults?: Defaults;
+  values?: CourtInfoValues;
   showTitle?: boolean;
 };
 
 export function CourtInfo({
   courtId,
   onChange,
-  defaults,
+  values,
   showTitle,
 }: CourtInfoProps) {
   const {
@@ -44,11 +44,11 @@ export function CourtInfo({
   const rooms = courtOptions?.rooms ?? [];
 
   useEffect(() => {
-    setCourtValue(defaults?.court ?? null);
-    setOfficeValue(defaults?.office ?? null);
-    setDepartmentValue(defaults?.department ?? null);
-    setRoomValue(defaults?.room ?? null);
-  }, [defaults]);
+    setCourtValue(values?.court ?? null);
+    setOfficeValue(values?.office ?? null);
+    setDepartmentValue(values?.department ?? null);
+    setRoomValue(values?.room ?? null);
+  }, [values]);
 
   const {
     selected: selectedCourt,

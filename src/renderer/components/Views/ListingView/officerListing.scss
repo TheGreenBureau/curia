@@ -1,0 +1,35 @@
+.officer-section {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.officer-listing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+[data-theme="light"] {
+  --officer-listing-item-hover-color: var(--sy-base-08);
+}
+
+[data-theme="dark"] {
+  --officer-listing-item-hover-color: var(--sy-primary-400);
+}
+
+.officer-listing-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  transition: var(--sy-transition-time);
+
+  &:hover {
+    color: var(--officer-listing-item-hover-color);
+    cursor: pointer;
+  }
+
+  p {
+    margin: 0rem;
+  }
+}

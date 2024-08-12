@@ -33,7 +33,7 @@ export function SettingsView() {
         <p>{t("settings:defaultsDescription")}</p>
         <CourtInfo
           courtId={defaults?.court?.id ?? null}
-          defaults={defaults}
+          values={defaults}
           onChange={(values) => {
             setDefaults({
               ...defaults,

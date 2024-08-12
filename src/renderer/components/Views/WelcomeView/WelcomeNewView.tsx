@@ -8,7 +8,6 @@ import { Listing } from "data/Listing";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@common/queryKeys";
 import { CourtInfo } from "@components/CourtInfo";
-import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
 import { Defaults } from "config";
 
 type WelcomeNewViewProps = {
@@ -82,7 +81,7 @@ export function WelcomeNewView({ onClickBack }: WelcomeNewViewProps) {
         <div className={"choices-container"}>
           <CourtInfo
             courtId={selections?.court?.id ?? null}
-            defaults={selections}
+            values={selections}
             onChange={(values) => {
               setSelections({
                 ...selections,

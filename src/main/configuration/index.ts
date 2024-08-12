@@ -12,7 +12,7 @@ import {
   getCourtDetailAsOptions,
   getCourtsAsOptions,
 } from "@common/courts/query";
-import { StaffMember } from "data/Persons";
+import { Officer } from "data/Persons";
 import {
   getTitleOption,
   getTitlesAsOptions,
@@ -163,7 +163,7 @@ const configHandles: ConfigAPI = {
         ? getCourtDetail(court.id, defaults.room.id, "rooms", lang)
         : null;
 
-    const presiding: StaffMember | null = defaults.presiding
+    const presiding: Officer | null = defaults.presiding
       ? { ...defaults.presiding }
       : null;
 
@@ -178,7 +178,7 @@ const configHandles: ConfigAPI = {
       );
     }
 
-    const secretary: StaffMember | null = defaults.secretary
+    const secretary: Officer | null = defaults.secretary
       ? { ...defaults.secretary }
       : null;
 

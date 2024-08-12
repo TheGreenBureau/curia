@@ -1,16 +1,15 @@
+import { useCurrentListing } from "@hooks/queries";
 import { ListingView } from "../ListingView";
 import { Welcome } from "../WelcomeView";
-import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@common/queryKeys";
+import { Modal } from "@components/Modals";
 
 export function MainView() {
-  const { data: currentListing, isSuccess } = useQuery({
-    queryKey: [QUERY_KEYS.currentListing],
-    queryFn: window.api.getCurrentDatabase,
-  });
+  const { data: currentListing, isSuccess } = useCurrentListing();
 
   return (
     <div>
+      {currentListing && <Modal />}
       {currentListing && isSuccess ? (
         <ListingView currentListing={currentListing} />
       ) : (

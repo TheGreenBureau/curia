@@ -22,7 +22,21 @@
   "listingViewExport": "Vie",
   "Järjestä": "Järjestä",
   "Klo": "Klo",
+  "Asia": "Asia",
   "Asianumero": "Asianumero",
   "Asianro_sja": "Asianro sjä",
-  "Uusi_juttu": "Uusi juttu"
+  "Uusi_juttu": "Uusi juttu",
+  "Virkamiehet": "Virkamiehet",
+  "presiding_abr": "PJ",
+  "member_abr": "JÄS",
+  "secretary_abr": "SIHT",
+  "prosecutor_abr": "SJÄ",
+  "Ei_asianumeroa": "Ei asianumeroa",
+  "Ei_asianimikettä": "Ei asianimikettä",
+  "Nimi": "Nimi",
+  "Virkanimike": "Virkanimike",
+  "Asema": "Asema",
+  "Nimi_on_pakollinen_tieto": "Nimi on pakollinen tieto",
+  "Lisää_uusi_virkamies": "Lisää uusi virkamies",
+  "Muokkaa_virkamiestä": "Muokkaa virkamiestä"
 }

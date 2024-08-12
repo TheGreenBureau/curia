@@ -1,4 +1,4 @@
-import React, { CSSProperties, useMemo, useState } from "react";
+import React, { CSSProperties, useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom/client";
 import {
   ColumnDef,
@@ -28,44 +28,29 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SyButton, SyLucide, SyModal } from "@purplebureau/sy-react";
+import { SyButton, SyLucide, SyModal, SyTextbox } from "@purplebureau/sy-react";
 import { useTranslation } from "react-i18next";
 import { format as dateFormat } from "date-fns";
+import { OfficerListing } from "./OfficerListing";
+import { useCurrentListing, useDefaults } from "@hooks/queries";
+import { produce } from "immer";
+import { useUpdateCurrentListing } from "@hooks/mutations";
 import { v4 as uuidv4 } from "uuid";
 
-function RowDragHandleCell({ rowId }: { rowId: string }) {
+function RowDragHandleCell({ rowId, index }: { rowId: string; index: number }) {
   const { attributes, listeners } = useSortable({
     id: rowId,
   });
 
   return (
-    <div style={{ cursor: "grab" }} {...attributes} {...listeners}>
+    <div
+      style={{ cursor: "grab", display: "flex", gap: "0.5rem" }}
+      {...attributes}
+      {...listeners}
+    >
+      <h4>{index + 1}</h4>
       <SyLucide name="grip-vertical" />
     </div>
-  );
-}
-
-function DraggableRow({ row }: { row: Row<Case> }) {
-  const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.id,
-  });
-
-  const style: CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition: transition,
-    opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 1 : 0,
-    position: "relative",
-  };
-
-  return (
-    <tr ref={setNodeRef} style={style}>
-      {row.getVisibleCells().map((cell) => (
-        <td key={cell.id} style={{ width: cell.column.getSize() }}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </td>
-      ))}
-    </tr>
   );
 }
 
@@ -76,42 +61,175 @@ type ListingTableProps = {
 };
 
 export function ListingTable({ cases }: ListingTableProps) {
-  const [newModalOpen, setNewModalOpen] = useState(false);
+  const [currentCases, setCurrentCases] = useState(cases);
+
+  const { data: currentListing } = useCurrentListing();
+  const { mutate: updateListing } = useUpdateCurrentListing();
+  const { data: defaults } = useDefaults();
+
+  useEffect(() => {
+    updateListing(
+      produce(currentListing, (draft) => {
+        draft.cases = currentCases;
+      })
+    );
+  }, [currentCases]);
+
+  useEffect(() => {
+    setCurrentCases(currentListing?.cases ?? []);
+  }, [currentListing]);
+
   const { t } = useTranslation();
+
+  function DraggableRow({ row }: { row: Row<Case> }) {
+    const { transform, transition, setNodeRef, isDragging } = useSortable({
+      id: row.original.id,
+    });
+
+    const style: CSSProperties = {
+      transform: CSS.Transform.toString(transform),
+      transition: transition,
+      zIndex: isDragging ? 1 : 0,
+      position: "relative",
+      backgroundColor: isDragging
+        ? "var(--table-clickable-hover-color)"
+        : undefined,
+      color: isDragging ? "var(--table-clickable-foreground-color)" : undefined,
+    };
+
+    return (
+      <tr ref={setNodeRef} style={style}>
+        {row.getVisibleCells().map((cell) => (
+          <td key={cell.id} style={{ width: cell.column.getSize() }}>
+            <div className="cellContent">
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </div>
+          </td>
+        ))}
+      </tr>
+    );
+  }
+
+  function ListingTextBox({
+    original,
+    value,
+    onChange,
+  }: {
+    original: Case;
+    value: string;
+    onChange: (found: Case, currentValue: string) => Case | null;
+  }) {
+    const [currentValue, setCurrentValue] = useState(value);
+
+    return (
+      <SyTextbox
+        style={{ color: "var(--sy-text-color)" }}
+        value={currentValue}
+        onChange={(changedValue) => setCurrentValue(changedValue)}
+        onBlur={() => {
+          const modified = onChange(original, currentValue);
+          if (modified) {
+            const index = currentCases.findIndex((c) => c.id === modified.id);
+            setCurrentCases(
+              produce(currentCases, (draft) => {
+                draft[index] = modified;
+              })
+            );
+          }
+        }}
+      />
+    );
+  }
+
+  const dataIds = useMemo<UniqueIdentifier[]>(
+    () => currentCases?.map(({ id }) => id),
+    [currentCases]
+  );
 
   const columns = useMemo<ColumnDef<Case>[]>(
     () => [
       {
         id: "drag-handle",
-        header: t("listings:Järjestä"),
-        cell: ({ row }) => <RowDragHandleCell rowId={row.id} />,
-        size: 60,
+        cell: ({ row }) => (
+          <RowDragHandleCell rowId={row.id} index={row.index} />
+        ),
+        size: 40,
       },
       columnHelper.accessor("time", {
         header: t("listings:Klo"),
-        cell: (info) => dateFormat(info.getValue(), "hh:mm"),
+        cell: (info) => dateFormat(info.getValue(), "HH:mm"),
+        size: 60,
+      }),
+      columnHelper.accessor("matter", {
+        header: t("listings:Asia"),
+        cell: (info) => (
+          <ListingTextBox
+            original={info.row.original}
+            value={info.getValue()}
+            onChange={(original, value) => {
+              return original.matter !== value
+                ? {
+                    ...original,
+                    matter: value,
+                  }
+                : null;
+            }}
+          />
+        ),
       }),
       columnHelper.accessor("caseNumber", {
         header: t("listings:Asianumero"),
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <ListingTextBox
+            original={info.row.original}
+            value={info.getValue()}
+            onChange={(original, value) => {
+              return original.caseNumber !== value
+                ? {
+                    ...original,
+                    caseNumber: value,
+                  }
+                : null;
+            }}
+          />
+        ),
       }),
       columnHelper.accessor("prosecutorCaseNumber", {
         header: t("listings:Asianro_sja"),
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <ListingTextBox
+            original={info.row.original}
+            value={info.getValue()}
+            onChange={(original, value) => {
+              return original.prosecutorCaseNumber !== value
+                ? {
+                    ...original,
+                    prosecutorCaseNumber: value,
+                  }
+                : null;
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor("officers", {
+        header: t("listings:Virkamiehet"),
+        cell: (info) =>
+          info.getValue() ? (
+            <OfficerListing
+              officers={info.getValue()}
+              caseNumber={info.row.original.caseNumber ?? ""}
+              matter={info.row.original.matter ?? ""}
+              caseID={info.row.original.id}
+              caseIndex={info.row.index}
+            />
+          ) : null,
       }),
     ],
-    []
-  );
-
-  const [data, setData] = useState([...cases]);
-
-  const dataIds = useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id),
-    [data]
+    [currentCases]
   );
 
   const table = useReactTable({
-    data,
+    data: currentCases,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getRowId: (row) => row.id,
@@ -124,11 +242,10 @@ export function ListingTable({ cases }: ListingTableProps) {
     const { active, over } = event;
 
     if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
+      const oldIndex = dataIds.indexOf(active.id);
+      const newIndex = dataIds.indexOf(over.id);
+      const moved = arrayMove(currentCases, oldIndex, newIndex);
+      setCurrentCases(moved);
     }
   }
 
@@ -138,6 +255,24 @@ export function ListingTable({ cases }: ListingTableProps) {
     useSensor(KeyboardSensor, {})
   );
 
+  const createCase = () => {
+    const date = new Date(currentListing.date);
+    date.setHours(9, 0, 0);
+
+    const newCase: Case = {
+      id: uuidv4(),
+      caseNumber: "",
+      prosecutorCaseNumber: "",
+      matter: "",
+      time: date,
+      type: "criminal",
+      officers: [defaults.presiding, defaults.secretary],
+      civilians: [],
+    };
+
+    setCurrentCases([...currentCases, newCase]);
+  };
+
   return (
     <>
       <div className="row" style={{ marginBottom: "2rem" }}>
@@ -145,30 +280,7 @@ export function ListingTable({ cases }: ListingTableProps) {
           {t("listings:listingViewCases")}
         </h2>
         <SyButton>Tuo CSV</SyButton>
-        <SyButton
-          onClick={() => {
-            const newCase: Case = {
-              id: uuidv4(),
-              caseNumber: "792/2024/123124",
-              prosecutorCaseNumber: "901/2024/111241",
-              matter: "Petos",
-              time: new Date(),
-              type: "criminal",
-              members: [],
-              plaintiffs: [],
-              defendants: [],
-              other: [],
-            };
-            setData([...data, newCase]);
-          }}
-        >
-          Uusi
-        </SyButton>
-        <SyModal
-          show={newModalOpen}
-          closeRequested={() => setNewModalOpen(false)}
-          header={t("listings:Uusi_juttu")}
-        />
+        <SyButton onClick={createCase}>Uusi</SyButton>
       </div>
       <DndContext
         collisionDetection={closestCenter}
@@ -181,13 +293,21 @@ export function ListingTable({ cases }: ListingTableProps) {
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                  <th
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    style={{ width: header.column.columnDef.size }}
+                  >
+                    <div className="content">
+                      <h4 className="text">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </h4>
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -204,7 +324,7 @@ export function ListingTable({ cases }: ListingTableProps) {
             </SortableContext>
           </tbody>
         </table>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <pre>{JSON.stringify(currentListing.cases, null, 2)}</pre>
       </DndContext>
     </>
   );

@@ -65,22 +65,21 @@ const deleteFile = async (db: Listing): Promise<Listing> => {
 };
 
 const listRecent = async (): Promise<ListingCore[]> => {
-  const recentRaw = await fs.readFile(RECENT, { encoding: "utf8" });
-  const recent = jsonTypeParse<ListingCore[]>(recentRaw);
+  try {
+    const recentRaw = await fs.readFile(RECENT, { encoding: "utf8" });
+    const recent = jsonTypeParse<ListingCore[]>(recentRaw);
+    return recent;
+  } catch (e) {
+    console.log(e);
 
-  return recent;
+    await writeFileAtomic(RECENT, "[]");
+    return [];
+  }
 };
 
 const addToRecents = async (db: ListingCore) => {
   try {
     const recent = await listRecent();
-
-    if (typeof recent === "string") {
-      console.log("No recents file or file unreadable. Creating...");
-
-      await writeFileAtomic(RECENT, JSON.stringify([db]));
-      return;
-    }
 
     let filtered = recent.filter((r) => r.id !== db.id);
     filtered.unshift(db);

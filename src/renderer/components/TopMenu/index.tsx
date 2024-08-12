@@ -12,17 +12,9 @@ type TopMenuProps = {
   court: Court;
   room: DropdownOption | null | undefined;
   date: Date | null | undefined;
-  unsavedChanges: boolean;
-  onSaveChanges: () => void;
 };
 
-export function TopMenu({
-  court,
-  room,
-  date,
-  unsavedChanges,
-  onSaveChanges,
-}: TopMenuProps) {
+export function TopMenu({ court, room, date }: TopMenuProps) {
   const queryClient = useQueryClient();
 
   const { mutate: deselectListing } = useMutation({
@@ -55,25 +47,6 @@ export function TopMenu({
         </h1>
       </div>
       <div className="sections-container">
-        <SyButton
-          variant="flat"
-          className="section-button"
-          disabled={!unsavedChanges}
-          style={{ color: "var(--sy-text-color)" }}
-          onClick={onSaveChanges}
-        >
-          <SyLucide
-            name={unsavedChanges ? "save" : "check"}
-            style={{
-              color: unsavedChanges
-                ? "var(--sy-red-500)"
-                : "var(--sy-teal-500)",
-            }}
-          />
-          {unsavedChanges
-            ? t("listings:listingViewSaveChanges")
-            : t("listings:listingViewNoChanges")}
-        </SyButton>
         <SyButton
           className="section-button"
           variant="flat"

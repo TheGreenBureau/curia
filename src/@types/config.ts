@@ -1,14 +1,14 @@
 import { Language } from "@common/dataUtils";
 import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
-import { StaffMember } from "data/Persons";
+import { Officer } from "data/Persons";
 
 export type Defaults = {
   court: DropdownOption | null;
   office: DropdownOption | null;
   department: DropdownOption | null;
   room: DropdownOption | null;
-  presiding: StaffMember | null;
-  secretary: StaffMember | null;
+  presiding: Officer | null;
+  secretary: Officer | null;
   break: Date | null;
 };
 

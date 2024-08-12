@@ -14,6 +14,7 @@ import fiSummonsStatus from "./locales/fi/summonsStatus.json";
 import fiTabs from "./locales/fi/tabs.json";
 import fiWelcome from "./locales/fi/welcome.json";
 import fiListings from "@locales/fi/listings.json";
+import fiGeneric from "@locales/fi/generic.json";
 
 export const defaultNS = "tabs";
 
@@ -36,6 +37,7 @@ i18next.use(initReactI18next).init({
       tabs: fiTabs,
       welcome: fiWelcome,
       listings: fiListings,
+      generic: fiGeneric,
     },
   },
 });
