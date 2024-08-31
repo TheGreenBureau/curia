@@ -1,17 +1,16 @@
 import { useState } from "react";
 
-type UseTextboxOpts = {
+type UseTextboxProps = {
+  initialValue?: string | null;
   onChangeMutator?: (value: string) => void;
   onBlurMutator?: (value: string) => void;
 };
 
-type UseTextboxProps = {
-  initialValue?: string | null;
-  opts?: UseTextboxOpts;
-};
-
-export function useTextbox({ initialValue, opts }: UseTextboxProps) {
-  const { onChangeMutator, onBlurMutator } = opts;
+export function useTextbox({
+  initialValue,
+  onChangeMutator,
+  onBlurMutator,
+}: UseTextboxProps) {
   const [text, setText] = useState(initialValue ?? "");
 
   const handleChange = (value: string) => {

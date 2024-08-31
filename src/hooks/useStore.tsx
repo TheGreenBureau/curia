@@ -1,21 +1,24 @@
 import { create } from "zustand";
-import { Modal } from "app/modals";
+
+export type WelcomeViewState = "initial" | "new" | "open" | undefined;
 
 type StoreState = {
-  modal: Modal | null;
-  modalOpen: boolean;
+  welcomeView: WelcomeViewState;
+  mountDirection: "left" | "right";
+  showSettings: boolean;
 };
 
 type StoreActions = {
-  setModal: (modal: Modal) => void;
-  showModal: () => void;
-  closeModal: () => void;
+  setWelcomeView: (state: WelcomeViewState) => void;
+  setMountDirection: (direction: "left" | "right") => void;
+  setShowSettings: (show: boolean) => void;
 };
 
 export const useStore = create<StoreState & StoreActions>()((set) => ({
-  modal: null,
-  modalOpen: false,
-  setModal: (modal) => set({ modal: modal }),
-  showModal: () => set({ modalOpen: true }),
-  closeModal: () => set({ modalOpen: false }),
+  welcomeView: undefined,
+  mountDirection: "right",
+  showSettings: true,
+  setWelcomeView: (state) => set({ welcomeView: state }),
+  setMountDirection: (direction) => set({ mountDirection: direction }),
+  setShowSettings: (show: boolean) => set({ showSettings: show }),
 }));

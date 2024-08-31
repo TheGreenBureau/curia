@@ -1,25 +1,21 @@
-import { DropdownOption } from "@purplebureau/sy-react/dist/@types/Dropdown";
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { Option } from "@/types/data/options";
 
-type UseDropdownOpts = {
+type UseDropdownProps = {
+  initialValue?: Option | null;
   onChangeMutator?: (value: string) => void;
-  onBlurMutator?: (selection: DropdownOption) => void;
+  onBlurMutator?: (selection: Option) => void;
   allowCustomText?: boolean;
 };
 
-type UseDropdownProps = {
-  initialValue?: DropdownOption | null;
-  opts?: UseDropdownOpts;
-};
-
-export function useDropdown({ initialValue, opts }: UseDropdownProps) {
-  const { onChangeMutator, onBlurMutator, allowCustomText } = opts;
-
-  const [selected, setSelected] = useState<DropdownOption | null>(
-    initialValue ?? null
-  );
-  const [text, setText] = useState(initialValue ? initialValue.content : "");
+export function useDropdown({
+  initialValue,
+  onChangeMutator,
+  onBlurMutator,
+  allowCustomText,
+}: UseDropdownProps) {
+  const [selected, setSelected] = useState<Option | null>(initialValue ?? null);
+  const [text, setText] = useState(initialValue ? initialValue.label : "");
 
   const handleChange = (value: string) => {
     setText(value);
@@ -29,15 +25,15 @@ export function useDropdown({ initialValue, opts }: UseDropdownProps) {
     }
   };
 
-  const handleBlur = (selection: DropdownOption | null | undefined) => {
+  const handleBlur = (selection: Option | null | undefined) => {
     if (allowCustomText && !selection) {
-      if (selected && text === selected.content) {
+      if (selected && text === selected.label) {
         return;
       }
 
-      const customSelection: DropdownOption = {
-        id: text,
-        content: text,
+      const customSelection: Option = {
+        value: text,
+        label: text,
       };
 
       setSelected(customSelection);
@@ -45,21 +41,21 @@ export function useDropdown({ initialValue, opts }: UseDropdownProps) {
       return;
     }
 
-    if (selection && (!selected || selection.id !== selected.id)) {
+    if (selection && (!selected || selection.value !== selected.value)) {
       setSelected(selection);
-      setText(selection.content);
+      setText(selection.label);
       onBlurMutator(selection);
       return;
     }
 
     if (selected && !allowCustomText) {
-      setText(selected.content);
+      setText(selected.label);
     }
   };
 
-  const setValue = (newValue: DropdownOption | null) => {
+  const setValue = (newValue: Option | null) => {
     setSelected(newValue);
-    setText(newValue ? newValue.content : "");
+    setText(newValue ? newValue.label : "");
   };
 
   return { selected, text, handleChange, handleBlur, setValue };

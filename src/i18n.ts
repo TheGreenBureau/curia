@@ -1,45 +1,28 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
+import strings from "@/locales/fi/strings.json";
+import officerPositions from "@/locales/fi/officerPositions.json";
+import positionAbbreviations from "@/locales/fi/positionAbbreviations.json";
+import civilianPositions from "@/locales/fi/civilianPositions.json";
 
-import fiCourtTitles from "./locales/fi/courtTitles.json";
-import fiDatabase from "./locales/fi/database.json";
-import fiDefendantSummonTypes from "./locales/fi/defendantSummonsTypes.json";
-import fiErrors from "./locales/fi/errors.json";
-import fiFiles from "./locales/fi/files.json";
-import fiGenericSummonsTypes from "./locales/fi/genericSummonsTypes.json";
-import fiPeoplePositions from "./locales/fi/peoplePositions.json";
-import fiProsecutorTitles from "./locales/fi/prosecutorTitles.json";
-import fiSettings from "./locales/fi/settings.json";
-import fiSummonsStatus from "./locales/fi/summonsStatus.json";
-import fiTabs from "./locales/fi/tabs.json";
-import fiWelcome from "./locales/fi/welcome.json";
-import fiListings from "@locales/fi/listings.json";
-import fiGeneric from "@locales/fi/generic.json";
-
-export const defaultNS = "tabs";
+export const defaultNS = "strings";
+export const resources = {
+  fi: {
+    strings,
+    officerPositions,
+    positionAbbreviations,
+    civilianPositions,
+  },
+} as const;
 
 i18next.use(initReactI18next).init({
   debug: true,
   fallbackLng: "fi",
+  lng: "fi",
   defaultNS,
-  resources: {
-    fi: {
-      courtTitles: fiCourtTitles,
-      database: fiDatabase,
-      defendantSummonTypes: fiDefendantSummonTypes,
-      errors: fiErrors,
-      files: fiFiles,
-      genericSummonsTypes: fiGenericSummonsTypes,
-      peoplePositions: fiPeoplePositions,
-      prosecutorTitles: fiProsecutorTitles,
-      settings: fiSettings,
-      summonsStatus: fiSummonsStatus,
-      tabs: fiTabs,
-      welcome: fiWelcome,
-      listings: fiListings,
-      generic: fiGeneric,
-    },
-  },
+  ns: ["strings"],
+  nsSeparator: ":",
+  resources,
 });
 
 export default i18next;

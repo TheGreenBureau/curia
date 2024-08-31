@@ -1,4 +1,4 @@
-import type { ApplicationAPI } from "app/api";
+import type { ApplicationAPI } from "@/types/config/api";
 
 declare global {
   interface Window {

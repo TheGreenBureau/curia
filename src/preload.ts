@@ -1,37 +1,36 @@
+import { ApplicationAPI } from "@/types/config/api";
 import { contextBridge, ipcRenderer } from "electron";
-import type { ApplicationAPI } from "app/api";
 
 const createIpc = <K extends keyof ApplicationAPI>(key: K) => {
   return async (...args: Parameters<ApplicationAPI[K]>) =>
     await ipcRenderer.invoke(key, ...args);
 };
 
-const databaseApi: ApplicationAPI = {
-  chooseDatabaseLocation: createIpc("chooseDatabaseLocation"),
-  setDatabaseDefaultLocation: createIpc("setDatabaseDefaultLocation"),
-  getDatabaseLocation: createIpc("getDatabaseLocation"),
-  changeLanguage: createIpc("changeLanguage"),
-  getLanguage: createIpc("getLanguage"),
+const api: ApplicationAPI = {
+  chooseListingsPath: createIpc("chooseListingsPath"),
+  setDefaultListingsPath: createIpc("setDefaultListingsPath"),
+  listingsPath: createIpc("listingsPath"),
   setDefaults: createIpc("setDefaults"),
-  getDefaults: createIpc("getDefaults"),
-  getCourtOptions: createIpc("getCourtOptions"),
-  getTitleOptions: createIpc("getTitleOptions"),
-  getPersonOptions: createIpc("getPersonOptions"),
-  getFilenameDateStart: createIpc("getFilenameDateStart"),
-  setFilenameDateStart: createIpc("getFilenameDateStart"),
-  createDatabase: createIpc("createDatabase"),
-  openDatabase: createIpc("openDatabase"),
-  updateDatabase: createIpc("updateDatabase"),
-  getCurrentDatabase: createIpc("getCurrentDatabase"),
-  deselectDatabase: createIpc("deselectDatabase"),
-  deleteDatabase: createIpc("deleteDatabase"),
-  importDatabase: createIpc("importDatabase"),
-  exportDatabase: createIpc("exportDatabase"),
-  getDatabases: createIpc("getDatabases"),
-  refreshDatabases: createIpc("refreshDatabases"),
+  defaults: createIpc("defaults"),
+  civilians: createIpc("civilians"),
+  officers: createIpc("officers"),
+  summons: createIpc("summons"),
+  summonsStatuses: createIpc("summonsStatuses"),
+  createListing: createIpc("createListing"),
+  openListing: createIpc("openListing"),
+  updateListing: createIpc("updateListing"),
+  currentListing: createIpc("currentListing"),
+  deselectCurrentListing: createIpc("deselectCurrentListing"),
+  deleteListings: createIpc("deleteListings"),
+  importListing: createIpc("importListing"),
+  exportListing: createIpc("exportListing"),
+  listings: createIpc("listings"),
   clearRecents: createIpc("clearRecents"),
-  getRecents: createIpc("getRecents"),
-  getCourt: createIpc("getCourt"),
+  recents: createIpc("recents"),
+  court: createIpc("court"),
+  titles: createIpc("titles"),
+  courtSelections: createIpc("courtSelections"),
+  courts: createIpc("courts"),
 };
 
-contextBridge.exposeInMainWorld("api", databaseApi);
+contextBridge.exposeInMainWorld("api", api);

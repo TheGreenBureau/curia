@@ -1,48 +1,41 @@
 import "./i18n";
-import { createRoot } from "react-dom/client";
-import { SyTheme } from "@purplebureau/sy-react";
-import { MainView } from "@components/Views/MainView";
-import {
-  SquarePlus,
-  FolderOpen,
-  CircleArrowLeft,
-  Import,
-  Settings,
-  Frown,
-  Check,
-  Save,
-  Eye,
-  Download,
-  GripVertical,
-  Plus,
-} from "lucide";
-import { registerIcons } from "@purplebureau/sy-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-registerIcons({
-  SquarePlus,
-  FolderOpen,
-  CircleArrowLeft,
-  Import,
-  Settings,
-  Frown,
-  Check,
-  Save,
-  Eye,
-  Download,
-  GripVertical,
-  Plus,
-});
+import { ThemeProvider } from "./components/ThemeProvider";
+import { createRoot } from "react-dom/client";
+import { useCurrentListing } from "@/hooks/queries";
+import { Landing } from "@/components/Pages/Landing";
+import { Listing } from "@/components/Pages/Listing";
+import { Settings } from "@/components/Pages/Settings";
+import { ModeToggle } from "@/components/ModeToggle";
+import { cn } from "@/lib/utils";
 
 const queryClient = new QueryClient();
 
 const app = document.getElementById("app");
 const root = createRoot(app);
 
-root.render(
-  <SyTheme>
+root.render(<App />);
+
+function App() {
+  return (
     <QueryClientProvider client={queryClient}>
-      <MainView />
+      <ThemeProvider defaultTheme="dark" storageKey="curia-ui-theme">
+        <Pages />
+      </ThemeProvider>
     </QueryClientProvider>
-  </SyTheme>
-);
+  );
+}
+
+function Pages() {
+  const current = useCurrentListing();
+
+  return (
+    <div className="overflow-hidden relative">
+      {!current.data ? <Landing /> : <Listing />}
+      <div className={cn("absolute right-8 top-4 flex align-middle gap-2")}>
+        <Settings />
+        <ModeToggle />
+      </div>
+    </div>
+  );
+}
