@@ -10,7 +10,12 @@ import { attachHandles } from "./ipc";
 import { ListingsAPI } from "@/types/config/api";
 import { getCourt } from "@/lib/staticData/courts";
 import { getConfig } from "./configHandles";
-import { Court } from "@/types/data/court";
+import { parse } from "csv-parse/sync";
+import { Case, CaseCSV, CaseType, isCaseCSV } from "@/types/data/case";
+import { v4 as uuidv4 } from "uuid";
+import { Defaults } from "@/types/config/defaults";
+import { Civilian, CivilianType, Officer } from "@/types/data/persons";
+import { current, produce } from "immer";
 
 let currentListing: Listing | null = null;
 
@@ -128,6 +133,19 @@ const filesAsListings = async (files: string[]): Promise<Listing[]> => {
   return listings;
 };
 
+const importCSV = async (): Promise<string> => {
+  const filePath = await selectFile("csv");
+
+  if (!filePath) throw new Error("Import cancelled.");
+
+  if (path.extname(filePath).toLowerCase() !== ".csv") {
+    throw new Error("Wrong file type.");
+  }
+
+  const data = await fs.readFile(filePath, { encoding: "utf8" });
+  return data;
+};
+
 const importListing = async (): Promise<Listing> => {
   const filePath = await selectFile("jtl");
 
@@ -150,6 +168,178 @@ const importListing = async (): Promise<Listing> => {
     currentListing = data;
     return data;
   }
+};
+
+type PositionType = {
+  variants: string[];
+  position: CivilianType;
+};
+
+const processCivilians = (civs: string): Civilian[] => {
+  const positions: PositionType[] = [
+    { variants: ["vastaaja"], position: "defendant" },
+    { variants: ["asianomistaja"], position: "injured" },
+    { variants: ["todistaja"], position: "witness" },
+  ];
+
+  return civs.split(",").map((person) => {
+    const parts = person.split(" ");
+    const positionString = parts.pop();
+
+    const position = positions.find((p) =>
+      p.variants.includes(positionString.toLowerCase())
+    );
+
+    const civilian: Civilian = {
+      id: uuidv4(),
+      name: parts.join(" "),
+      type: position ? position.position : "defendant",
+    };
+
+    return civilian;
+  });
+};
+
+const processPlaintiffs = (plaints: string, currentCase: Case): Case => {
+  const prosecutors: Officer[] = [];
+  const plaintiffs: Civilian[] = [];
+
+  const prosecPos = ["syyttäjä"];
+  const plaintiffPos = ["kantaja"];
+
+  const personsWithTitles = plaints.split(",");
+
+  for (let person of personsWithTitles) {
+    const parts = person.split(" ");
+    const positionString = parts.pop();
+
+    if (prosecPos.includes(positionString.toLowerCase())) {
+      prosecutors.push({
+        id: uuidv4(),
+        name: parts.join(" "),
+        type: "prosecutor",
+      });
+    } else if (plaintiffPos.includes(positionString.toLowerCase())) {
+      plaintiffs.push({
+        id: uuidv4(),
+        name: parts.join(" "),
+        type: "plaintiff",
+      });
+    }
+  }
+
+  return produce(currentCase, (draft) => {
+    draft.officers = [...draft.officers, ...prosecutors];
+    draft.civilians = [...draft.civilians, ...plaintiffs];
+  });
+};
+
+const processCSVLine = (
+  line: CaseCSV,
+  defaults: Defaults,
+  type: CaseType
+): Case => {
+  const dateparts = line.päiväys.trim().split(".");
+  const timeparts = line.alkamiskelloaika.trim().split(":");
+
+  const date = new Date();
+  date.setFullYear(
+    parseInt(dateparts[2]),
+    parseInt(dateparts[1]),
+    parseInt(dateparts[0])
+  );
+  date.setHours(parseInt(timeparts[0]), parseInt(timeparts[1]), 0, 0);
+
+  const current: Case = {
+    id: uuidv4(),
+    caseNumber: line["asia ID"].trim(),
+    prosecutorCaseNumber: line["syyttäjän asia ID"].trim(),
+    matter: line.asianimike.trim(),
+    time: date,
+    type: type,
+    officers: [defaults.presiding, defaults.secretary],
+    civilians: processCivilians(line.kohteet),
+    csv: true,
+  };
+
+  return processPlaintiffs(line.esittäjät, current);
+};
+
+const parseCSV = async (type: CaseType) => {
+  const csv = await importCSV();
+  const parsed = parse(csv, {
+    columns: true,
+    skip_empty_lines: true,
+    delimiter: ";",
+  });
+
+  if (!Array.isArray(parsed)) {
+    throw new Error("Invalid CSV-file.");
+  }
+
+  const cases: Case[] = [];
+  const errors: string[] = [];
+
+  const { defaults } = await getConfig();
+
+  for (let line of parsed) {
+    if (isCaseCSV(line)) {
+      cases.push(processCSVLine(line, defaults, type));
+      continue;
+    }
+
+    errors.push(JSON.stringify(line, null, 2));
+  }
+
+  return {
+    cases,
+    errors: errors.length > 0 ? errors : undefined,
+  };
+};
+
+const processCases = (csvCases: Case[]): Case[] => {
+  // Filter deleted cases
+  const results = currentListing.cases.filter(
+    (c) => !c.csv || csvCases.some((csv) => csv.caseNumber === c.caseNumber)
+  );
+
+  // Add new cases and modify existing
+  for (let csv of csvCases) {
+    const currentCase = currentListing.cases.find(
+      (c) => c.caseNumber === csv.caseNumber
+    );
+
+    if (!currentCase) {
+      results.push(csv);
+      continue;
+    }
+
+    const resultCase = produce(currentCase, (draft) => {
+      draft.matter = csv.matter;
+      draft.time = csv.time;
+      draft.prosecutorCaseNumber = csv.prosecutorCaseNumber;
+      draft.officers = [
+        ...draft.officers.filter((o) => o.type === "prosecutor"),
+        ...csv.officers,
+      ];
+      draft.civilians = draft.civilians.filter(
+        (c) =>
+          c.type !== "defendant" ||
+          csv.civilians.some((cc) => cc.name === c.name)
+      );
+
+      for (let civilian of csv.civilians) {
+        if (!draft.civilians.some((civ) => civ.name === civilian.name)) {
+          draft.civilians.push(civilian);
+        }
+      }
+    });
+
+    const resultIndex = results.findIndex((c) => c.id === currentCase.id);
+    results[resultIndex] = resultCase;
+  }
+
+  return results;
 };
 
 const listingsHandles: ListingsAPI = {
@@ -248,6 +438,21 @@ const listingsHandles: ListingsAPI = {
 
   court: async ({ courtId, lang }) => {
     return getCourt(courtId, lang);
+  },
+
+  openCSV: async ({ type }) => {
+    const results = await parseCSV(type);
+    const processed = processCases(results.cases);
+
+    currentListing = produce(currentListing, (draft) => {
+      draft.cases = processed;
+    });
+
+    if (results.errors?.length > 0) {
+      return { errors: results.errors };
+    }
+
+    return {};
   },
 };
 

@@ -31,6 +31,7 @@ const api: ApplicationAPI = {
   titles: createIpc("titles"),
   courtSelections: createIpc("courtSelections"),
   courts: createIpc("courts"),
+  openCSV: createIpc("openCSV"),
 };
 
 contextBridge.exposeInMainWorld("api", api);

@@ -4,10 +4,9 @@ import { Col, Row } from "@/components/ui/rowcol";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Case } from "@/types/data/case";
-import { CivilianSheet } from "./CivilianSheet";
+import { CivilianSheet } from "@/components/Pages/Listing/Item/Civilians/CivilianSheet";
 
 type CivilianListProps = {
-  civilians: Civilian[];
   currentCase: Case;
 };
 
@@ -46,10 +45,8 @@ const sortCivilians = (a: Civilian, b: Civilian) => {
   }
 };
 
-export function CivilianList({ civilians, currentCase }: CivilianListProps) {
-  const { t } = useTranslation();
-
-  const sortedCivilians = produce(civilians, (draft) =>
+export function CivilianList({ currentCase }: CivilianListProps) {
+  const sortedCivilians = produce(currentCase.civilians, (draft) =>
     draft.sort(sortCivilians)
   );
 
@@ -83,7 +80,7 @@ export function CivilianItem({ civilian, currentCase }: CivilianItemProps) {
       </Col>
       <Col>
         <CivilianSheet getCivilian={() => civilian} currentCase={currentCase}>
-          <div className="cursor-pointer transition-all duration-200 hover:opacity-80 max-w-48 overflow-hidden text-nowrap text-ellipsis">
+          <div className="cursor-pointer transition-all duration-200 hover:opacity-80 min-w-48 max-w-48 overflow-hidden text-nowrap text-ellipsis">
             {civilian.name}
           </div>
         </CivilianSheet>

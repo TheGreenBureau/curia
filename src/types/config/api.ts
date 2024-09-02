@@ -1,7 +1,7 @@
 import type { Defaults } from "./defaults";
 import type { Court } from "@/types/data/court";
 import type { Listing } from "@/types/data/listing";
-import { CaseType } from "@/types/data/case";
+import { Case, CaseType } from "@/types/data/case";
 import type { Option } from "@/types/data/options";
 import { SummonsQueryType } from "@/types/data/persons";
 
@@ -68,6 +68,7 @@ export type ListingsAPI = {
   clearRecents: Action<void>;
   recents: Action<Listing[]>;
   court: ActionWithArg<Court | null, { courtId: string; lang: string }>;
+  openCSV: ActionWithArg<{ errors?: string[] }, { type: CaseType }>;
 };
 
 export type ApplicationAPI = ConfigAPI & ListingsAPI;

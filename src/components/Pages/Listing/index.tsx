@@ -4,15 +4,16 @@ import { Separator } from "@/components/ui/separator";
 import {
   useMutateCurrentListing,
   useMutateDeselectListing,
+  useMutateOpenCSV,
 } from "@/hooks/mutations";
-import { useCourts, useCurrentListing, useDefaults } from "@/hooks/queries";
-import { cn, isKey, sortDates } from "@/lib/utils";
+import { useCourts, useCurrentListing } from "@/hooks/queries";
+import { cn, isDateArraySortedByTime, isKey, sortDates } from "@/lib/utils";
 import { format } from "date-fns";
 import { ChevronLeft, CircleSlash2 } from "lucide-react";
 import { SessionEditSheet } from "./SessionEditSheet";
 import styles from "./listing.module.css";
 import { useStore } from "@/hooks/useStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useTranslation } from "react-i18next";
@@ -20,11 +21,9 @@ import { CaseSheet } from "./CaseSheet";
 import { Case } from "@/types/data/case";
 import { Defaults } from "@/types/config/defaults";
 import { Officer } from "@/types/data/persons";
-import { v4 as uuidv4 } from "uuid";
 import { produce } from "immer";
 import { CaseList } from "./CaseList";
 import { Row } from "@/components/ui/rowcol";
-import { ModeToggle } from "@/components/ModeToggle";
 
 const createNewCase = (defaults?: Defaults): Case => {
   const date = new Date();
@@ -57,6 +56,7 @@ export function Listing() {
   const courts = useCourts();
   const deselectListing = useMutateDeselectListing();
   const updateListing = useMutateCurrentListing();
+  const openCSV = useMutateOpenCSV();
 
   const setMountDirection = useStore((state) => state.setMountDirection);
   const setShowSettings = useStore((state) => state.setShowSettings);
@@ -154,13 +154,25 @@ export function Listing() {
               )}
               {listing.data.cases.length > 0 && (
                 <Row className="justify-end flex-1 items-center">
-                  <Button variant="outline" onClick={() => sortCasesByTime()}>
+                  <Button
+                    variant="outline"
+                    onClick={() => sortCasesByTime()}
+                    disabled={isDateArraySortedByTime(
+                      listing.data.cases.map((c) => new Date(c.time))
+                    )}
+                  >
                     Aikajärjestykseen
                   </Button>
                   <CaseSheet
                     getCase={() => createNewCase()}
                     triggerLabel={t("strings:Uusi juttu")}
                   />
+                  <Button
+                    variant="outline"
+                    onClick={() => openCSV.mutate({ type: "criminal" })}
+                  >
+                    Tuo CSV
+                  </Button>
                 </Row>
               )}
             </div>
@@ -179,7 +191,12 @@ export function Listing() {
                 getCase={() => createNewCase()}
                 triggerLabel={t("strings:Uusi juttu")}
               />
-              <Button variant="outline">Tuo CSV</Button>
+              <Button
+                variant="outline"
+                onClick={() => openCSV.mutate({ type: "criminal" })}
+              >
+                Tuo CSV
+              </Button>
             </div>
           </Alert>
         ) : (

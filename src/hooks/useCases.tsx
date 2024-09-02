@@ -3,6 +3,8 @@ import { useMutateCurrentListing } from "@/hooks/mutations";
 import { useEffect, useState } from "react";
 import { Case } from "@/types/data/case";
 import { produce } from "immer";
+import { Listing } from "@/types/data/listing";
+import { UseQueryResult } from "@tanstack/react-query";
 
 export const useCases = () => {
   const [cases, setCases] = useState<Case[]>([]);
@@ -33,18 +35,27 @@ export const useCases = () => {
   return [cases, updateCases, listing] as const;
 };
 
-export const useCase = (item: Case) => {
+export type UseCaseValues = {
+  currentCase: Case;
+  updateCase: (updated: Case) => void;
+  saveCase: (updated?: Case) => void;
+  listingQuery: UseQueryResult<Listing, Error>;
+};
+
+export const useCase = (item: Case): UseCaseValues => {
   const [currentCase, setCurrentCase] = useState<Case | null>({
     ...item,
     time: new Date(item.time),
   });
 
-  const listing = useCurrentListing();
+  const listingQuery = useCurrentListing();
   const updateListing = useMutateCurrentListing();
 
   useEffect(() => {
-    if (listing.isSuccess) {
-      const foundCase = listing.data.cases.find((c) => c.id === currentCase.id);
+    if (listingQuery.isSuccess) {
+      const foundCase = listingQuery.data.cases.find(
+        (c) => c.id === currentCase.id
+      );
 
       if (foundCase) {
         setCurrentCase({
@@ -53,7 +64,7 @@ export const useCase = (item: Case) => {
         });
       }
     }
-  }, [listing.data]);
+  }, [listingQuery.data]);
 
   const updateCase = (updated: Case) => {
     setCurrentCase(updated);
@@ -65,7 +76,7 @@ export const useCase = (item: Case) => {
     }
 
     updateListing.mutate(
-      produce(listing.data, (draft) => {
+      produce(listingQuery.data, (draft) => {
         const currentCaseIndex = draft.cases.findIndex((c) => c.id === item.id);
 
         if (currentCaseIndex === -1) {
@@ -77,5 +88,10 @@ export const useCase = (item: Case) => {
     );
   };
 
-  return [currentCase, updateCase, saveCase, listing] as const;
+  return {
+    currentCase,
+    updateCase,
+    saveCase,
+    listingQuery,
+  };
 };

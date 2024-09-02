@@ -1,23 +1,35 @@
-import { CSSProperties, forwardRef } from "react";
+import { CSSProperties, forwardRef, useState } from "react";
 import { Case } from "@/types/data/case";
 import { Card, CardContent } from "@/components/ui/card";
-import { TimePicker } from "@/components/ui/date-time-picker";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Heading } from "@/components/ui/headings";
-import { GripVertical, Menu, Plus } from "lucide-react";
+import {
+  GripVertical,
+  Plus,
+  Trash,
+  NotebookPen,
+  User,
+  Scale,
+  Hash,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
 import { useCase } from "@/hooks/useCases";
 import { Col, Row } from "@/components/ui/rowcol";
 import { useTranslation } from "react-i18next";
-import { Label } from "@/components/ui/label";
-import { OfficerList } from "@/components/Pages/Listing/OfficerList";
-import { Button } from "@/components/ui/button";
-import { OfficerSheet } from "./OfficerSheet";
-import { CivilianSheet } from "./CivilianSheet";
-import { CivilianList } from "./CivilianList";
-import { Textarea } from "@/components/ui/textarea";
+import {
+  ItemMenu,
+  MenuItem,
+  MenuSubItem,
+} from "@/components/Pages/Listing/Item/ItemMenu";
+import { Notes } from "./Notes";
+import { Civilians } from "@/components/Pages/Listing/Item/Civilians";
+import { Officers } from "./Officers";
+import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { CaseNumbers } from "./CaseNumbers";
+import { Matter } from "./Matter";
+import { Time } from "./Time";
+import { DeleteCaseDialog } from "./DeleteCaseDialog";
 
 type ItemProps = {
   item: Case;
@@ -30,7 +42,10 @@ type ItemProps = {
 
 export const Item = forwardRef<HTMLDivElement, ItemProps>(
   ({ item, index, style, attributes, listeners, className }, ref) => {
-    const [currentCase, updateCase, saveCase] = useCase(item);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+    const caseQuery = useCase(item);
+    const { currentCase } = caseQuery;
 
     const { t } = useTranslation();
 
@@ -39,7 +54,7 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
         <Card className={cn("w-full pt-4", className)}>
           <CardContent className="relative">
             <Row>
-              <Col className="w-36">
+              <Col className="w-28">
                 <Heading level="h4" className="m-0">
                   {t("strings:Nro")}
                 </Heading>
@@ -54,186 +69,101 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
                   />
                 </Row>
               </Col>
-              <Row className="gap-4 md:gap-10 justify-start 2xl:justify-between max-w-[800px] xl:max-w-[1600px] flex-wrap w-full">
-                <Col>
-                  <Heading level="h4" className="m-0">
-                    {t("strings:Kellonaika")}
-                  </Heading>
-                  <TimePicker
-                    date={currentCase.time}
-                    onChange={(date) => {
-                      saveCase({
-                        ...currentCase,
-                        time: date,
-                      });
-                    }}
-                    granularity="minute"
-                  />
-                </Col>
-                <Col>
-                  <Heading level="h4" className="m-0">
-                    {t("strings:Asia")}
-                  </Heading>
-                  <Input
-                    className={cn(
-                      "text-lg font-firasans leading-none tracking-tight font-medium transition-all duration-200 outline-none text-ellipsis w-64",
-                      currentCase.matter === "" && "border-rose-500"
-                    )}
-                    value={currentCase.matter.toUpperCase()}
-                    onChange={(e) => {
-                      updateCase({
-                        ...currentCase,
-                        matter: e.target.value,
-                      });
-                    }}
-                    onClear={() =>
-                      updateCase({
-                        ...currentCase,
-                        matter: "",
-                      })
-                    }
-                    onBlur={() => saveCase()}
-                  />
-                </Col>
-                <Col className="justify-start">
-                  <Heading level="h4" className="m-0 ml-9">
-                    {t("strings:Asianumerot")}
-                  </Heading>
-                  <Row className="items-center">
-                    <Label className="hidden lg:block w-5 text-right">TI</Label>
-                    <Input
-                      className={cn(
-                        "text-base transition-all duration-200 outline-none text-ellipsis w-52",
-                        currentCase.caseNumber === "" && "border-rose-500"
-                      )}
-                      value={currentCase.caseNumber}
-                      onChange={(e) =>
-                        updateCase({
-                          ...currentCase,
-                          caseNumber: e.target.value,
-                        })
-                      }
-                      onClear={() =>
-                        updateCase({
-                          ...currentCase,
-                          caseNumber: "",
-                        })
-                      }
-                      onBlur={() => saveCase()}
-                    />
-                  </Row>
-                  {currentCase.type === "criminal" && (
-                    <Row className="items-center">
-                      <Label className="hidden lg:block w-5 text-right">
-                        SJÄ
-                      </Label>
-                      <Input
-                        className={cn(
-                          "text-muted-foreground text-base transition-all duration-200 outline-none text-ellipsis w-52",
-                          currentCase.prosecutorCaseNumber === "" &&
-                            "border-rose-500"
-                        )}
-                        value={currentCase.prosecutorCaseNumber}
-                        onChange={(e) =>
-                          updateCase({
-                            ...currentCase,
-                            prosecutorCaseNumber: e.target.value,
-                          })
-                        }
-                        onClear={() =>
-                          updateCase({
-                            ...currentCase,
-                            prosecutorCaseNumber: "",
-                          })
-                        }
-                        onBlur={() => saveCase()}
-                      />
-                    </Row>
-                  )}
-                </Col>
-                <Col className="justify-start">
-                  <Row className="">
-                    <Heading level="h4" className="m-0">
-                      {t("strings:Virkamiehet")}
-                    </Heading>
-                    <OfficerSheet
-                      getOfficer={() => {
-                        return {
-                          id: "",
-                          name: "",
-                          title: "",
-                          type: "presiding",
-                        };
-                      }}
-                      currentCase={currentCase}
-                    >
-                      <Button size="icon" className="h-6 w-6" variant="outline">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </OfficerSheet>
-                  </Row>
-                  <OfficerList
-                    officers={currentCase.officers}
-                    currentCase={currentCase}
-                  />
-                </Col>
+              <Row className="gap-10 justify-start mr-10 w-full">
+                <Time heading={t("strings:Kellonaika")} {...caseQuery} />
 
-                <Col className="justify-start">
-                  <Row className="">
-                    <Heading level="h4" className="m-0">
-                      {t("strings:Siviilit")}
-                    </Heading>
-                    <CivilianSheet
-                      getCivilian={() => {
-                        return {
-                          id: "",
-                          name: "",
-                          type: "defendant",
-                        };
-                      }}
-                      currentCase={currentCase}
-                    >
-                      <Button size="icon" className="h-6 w-6" variant="outline">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </CivilianSheet>
-                  </Row>
-                  {currentCase.civilians.length === 0 ? (
-                    <p className="text-muted-foreground text-center w-full">
-                      {t("strings:Ei henkilöitä")}
-                    </p>
-                  ) : (
-                    <CivilianList
-                      civilians={currentCase.civilians}
-                      currentCase={currentCase}
-                    />
-                  )}
-                </Col>
+                <Matter heading={t("strings:Asia")} {...caseQuery} />
 
-                <Col className="hidden min-[1800px]:flex">
-                  <Heading level="h4" className="m-0">
-                    {t("strings:Huomioita")}
-                  </Heading>
-                  <Textarea
-                    value={currentCase.notes}
-                    onChange={(e) =>
-                      updateCase({
-                        ...currentCase,
-                        notes: e.target.value,
-                      })
-                    }
-                    onBlur={() => saveCase()}
-                  />
-                </Col>
+                <CaseNumbers
+                  className="hidden casenumbers:flex"
+                  {...caseQuery}
+                  heading={
+                    currentCase.type === "civil"
+                      ? t("strings:Asianumero")
+                      : t("strings:Asianumerot")
+                  }
+                />
+
+                <Officers
+                  className="hidden officers:flex"
+                  currentCase={currentCase}
+                  heading={t("strings:Virkamiehet")}
+                />
+
+                <Civilians
+                  className="hidden civilians:flex"
+                  currentCase={currentCase}
+                  heading={t("strings:Siviilit")}
+                />
+
+                <Notes
+                  className="hidden notes:flex"
+                  heading={t("strings:Huomioita")}
+                  {...caseQuery}
+                />
               </Row>
             </Row>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 -top-2"
-            >
-              <Menu className="w-4 h-4" />
-            </Button>
+
+            <ItemMenu className="absolute right-2 -top-2">
+              <MenuSubItem
+                icon={Hash}
+                triggerContent={
+                  currentCase.type === "civil"
+                    ? t("strings:Asianumero")
+                    : t("strings:Asianumerot")
+                }
+                className="casenumbers:hidden"
+              >
+                <CaseNumbers
+                  {...caseQuery}
+                  heading={
+                    currentCase.type === "civil"
+                      ? t("strings:Asianumero")
+                      : t("strings:Asianumerot")
+                  }
+                />
+              </MenuSubItem>
+              <MenuSubItem
+                icon={Scale}
+                triggerContent={t("strings:Virkamiehet")}
+                className="officers:hidden"
+              >
+                <Officers
+                  currentCase={currentCase}
+                  heading={t("strings:Virkamiehet")}
+                />
+              </MenuSubItem>
+              <MenuSubItem
+                icon={User}
+                triggerContent={t("strings:Siviilit")}
+                className="civilians:hidden"
+              >
+                <Civilians
+                  currentCase={currentCase}
+                  heading={t("strings:Siviilit")}
+                />
+              </MenuSubItem>
+              <MenuSubItem
+                icon={NotebookPen}
+                triggerContent={t("strings:Huomioita")}
+                className="notes:hidden"
+              >
+                <Notes {...caseQuery} heading={t("strings:Huomioita")} />
+              </MenuSubItem>
+              <DropdownMenuSeparator className="notes:hidden" />
+              <MenuItem onClick={() => setDeleteDialogOpen(true)} icon={Trash}>
+                {t("strings:Poista")}
+              </MenuItem>
+            </ItemMenu>
+
+            {currentCase && caseQuery.listingQuery.isSuccess && (
+              <DeleteCaseDialog
+                currentCase={currentCase}
+                currentListing={caseQuery.listingQuery.data}
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+              />
+            )}
           </CardContent>
         </Card>
       </div>

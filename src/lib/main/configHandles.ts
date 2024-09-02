@@ -14,7 +14,6 @@ import {
 } from "@/lib/staticData/courts";
 import { Officer, SummonsQueryType } from "@/types/data/persons";
 import { getTitles, getTitle, isDefinedTitle } from "@/lib/staticData/titles";
-import { CivilianOptions, Option } from "@/types/data/options";
 import { getSummons, getSummonsStatuses } from "@/lib/staticData/summons";
 import {
   getCivilianPositions,

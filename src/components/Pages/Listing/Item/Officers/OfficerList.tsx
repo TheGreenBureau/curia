@@ -7,7 +7,6 @@ import { Case } from "@/types/data/case";
 import { OfficerSheet } from "./OfficerSheet";
 
 type OfficerListProps = {
-  officers: Officer[];
   currentCase: Case;
 };
 
@@ -43,8 +42,10 @@ const sortOfficers = (a: Officer, b: Officer) => {
   }
 };
 
-export function OfficerList({ officers, currentCase }: OfficerListProps) {
-  const sortedOfficers = produce(officers, (draft) => draft.sort(sortOfficers));
+export function OfficerList({ currentCase }: OfficerListProps) {
+  const sortedOfficers = produce(currentCase.officers, (draft) =>
+    draft.sort(sortOfficers)
+  );
 
   return (
     <Col className="gap-2">
@@ -76,7 +77,7 @@ export function OfficerItem({ officer, currentCase }: OfficerItemProps) {
       </Col>
       <Col>
         <OfficerSheet getOfficer={() => officer} currentCase={currentCase}>
-          <div className="cursor-pointer transition-all duration-200 hover:opacity-80 max-w-48 overflow-hidden text-nowrap text-ellipsis">
+          <div className="cursor-pointer transition-all duration-200 hover:opacity-80 min-w-48 max-w-48 overflow-hidden text-nowrap text-ellipsis">
             {officer.name}
           </div>
         </OfficerSheet>

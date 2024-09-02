@@ -223,3 +223,23 @@ export const getNodeText = (node: React.ReactNode): string => {
       return "";
   }
 };
+
+export const isDateArraySortedByTime = (arr: Date[]) => {
+  let sorted = true;
+
+  for (let i = 0; i < arr.length - 1; i++) {
+    const dateA = new Date(`1988-01-13T00:00:00.00`);
+    const dateB = new Date(`1988-01-13T00:00:00.00`);
+
+    dateA.setHours(arr[i].getHours(), arr[i].getMinutes());
+
+    dateB.setHours(arr[i + 1].getHours(), arr[i + 1].getMinutes());
+
+    if (dateA.getTime() > dateB.getTime()) {
+      sorted = false;
+      break;
+    }
+  }
+
+  return sorted;
+};

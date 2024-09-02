@@ -1,5 +1,10 @@
 import { QUERY_KEYS } from "@/lib/queryKeys";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryCache,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 export const useMutateCurrentListing = () => {
   const queryClient = useQueryClient();
@@ -139,6 +144,19 @@ export const useMutateImportListing = () => {
       });
       await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.recents],
+      });
+    },
+  });
+};
+
+export const useMutateOpenCSV = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: window.api.openCSV,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.currentListing],
       });
     },
   });
