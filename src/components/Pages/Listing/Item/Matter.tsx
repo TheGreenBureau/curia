@@ -1,9 +1,13 @@
-import { Col } from "@/components/ui/rowcol";
+import { Col, Row } from "@/components/ui/rowcol";
 import { Heading } from "@/components/ui/headings";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { UseCaseValues } from "@/hooks/useCases";
 import { ReactNode } from "react";
+import { ShieldAlert, ShieldOff } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { ComboCreate, ComboCreateCrime } from "@/components/ui/combocreate";
+import { useCrimes, useCrimesSearch } from "@/hooks/queries";
 
 type MatterProps = UseCaseValues & {
   className?: string;
@@ -17,32 +21,66 @@ export function Matter({
   updateCase,
   saveCase,
 }: MatterProps) {
+  const { t } = useTranslation();
+
   return (
     <Col className={className}>
       {heading && (
-        <Heading level="h4" className="m-0">
-          {heading}
-        </Heading>
+        <Row
+          className={cn(
+            "items-center gap-2",
+            currentCase.confidential && "text-rose-500"
+          )}
+        >
+          <Heading level="h4" className="m-0 transition-colors duration-100">
+            {heading}
+          </Heading>
+          {currentCase.confidential ? (
+            <ShieldAlert
+              className="h-4 w-4 cursor-pointer hover:opacity-80"
+              onClick={() => {
+                saveCase({
+                  ...currentCase,
+                  confidential: false,
+                });
+              }}
+            />
+          ) : (
+            <ShieldOff
+              className="h-4 w-4 cursor-pointer hover:opacity-80"
+              onClick={() => {
+                console.log("Clicked");
+                saveCase({
+                  ...currentCase,
+                  confidential: true,
+                });
+              }}
+            />
+          )}
+          <Heading
+            level="h4"
+            className={cn(
+              "m-0 uppercase transition-transform duration-100 scale-0 text-rose-500",
+              currentCase.confidential && "scale-100"
+            )}
+          >
+            {t("strings:Salainen")}
+          </Heading>
+        </Row>
       )}
-      <Input
+      <ComboCreateCrime
         className={cn(
-          "text-lg font-firasans leading-none tracking-tight font-medium transition-all duration-200 outline-none text-ellipsis w-64",
+          "text-lg font-firasans uppercase tracking-tight font-medium w-64",
           currentCase.matter === "" && "border-rose-500"
         )}
-        value={currentCase.matter.toUpperCase()}
-        onChange={(e) => {
-          updateCase({
+        value={currentCase.matter}
+        onChange={(value) => {
+          saveCase({
             ...currentCase,
-            matter: e.target.value,
+            matter: value,
           });
         }}
-        onClear={() =>
-          updateCase({
-            ...currentCase,
-            matter: "",
-          })
-        }
-        onBlur={() => saveCase()}
+        placeholder={t("strings:Kirjoita tai valitse...")}
       />
     </Col>
   );

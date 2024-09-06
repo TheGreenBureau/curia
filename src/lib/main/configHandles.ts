@@ -7,13 +7,11 @@ import { selectDirectory } from "@/lib/main/files";
 import { ConfigAPI, ConfigResult } from "@/types/config/api";
 import {
   getCourt,
-  getCourtDetail,
   getCourtDetails,
   getCourts,
   getCourtsFull,
 } from "@/lib/staticData/courts";
-import { Officer, SummonsQueryType } from "@/types/data/persons";
-import { getTitles, getTitle, isDefinedTitle } from "@/lib/staticData/titles";
+import { getTitles } from "@/lib/staticData/titles";
 import { getSummons, getSummonsStatuses } from "@/lib/staticData/summons";
 import {
   getCivilianPositions,
@@ -22,6 +20,7 @@ import {
 import { attachHandles } from "./ipc";
 import { Defaults } from "@/types/config/defaults";
 import { produce } from "immer";
+import { getCrimesAsOptions } from "../staticData/crimes";
 
 let cachedConfig: AppConfig;
 
@@ -222,6 +221,22 @@ const configHandles: ConfigAPI = {
 
   courts: async ({ lang }) => {
     return getCourtsFull(lang);
+  },
+
+  crimes: async ({ lang }) => {
+    return getCrimesAsOptions(lang);
+  },
+
+  crimesSearch: async ({ lang, query }) => {
+    const crimes = getCrimesAsOptions(lang);
+
+    if (query === "") {
+      return crimes;
+    }
+
+    return crimes.filter((crime) =>
+      crime.label.toLowerCase().includes(query.toLowerCase())
+    );
   },
 };
 

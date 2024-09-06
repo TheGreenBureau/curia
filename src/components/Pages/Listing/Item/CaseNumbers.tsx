@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import type { UseCaseValues } from "@/hooks/useCases";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 type CaseNumbersProps = UseCaseValues & {
   className?: string;
@@ -18,6 +19,8 @@ export function CaseNumbers({
   updateCase,
   saveCase,
 }: CaseNumbersProps) {
+  const { t } = useTranslation();
+
   return (
     <Col className={className}>
       {heading && (
@@ -27,7 +30,7 @@ export function CaseNumbers({
       )}
       <Row className="items-center">
         {currentCase.type === "criminal" && (
-          <Label className="w-5 text-right">TI</Label>
+          <Label className="w-5 text-right">{t("strings:TI")}</Label>
         )}
         <Input
           className={cn(
@@ -53,7 +56,7 @@ export function CaseNumbers({
       </Row>
       {currentCase.type === "criminal" && (
         <Row className="items-center">
-          <Label className="w-5 text-right">SJÄ</Label>
+          <Label className="w-5 text-right">{t("strings:SJÄ")}</Label>
           <Input
             className={cn(
               "text-muted-foreground text-base transition-all duration-200 outline-none text-ellipsis w-52",

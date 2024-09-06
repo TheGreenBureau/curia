@@ -1,7 +1,7 @@
 {
-  "presiding": "Puheenjohtaja",
-  "secretary": "Sihteeri",
-  "member": "Jäsen",
-  "layman": "Lautamies",
-  "prosecutor": "Syyttäjä"
+  "presiding": "Ordförande",
+  "secretary": "Sekreterare",
+  "member": "Ledamot",
+  "layman": "Nämndeman",
+  "prosecutor": "Åklagare"
 }

@@ -51,7 +51,13 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
 
     return (
       <div ref={ref} style={style}>
-        <Card className={cn("w-full pt-4", className)}>
+        <Card
+          className={cn(
+            "w-full pt-4 transition-colors duration-100",
+            currentCase?.confidential && "border-rose-500",
+            className
+          )}
+        >
           <CardContent className="relative">
             <Row>
               <Col className="w-28">

@@ -12,6 +12,7 @@ export type Case = {
   type: CaseType;
   officers: Officer[];
   civilians: Civilian[];
+  confidential?: boolean;
   csv?: boolean;
   notes?: string;
 };

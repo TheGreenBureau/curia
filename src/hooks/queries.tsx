@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-const useResolvedLanguage = () => {
+export const useResolvedLanguage = () => {
   const { i18n } = useTranslation();
 
   return i18n.resolvedLanguage ?? "fi";
@@ -95,5 +95,23 @@ export const useSummonsStatuses = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.summonStatus, lang],
     queryFn: async () => await window.api.summonsStatuses({ lang }),
+  });
+};
+
+export const useCrimes = () => {
+  const lang = useResolvedLanguage();
+
+  return useQuery({
+    queryKey: [QUERY_KEYS.crimes, lang],
+    queryFn: async () => await window.api.crimes({ lang }),
+  });
+};
+
+export const useCrimesSearch = (query: string) => {
+  const lang = useResolvedLanguage();
+
+  return useQuery({
+    queryKey: [QUERY_KEYS.crimes, lang, query],
+    queryFn: async () => await window.api.crimesSearch({ lang, query }),
   });
 };

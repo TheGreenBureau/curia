@@ -299,3 +299,25 @@
   font-display: swap;
   src: url("src/fonts/Silkscreen/Silkscreen-Bold.ttf");
 }
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("src/fonts/Open_Sans/static/OpenSans-Regular.ttf");
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("src/fonts/Open_Sans/static/OpenSans-Italic.ttf");
+}
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("src/fonts/Open_Sans/static/OpenSans-Bold.ttf");
+}

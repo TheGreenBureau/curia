@@ -12,4 +12,5 @@ export const QUERY_KEYS = {
   courts: "courts",
   summons: "summons",
   summonStatus: "summonStatus",
+  crimes: "crimes",
 } as const;

@@ -16,10 +16,18 @@ import { Pencil, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Listing } from "@/types/data/listing";
 import { produce } from "immer";
-import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { DateTimePicker, TimePicker } from "@/components/ui/date-time-picker";
 import { fi } from "date-fns/locale/fi";
+import { sv } from "date-fns/locale/sv";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const locales = {
+  fi: fi,
+  sv: sv,
+};
 
 type SessionEditSheetProps = {
   getListing: () => Listing;
@@ -27,6 +35,12 @@ type SessionEditSheetProps = {
 
 export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
   const [currentDate, setCurrentDate] = useState<Date | undefined>(new Date());
+  const [currentBreak, setCurrentBreak] = useState<Date | undefined>(() => {
+    const date = new Date();
+    date.setHours(12, 0, 0, 0);
+    return date;
+  });
+  const [breakActive, setBreakActive] = useState(false);
   const [values, setValues] = useState({
     court: "",
     office: "",
@@ -37,6 +51,7 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
   const updateListing = useMutateCurrentListing();
 
   const { t } = useTranslation();
+  const [language] = useLanguage();
 
   const assignListing = () => {
     const listing = getListing();
@@ -46,6 +61,11 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
     });
 
     setCurrentDate(new Date(listing.date));
+
+    if (listing.break) {
+      setCurrentBreak(listing.break);
+      setBreakActive(true);
+    }
   };
 
   return (
@@ -77,10 +97,37 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
             <div className="col-span-3">
               <DateTimePicker
                 value={currentDate}
-                locale={fi}
+                locale={locales[language]}
                 onChange={(selected) => setCurrentDate(selected)}
                 granularity="day"
                 displayFormat={{ hour24: "dd.MM.yyyy" }}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-8 items-center gap-4">
+            <Label className="text-right col-span-2">
+              {t("strings:Tauko")}
+            </Label>
+            <div className="col-span-1">
+              <Checkbox
+                className="h-5 w-5"
+                checked={breakActive}
+                onCheckedChange={(checked) => {
+                  if (checked === "indeterminate") {
+                    return;
+                  }
+
+                  setBreakActive(checked);
+                }}
+              />
+            </div>
+            <div className="col-span-5">
+              <TimePicker
+                disabled={!breakActive}
+                date={currentBreak}
+                onChange={(selected) => setCurrentBreak(selected)}
+                granularity="minute"
               />
             </div>
           </div>
@@ -99,6 +146,7 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
                     draft.department = values.department;
                     draft.room = values.room;
                     draft.date = currentDate;
+                    draft.break = breakActive ? currentBreak : undefined;
                   })
                 );
               }}

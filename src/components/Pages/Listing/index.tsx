@@ -6,14 +6,19 @@ import {
   useMutateDeselectListing,
   useMutateOpenCSV,
 } from "@/hooks/mutations";
-import { useCourts, useCurrentListing } from "@/hooks/queries";
+import {
+  useCourts,
+  useCrimes,
+  useCurrentListing,
+  useTitles,
+} from "@/hooks/queries";
 import { cn, isDateArraySortedByTime, isKey, sortDates } from "@/lib/utils";
 import { format } from "date-fns";
 import { ChevronLeft, CircleSlash2 } from "lucide-react";
 import { SessionEditSheet } from "./SessionEditSheet";
 import styles from "./listing.module.css";
 import { useStore } from "@/hooks/useStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useTranslation } from "react-i18next";
@@ -24,6 +29,8 @@ import { Officer } from "@/types/data/persons";
 import { produce } from "immer";
 import { CaseList } from "./CaseList";
 import { Row } from "@/components/ui/rowcol";
+import { DocumentDialog } from "./DocumentDialog";
+import { ListingMenu } from "@/components/Pages/Listing/ListingMenu";
 
 const createNewCase = (defaults?: Defaults): Case => {
   const date = new Date();
@@ -52,16 +59,19 @@ const createNewCase = (defaults?: Defaults): Case => {
 };
 
 export function Listing() {
+  const [caseSheetOpen, setCaseSheetOpen] = useState(false);
+
   const listing = useCurrentListing();
   const courts = useCourts();
+  const crimes = useCrimes();
   const deselectListing = useMutateDeselectListing();
-  const updateListing = useMutateCurrentListing();
   const openCSV = useMutateOpenCSV();
 
   const setMountDirection = useStore((state) => state.setMountDirection);
   const setShowSettings = useStore((state) => state.setShowSettings);
   const view = useStore((state) => state.welcomeView);
   const setView = useStore((state) => state.setWelcomeView);
+  const titles = useTitles();
 
   const { t } = useTranslation();
 
@@ -72,28 +82,6 @@ export function Listing() {
       setView("initial");
     }
   });
-
-  const sortCasesByTime = () => {
-    const sorted = produce(listing.data.cases, (draft) => {
-      draft.sort((a, b) => {
-        const aDate = new Date(a.time);
-        const bDate = new Date(b.time);
-
-        const date1 = new Date();
-        const date2 = new Date();
-        date1.setHours(aDate.getHours(), aDate.getMinutes());
-        date2.setHours(bDate.getHours(), bDate.getMinutes());
-
-        return sortDates(date1, date2, "asc");
-      });
-    });
-
-    updateListing.mutate(
-      produce(listing.data, (draft) => {
-        draft.cases = sorted;
-      })
-    );
-  };
 
   if (listing.isSuccess && courts.isSuccess) {
     const court = courts.data.find((c) => c.id === listing.data.court);
@@ -110,6 +98,11 @@ export function Listing() {
 
     return (
       <div className={cn("flex flex-col px-8 py-10 gap-4", styles.mountRight)}>
+        <CaseSheet
+          getCase={() => createNewCase()}
+          open={caseSheetOpen}
+          onOpenChange={(open) => setCaseSheetOpen(open)}
+        />
         <div className="flex flex-row w-full">
           <Button
             variant="ghost"
@@ -154,25 +147,24 @@ export function Listing() {
               )}
               {listing.data.cases.length > 0 && (
                 <Row className="justify-end flex-1 items-center">
-                  <Button
-                    variant="outline"
-                    onClick={() => sortCasesByTime()}
-                    disabled={isDateArraySortedByTime(
-                      listing.data.cases.map((c) => new Date(c.time))
-                    )}
-                  >
-                    Aikajärjestykseen
-                  </Button>
-                  <CaseSheet
-                    getCase={() => createNewCase()}
-                    triggerLabel={t("strings:Uusi juttu")}
+                  <ListingMenu
+                    listing={listing.data}
+                    onOpenCaseSheet={() => setCaseSheetOpen(true)}
                   />
-                  <Button
-                    variant="outline"
-                    onClick={() => openCSV.mutate({ type: "criminal" })}
-                  >
-                    Tuo CSV
-                  </Button>
+                  {titles.isSuccess && crimes.isSuccess && (
+                    <DocumentDialog
+                      court={court}
+                      department={department}
+                      room={room}
+                      date={listing.data.date}
+                      cases={listing.data.cases}
+                      courtTitles={titles.data.court}
+                      prosecutorTitles={titles.data.prosecutor}
+                      laymanTitles={titles.data.layman}
+                      sessionBrake={listing?.data?.break}
+                      crimes={crimes.data}
+                    />
+                  )}
                 </Row>
               )}
             </div>
@@ -189,7 +181,8 @@ export function Listing() {
             <div className="flex flex-row gap-4 mt-2">
               <CaseSheet
                 getCase={() => createNewCase()}
-                triggerLabel={t("strings:Uusi juttu")}
+                open={caseSheetOpen}
+                onOpenChange={(open) => setCaseSheetOpen(open)}
               />
               <Button
                 variant="outline"

@@ -50,6 +50,8 @@ export type ConfigAPI = {
     { courtId: string | undefined | null; lang: string }
   >;
   courts: ActionWithArg<Court[], { lang: string }>;
+  crimes: ActionWithArg<Option[], { lang: string }>;
+  crimesSearch: ActionWithArg<Option[], { lang: string; query: string }>;
 };
 
 export type ListingsAPI = {

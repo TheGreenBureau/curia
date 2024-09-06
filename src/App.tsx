@@ -8,6 +8,7 @@ import { Listing } from "@/components/Pages/Listing";
 import { Settings } from "@/components/Pages/Settings";
 import { ModeToggle } from "@/components/ModeToggle";
 import { cn } from "@/lib/utils";
+import { LanguageToggle } from "./components/LanguageToggle";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ function Pages() {
       <div className={cn("absolute right-8 top-4 flex align-middle gap-2")}>
         <Settings />
         <ModeToggle />
+        <LanguageToggle />
       </div>
     </div>
   );

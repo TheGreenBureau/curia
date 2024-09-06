@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/headings";
 import { Label } from "./ui/label";
+import { ComboCreate } from "./ui/combocreate";
 
 type OfficerValues = {
   presiding: Officer | null;
@@ -93,7 +94,7 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               className="col-span-3"
             />
             <Label className="text-right">{t("strings:Virkanimike")}</Label>
-            <ComboboxFree
+            <ComboCreate
               className="col-span-3"
               options={data.court}
               disabled={
@@ -106,7 +107,7 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               onChange={(currentValue) =>
                 handleChange("presiding", "title", currentValue)
               }
-              placeholderSelect={t("strings:Kirjoita tai valitse...")}
+              placeholder={t("strings:Kirjoita tai valitse...")}
               placeholderDisabled={t("strings:Valitse edeltävä")}
             />
           </div>
@@ -129,7 +130,7 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               className="col-span-3"
             />
             <Label className="text-right">{t("strings:Virkanimike")}</Label>
-            <ComboboxFree
+            <ComboCreate
               className="col-span-3"
               options={data.court}
               disabled={
@@ -139,10 +140,10 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
                 values.secretary.name === ""
               }
               value={values.secretary?.title ?? ""}
-              onChange={(currentValue) =>
-                handleChange("secretary", "title", currentValue)
-              }
-              placeholderSelect={t("strings:Kirjoita tai valitse...")}
+              onChange={(currentValue) => {
+                handleChange("secretary", "title", currentValue);
+              }}
+              placeholder={t("strings:Kirjoita tai valitse...")}
               placeholderDisabled={t("strings:Valitse edeltävä")}
             />
           </div>

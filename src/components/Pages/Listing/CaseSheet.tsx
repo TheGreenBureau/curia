@@ -9,7 +9,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Case } from "@/types/data/case";
 import { useTranslation } from "react-i18next";
@@ -26,18 +25,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutateCurrentListing } from "@/hooks/mutations";
 import { useCurrentListing, useDefaults } from "@/hooks/queries";
 import { v4 as uuidv4 } from "uuid";
-import { Officer } from "@/types/data/persons";
 
 type CaseSheetProps = {
   getCase: () => Case;
-  triggerLabel: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
-export function CaseSheet({ getCase, triggerLabel }: CaseSheetProps) {
+export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
   const [currentCase, setCurrentCase] = useState<Case | null>(null);
 
   const currentListing = useCurrentListing();
@@ -45,6 +44,19 @@ export function CaseSheet({ getCase, triggerLabel }: CaseSheetProps) {
   const defaults = useDefaults();
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (open) {
+      const given = getCase();
+      if (given.id === "") {
+        given.officers = [
+          defaults.data.presiding,
+          defaults.data.secretary,
+        ].filter((o) => o !== null);
+      }
+      setCurrentCase(given);
+    }
+  }, [open]);
 
   const updateCase = <K extends keyof Case>(key: K, value: Case[K]) => {
     setCurrentCase(
@@ -58,24 +70,7 @@ export function CaseSheet({ getCase, triggerLabel }: CaseSheetProps) {
 
   if (currentListing.isSuccess && defaults.isSuccess) {
     return (
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            onClick={() => {
-              const given = getCase();
-              if (given.id === "") {
-                given.officers = [
-                  defaults.data.presiding,
-                  defaults.data.secretary,
-                ].filter((o) => o !== null);
-              }
-              setCurrentCase(given);
-            }}
-          >
-            {triggerLabel}
-          </Button>
-        </SheetTrigger>
+      <Sheet open={open} onOpenChange={onOpenChange}>
         {currentCase && (
           <SheetContent side="right" className="sm:max-w-md">
             <SheetHeader>

@@ -572,6 +572,7 @@ interface TimePickerProps {
    * */
   granularity?: Granularity;
   icon?: boolean;
+  disabled?: boolean;
 }
 
 interface TimePickerRef {
@@ -581,7 +582,10 @@ interface TimePickerRef {
 }
 
 const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
-  ({ date, onChange, hourCycle = 24, granularity = "second", icon }, ref) => {
+  (
+    { date, onChange, hourCycle = 24, granularity = "second", icon, disabled },
+    ref
+  ) => {
     const minuteRef = React.useRef<HTMLInputElement>(null);
     const hourRef = React.useRef<HTMLInputElement>(null);
     const secondRef = React.useRef<HTMLInputElement>(null);
@@ -612,6 +616,7 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
           </label>
         )}
         <TimePickerInput
+          disabled={disabled}
           className="font-firasans font-semibold"
           picker={hourCycle === 24 ? "hours" : "12hours"}
           date={date}
@@ -625,6 +630,7 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
           <>
             :
             <TimePickerInput
+              disabled={disabled}
               className="font-firasans font-semibold"
               picker="minutes"
               date={date}

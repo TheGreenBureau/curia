@@ -4,12 +4,12 @@
   "president": "Laamanni",
   "secretary": "Käräjäsihteeri",
   "appealsJudge": "Hovioikeudenneuvos",
-  "appealsReferendary": "Esittelijä",
+  "appealsReferendary": "Hovioikeuden esittelijä",
   "appealsPresident": "Hovioikeuden presidentti",
   "appealsSecretary": "Hovioikeuden sihteeri",
   "appealsNotary": "Notaari",
   "supremeJudge": "Oikeusneuvos",
-  "supremeReferendary": "Esittelijä",
+  "supremeReferendary": "Korkeimman oikeuden esittelijä",
   "supremePresident": "Korkeimman oikeuden presidentti",
   "supremeSecretary": "Korkeimman oikeuden sihteeri"
 }

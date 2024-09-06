@@ -49,6 +49,7 @@ export function ComboboxFree({
   const [internalValue, setInternalValue] = useState(defaultValue ?? "");
 
   const divRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
   const { t } = useTranslation();
 
@@ -108,6 +109,10 @@ export function ComboboxFree({
             onClick={(e) => e.stopPropagation()}
             onKeyUp={(e) => {
               e.preventDefault();
+
+              if (e.key === "ArrowDown") {
+                contentRef.current.focus();
+              }
             }}
             onFocus={() => setOpen(true)}
             disabled={disabled}
