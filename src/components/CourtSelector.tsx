@@ -33,6 +33,20 @@ export function CourtSelector({
 
   const { t } = useTranslation();
 
+  useEffect(() => {
+    if (data?.currentCourt) {
+      if (data.departments.length === 1) {
+        onChange(
+          produce(values, (draft) => {
+            draft.department = data.departments[0].value;
+            draft.office =
+              data.offices.length === 1 ? data.offices[0].value : values.office;
+          })
+        );
+      }
+    }
+  }, [data?.currentCourt]);
+
   const handleSelectionChange = (
     type: "court" | "office" | "department" | "room",
     value: string
@@ -56,7 +70,8 @@ export function CourtSelector({
         onChange(
           produce(values, (draft) => {
             draft.department = value;
-            draft.office = "";
+            draft.office =
+              data.offices.length === 1 ? data.offices[0].value : "";
             draft.room = "";
           })
         );
@@ -120,7 +135,12 @@ export function CourtSelector({
             <Combobox
               className="col-span-3"
               options={data.departments}
-              disabled={isPending || isFetching || values.court === ""}
+              disabled={
+                isPending ||
+                isFetching ||
+                values.court === "" ||
+                data.departments.length === 1
+              }
               value={values.department}
               onChange={(currentValue) =>
                 handleSelectionChange("department", currentValue)
@@ -134,7 +154,12 @@ export function CourtSelector({
             <Combobox
               className="col-span-3"
               options={data.offices}
-              disabled={isPending || isFetching || values.department === ""}
+              disabled={
+                isPending ||
+                isFetching ||
+                values.department === "" ||
+                data.offices.length === 1
+              }
               value={values.office}
               onChange={(currentValue) =>
                 handleSelectionChange("office", currentValue)

@@ -46,6 +46,7 @@ export type ConfigAPI = {
       offices: Option[];
       departments: Option[];
       rooms: Option[];
+      currentCourt: Court | null;
     },
     {
       courtId: string | undefined | null;

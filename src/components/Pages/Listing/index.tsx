@@ -145,28 +145,25 @@ export function Listing() {
                   </Heading>
                 </>
               )}
-              {listing.data.cases.length > 0 && (
-                <Row className="justify-end flex-1 items-center">
+              {listing.data.cases.length > 0 &&
+                titles.isSuccess &&
+                crimes.isSuccess && (
                   <ListingMenu
                     listing={listing.data}
                     onOpenCaseSheet={() => setCaseSheetOpen(true)}
+                    court={court}
+                    office={office}
+                    department={department}
+                    room={room}
+                    date={listing.data.date}
+                    cases={listing.data.cases}
+                    courtTitles={titles.data.court}
+                    prosecutorTitles={titles.data.prosecutor}
+                    laymanTitles={titles.data.layman}
+                    sessionBrake={listing?.data?.break}
+                    crimes={crimes.data}
                   />
-                  {titles.isSuccess && crimes.isSuccess && (
-                    <DocumentDialog
-                      court={court}
-                      department={department}
-                      room={room}
-                      date={listing.data.date}
-                      cases={listing.data.cases}
-                      courtTitles={titles.data.court}
-                      prosecutorTitles={titles.data.prosecutor}
-                      laymanTitles={titles.data.layman}
-                      sessionBrake={listing?.data?.break}
-                      crimes={crimes.data}
-                    />
-                  )}
-                </Row>
-              )}
+                )}
             </div>
           </div>
         </div>
@@ -179,16 +176,14 @@ export function Listing() {
               {t("strings:Juttuluettelo on toistaiseksi tyhjä.")}
             </AlertDescription>
             <div className="flex flex-row gap-4 mt-2">
-              <CaseSheet
-                getCase={() => createNewCase()}
-                open={caseSheetOpen}
-                onOpenChange={(open) => setCaseSheetOpen(open)}
-              />
+              <Button variant="outline" onClick={() => setCaseSheetOpen(true)}>
+                {t("strings:Uusi juttu")}
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => openCSV.mutate({ type: "criminal" })}
               >
-                Tuo CSV
+                {t("strings:Tuo CSV")}
               </Button>
             </div>
           </Alert>

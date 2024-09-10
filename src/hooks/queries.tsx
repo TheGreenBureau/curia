@@ -62,7 +62,7 @@ export const useCourtSelections = (
   const lang = useResolvedLanguage();
 
   return useQuery({
-    queryKey: [QUERY_KEYS.courtOptions, lang, courtId],
+    queryKey: [QUERY_KEYS.courtOptions, lang, courtId, officeId],
     queryFn: async () =>
       await window.api.courtSelections({ courtId, officeId, lang }),
     placeholderData: keepPreviousData,

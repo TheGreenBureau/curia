@@ -206,6 +206,7 @@ const configHandles: ConfigAPI = {
         offices: [],
         departments: [],
         rooms: [],
+        currentCourt: null,
       };
     }
 
@@ -214,14 +215,13 @@ const configHandles: ConfigAPI = {
 
     const currentOffice = currentCourt.offices[officeId];
 
-    console.log(JSON.stringify(currentOffice));
-
     if (!currentOffice) {
       return {
         courts,
         offices,
         departments,
         rooms: [],
+        currentCourt,
       };
     }
 
@@ -232,6 +232,7 @@ const configHandles: ConfigAPI = {
       offices,
       departments,
       rooms,
+      currentCourt,
     };
   },
 

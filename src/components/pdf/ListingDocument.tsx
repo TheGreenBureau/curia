@@ -61,10 +61,10 @@ const styles = StyleSheet.create({
     gap: 2,
     fontFamily: "Fira Sans",
     fontSize: 14,
-    paddingBottom: 30,
+    paddingBottom: 40,
     paddingTop: 40,
-    paddingLeft: 30,
-    paddingRight: 30,
+    paddingLeft: 40,
+    paddingRight: 40,
   },
   section: {
     marginTop: 20,
@@ -142,10 +142,10 @@ export const ListingDocument = ({
             style={{ flexDirection: "column", width: "50%", marginRight: 20 }}
           >
             <Text style={styles.topTextUpper}>{court.name}</Text>
-            {department.toLowerCase() !== "ei osastoja" ||
-              (department.toLowerCase() !== "inga avdelningar" && (
+            {department.toLowerCase() !== "ei osastoja" &&
+              department.toLowerCase() !== "inga avdelningar" && (
                 <Text>{department}</Text>
-              ))}
+              )}
             <Text>{room}</Text>
           </View>
           <View style={{ flexDirection: "column" }}>
@@ -300,6 +300,7 @@ function CaseView({ currentCase, index, crimes }: CaseViewProps) {
               .filter((c) => c.type === "defendant")
               .map((defendant) => (
                 <View
+                  key={defendant.id}
                   style={{
                     flexDirection: "row",
                     maxWidth: "100%",
