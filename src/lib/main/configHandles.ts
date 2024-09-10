@@ -7,7 +7,9 @@ import { selectDirectory } from "@/lib/main/files";
 import { ConfigAPI, ConfigResult } from "@/types/config/api";
 import {
   getCourt,
-  getCourtDetails,
+  getCourtDepartments,
+  getCourtOffices,
+  getOfficeRooms,
   getCourts,
   getCourtsFull,
 } from "@/lib/staticData/courts";
@@ -193,7 +195,7 @@ const configHandles: ConfigAPI = {
     return getSummonsStatuses(lang);
   },
 
-  courtSelections: async ({ courtId, lang }) => {
+  courtSelections: async ({ courtId, officeId, lang }) => {
     const courts = getCourts(lang);
 
     const currentCourt = getCourt(courtId, lang);
@@ -207,9 +209,23 @@ const configHandles: ConfigAPI = {
       };
     }
 
-    const offices = getCourtDetails("offices", currentCourt);
-    const departments = getCourtDetails("departments", currentCourt);
-    const rooms = getCourtDetails("rooms", currentCourt);
+    const offices = getCourtOffices(currentCourt);
+    const departments = getCourtDepartments(currentCourt);
+
+    const currentOffice = currentCourt.offices[officeId];
+
+    console.log(JSON.stringify(currentOffice));
+
+    if (!currentOffice) {
+      return {
+        courts,
+        offices,
+        departments,
+        rooms: [],
+      };
+    }
+
+    const rooms = getOfficeRooms(currentOffice);
 
     return {
       courts,

@@ -112,9 +112,12 @@ function LandingInitial() {
       )}`;
     }
 
-    const room = isKey(court.rooms, recent.room)
-      ? court.rooms[recent.room]
-      : "";
+    const office = court.offices[recent.office];
+
+    const room =
+      office && isKey(office.rooms, recent.room)
+        ? office.rooms[recent.room]
+        : "";
 
     return `${court.name} | ${
       room !== "" ? room : t("strings:Ei salia")

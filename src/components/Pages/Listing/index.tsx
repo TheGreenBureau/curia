@@ -1,18 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/headings";
 import { Separator } from "@/components/ui/separator";
-import {
-  useMutateCurrentListing,
-  useMutateDeselectListing,
-  useMutateOpenCSV,
-} from "@/hooks/mutations";
+import { useMutateDeselectListing, useMutateOpenCSV } from "@/hooks/mutations";
 import {
   useCourts,
   useCrimes,
   useCurrentListing,
   useTitles,
 } from "@/hooks/queries";
-import { cn, isDateArraySortedByTime, isKey, sortDates } from "@/lib/utils";
+import { cn, isKey } from "@/lib/utils";
 import { format } from "date-fns";
 import { ChevronLeft, CircleSlash2 } from "lucide-react";
 import { SessionEditSheet } from "./SessionEditSheet";
@@ -26,7 +22,6 @@ import { CaseSheet } from "./CaseSheet";
 import { Case } from "@/types/data/case";
 import { Defaults } from "@/types/config/defaults";
 import { Officer } from "@/types/data/persons";
-import { produce } from "immer";
 import { CaseList } from "./CaseList";
 import { Row } from "@/components/ui/rowcol";
 import { DocumentDialog } from "./DocumentDialog";
@@ -86,14 +81,19 @@ export function Listing() {
   if (listing.isSuccess && courts.isSuccess) {
     const court = courts.data.find((c) => c.id === listing.data.court);
 
+    const office =
+      court && isKey(court.offices, listing.data.office)
+        ? court.offices[listing.data.office]
+        : null;
+
     const department =
       court && isKey(court.departments, listing.data.department)
         ? court.departments[listing.data.department]
         : "";
 
     const room =
-      court && isKey(court.rooms, listing.data.room)
-        ? court.rooms[listing.data.room]
+      court && office && isKey(office.rooms, listing.data.room)
+        ? office.rooms[listing.data.room]
         : "";
 
     return (

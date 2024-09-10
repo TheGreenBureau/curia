@@ -6,6 +6,7 @@ import { AlertCircle } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { Heading } from "@/components/ui/headings";
 import { Label } from "./ui/label";
+import { useEffect } from "react";
 
 type CourtValues = {
   court: string;
@@ -28,7 +29,7 @@ export function CourtSelector({
   hasTitle,
 }: CourtSelectorProps) {
   const { data, isPending, isFetching, isError, isSuccess } =
-    useCourtSelections(courtId);
+    useCourtSelections(courtId, values.office);
 
   const { t } = useTranslation();
 
@@ -51,19 +52,19 @@ export function CourtSelector({
           })
         );
         break;
-      case "office":
-        onChange(
-          produce(values, (draft) => {
-            draft.office = value;
-            draft.department = "";
-            draft.room = "";
-          })
-        );
-        break;
       case "department":
         onChange(
           produce(values, (draft) => {
             draft.department = value;
+            draft.office = "";
+            draft.room = "";
+          })
+        );
+        break;
+      case "office":
+        onChange(
+          produce(values, (draft) => {
+            draft.office = value;
             draft.room = "";
           })
         );
@@ -115,28 +116,28 @@ export function CourtSelector({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">{t("strings:Kanslia")}</Label>
+            <Label className="text-right">{t("strings:Osasto")}</Label>
             <Combobox
               className="col-span-3"
-              options={data.offices}
+              options={data.departments}
               disabled={isPending || isFetching || values.court === ""}
-              value={values.office}
+              value={values.department}
               onChange={(currentValue) =>
-                handleSelectionChange("office", currentValue)
+                handleSelectionChange("department", currentValue)
               }
               placeholderSelect={t("strings:Valitse")}
               placeholderDisabled={t("strings:Valitse edeltävä")}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">{t("strings:Osasto")}</Label>
+            <Label className="text-right">{t("strings:Kanslia")}</Label>
             <Combobox
               className="col-span-3"
-              options={data.departments}
-              disabled={isPending || isFetching || values.office === ""}
-              value={values.department}
+              options={data.offices}
+              disabled={isPending || isFetching || values.department === ""}
+              value={values.office}
               onChange={(currentValue) =>
-                handleSelectionChange("department", currentValue)
+                handleSelectionChange("office", currentValue)
               }
               placeholderSelect={t("strings:Valitse")}
               placeholderDisabled={t("strings:Valitse edeltävä")}
@@ -147,7 +148,7 @@ export function CourtSelector({
             <Combobox
               className="col-span-3"
               options={data.rooms}
-              disabled={isPending || isFetching || values.department === ""}
+              disabled={isPending || isFetching || values.office === ""}
               value={values.room}
               onChange={(currentValue) =>
                 handleSelectionChange("room", currentValue)

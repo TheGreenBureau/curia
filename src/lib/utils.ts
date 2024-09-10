@@ -182,12 +182,14 @@ export const formatListingName = (listing: Listing) => {
   }
 
   const court = getCourt(listing.court, i18next.resolvedLanguage);
+  const office = court.offices[listing.office];
 
-  const room = court
-    ? isKey(court.rooms, listing.room)
-      ? court.rooms[listing.room]
-      : ""
-    : "";
+  const room =
+    court && office
+      ? isKey(office.rooms, listing.room)
+        ? office.rooms[listing.room]
+        : ""
+      : "";
 
   let fileName = `${court?.name ?? ""} | ${dateString(listing.date)}`;
 
