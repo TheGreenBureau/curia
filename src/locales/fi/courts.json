@@ -9,25 +9,11 @@
       "89ee8fb4-d6b7-4eb4-ba27-d7169e753f86": "Osasto 1",
       "abb01819-2404-4901-a10a-5fafd116d2d7": "Osasto 2",
       "965c2653-cb82-46d7-af4f-10f54f8d2d1d": "Osasto 3",
-      "e34ee3fa-6385-4e1e-b3cf-47b5b0ac8511": "Osasto 4",
-      "8113827b-f3d8-4a47-977b-1da44eb53e5a": "Osasto 5",
-      "e3244f5d-5260-4a44-9144-b9cb066e0d26": "Osasto 6",
-      "0cbd172d-23c9-437c-af14-4d72b467b321": "Osasto 7",
-      "bff01275-0d02-4542-a87e-53192f01e678": "Osasto 8",
-      "2bd2ed73-0582-4c42-9c67-174982fe6b00": "Osasto 9",
-      "0c6a0b88-6f51-4008-8e85-8169f3264470": "Osasto 10"
+      "e34ee3fa-6385-4e1e-b3cf-47b5b0ac8511": "Osasto 4"
     },
     "rooms": {
       "022b38eb-b99a-4c4f-83c6-5713d5e0128b": "Sali 1",
-      "4d88d8fa-2e86-48f9-8517-0e339e8f4a31": "Sali 2",
-      "b082870d-13b1-42f2-86ae-91e693e1353e": "Sali 3",
-      "bbacdf53-9940-47a3-be18-fe56b8aebb9c": "Sali 4",
-      "87367369-d48a-4249-bd68-be904613a592": "Sali 5",
-      "51b7dbf3-9073-4aa9-83b9-16d7c36e10dc": "Sali 6",
-      "243aeb8f-a664-49ca-8b34-c572701e51f0": "Sali 7",
-      "f2d3ad4a-3b93-4aaf-822b-1a5dd20b5760": "Sali 8",
-      "df17b57d-1c1e-4cde-a427-597e1b40e358": "Sali 9",
-      "acfa44e5-423d-4ecb-8ba5-021e026f621f": "Sali 10"
+      "4d88d8fa-2e86-48f9-8517-0e339e8f4a31": "Sali 2"
     }
   },
   "e74e2877-1399-4883-a25f-d75be8acc917": {
@@ -37,16 +23,7 @@
       "00c0c4be-86be-47c8-9a52-938724f64d09": "Lappeenranta"
     },
     "departments": {
-      "89ee8fb4-d6b7-4eb4-ba27-d7169e753f86": "Osasto 1",
-      "abb01819-2404-4901-a10a-5fafd116d2d7": "Osasto 2",
-      "965c2653-cb82-46d7-af4f-10f54f8d2d1d": "Osasto 3",
-      "e34ee3fa-6385-4e1e-b3cf-47b5b0ac8511": "Osasto 4",
-      "8113827b-f3d8-4a47-977b-1da44eb53e5a": "Osasto 5",
-      "e3244f5d-5260-4a44-9144-b9cb066e0d26": "Osasto 6",
-      "0cbd172d-23c9-437c-af14-4d72b467b321": "Osasto 7",
-      "bff01275-0d02-4542-a87e-53192f01e678": "Osasto 8",
-      "2bd2ed73-0582-4c42-9c67-174982fe6b00": "Osasto 9",
-      "0c6a0b88-6f51-4008-8e85-8169f3264470": "Osasto 10"
+      "89ee8fb4-d6b7-4eb4-ba27-d7169e753f86": "Ei osastoja"
     },
     "rooms": {
       "022b38eb-b99a-4c4f-83c6-5713d5e0128b": "Sali 1",
@@ -55,30 +32,18 @@
       "bbacdf53-9940-47a3-be18-fe56b8aebb9c": "Sali 4",
       "87367369-d48a-4249-bd68-be904613a592": "Sali 5",
       "51b7dbf3-9073-4aa9-83b9-16d7c36e10dc": "Sali 6",
-      "243aeb8f-a664-49ca-8b34-c572701e51f0": "Sali 7",
-      "f2d3ad4a-3b93-4aaf-822b-1a5dd20b5760": "Sali 8",
-      "df17b57d-1c1e-4cde-a427-597e1b40e358": "Sali 9",
-      "acfa44e5-423d-4ecb-8ba5-021e026f621f": "Sali 10"
+      "243aeb8f-a664-49ca-8b34-c572701e51f0": "Sali 7"
     }
   },
   "e30d37ae-8022-40ec-b5aa-c3299aa15d5c": {
     "name": "Etelä-Pohjanmaan käräjäoikeus",
     "abbreviation": "EPKO",
     "offices": {
-      "e971a7cf-0261-49dc-a5fb-99e7002be7c8": "Seinäjoki",
-      "742ba4a9-f73f-449d-9d60-24a9db2184d5": "Kauhava"
+      "e971a7cf-0261-49dc-a5fb-99e7002be7c8": "Seinäjoki"
     },
     "departments": {
       "89ee8fb4-d6b7-4eb4-ba27-d7169e753f86": "Osasto 1",
-      "abb01819-2404-4901-a10a-5fafd116d2d7": "Osasto 2",
-      "965c2653-cb82-46d7-af4f-10f54f8d2d1d": "Osasto 3",
-      "e34ee3fa-6385-4e1e-b3cf-47b5b0ac8511": "Osasto 4",
-      "8113827b-f3d8-4a47-977b-1da44eb53e5a": "Osasto 5",
-      "e3244f5d-5260-4a44-9144-b9cb066e0d26": "Osasto 6",
-      "0cbd172d-23c9-437c-af14-4d72b467b321": "Osasto 7",
-      "bff01275-0d02-4542-a87e-53192f01e678": "Osasto 8",
-      "2bd2ed73-0582-4c42-9c67-174982fe6b00": "Osasto 9",
-      "0c6a0b88-6f51-4008-8e85-8169f3264470": "Osasto 10"
+      "abb01819-2404-4901-a10a-5fafd116d2d7": "Osasto 2"
     },
     "rooms": {
       "022b38eb-b99a-4c4f-83c6-5713d5e0128b": "Sali 1",
@@ -88,9 +53,7 @@
       "87367369-d48a-4249-bd68-be904613a592": "Sali 5",
       "51b7dbf3-9073-4aa9-83b9-16d7c36e10dc": "Sali 6",
       "243aeb8f-a664-49ca-8b34-c572701e51f0": "Sali 7",
-      "f2d3ad4a-3b93-4aaf-822b-1a5dd20b5760": "Sali 8",
-      "df17b57d-1c1e-4cde-a427-597e1b40e358": "Sali 9",
-      "acfa44e5-423d-4ecb-8ba5-021e026f621f": "Sali 10"
+      "f2d3ad4a-3b93-4aaf-822b-1a5dd20b5760": "Poliisitalon pakkokeinosali"
     }
   },
   "e9aab3b9-f8f9-40d8-bc7a-16b627db46bd": {
@@ -101,16 +64,7 @@
       "aa379a44-a47e-4e90-94c6-dba51d83e3dc": "Savonlinna"
     },
     "departments": {
-      "89ee8fb4-d6b7-4eb4-ba27-d7169e753f86": "Osasto 1",
-      "abb01819-2404-4901-a10a-5fafd116d2d7": "Osasto 2",
-      "965c2653-cb82-46d7-af4f-10f54f8d2d1d": "Osasto 3",
-      "e34ee3fa-6385-4e1e-b3cf-47b5b0ac8511": "Osasto 4",
-      "8113827b-f3d8-4a47-977b-1da44eb53e5a": "Osasto 5",
-      "e3244f5d-5260-4a44-9144-b9cb066e0d26": "Osasto 6",
-      "0cbd172d-23c9-437c-af14-4d72b467b321": "Osasto 7",
-      "bff01275-0d02-4542-a87e-53192f01e678": "Osasto 8",
-      "2bd2ed73-0582-4c42-9c67-174982fe6b00": "Osasto 9",
-      "0c6a0b88-6f51-4008-8e85-8169f3264470": "Osasto 10"
+      "89ee8fb4-d6b7-4eb4-ba27-d7169e753f86": "Ei osastoja"
     },
     "rooms": {
       "022b38eb-b99a-4c4f-83c6-5713d5e0128b": "Sali 1",
@@ -118,11 +72,7 @@
       "b082870d-13b1-42f2-86ae-91e693e1353e": "Sali 3",
       "bbacdf53-9940-47a3-be18-fe56b8aebb9c": "Sali 4",
       "87367369-d48a-4249-bd68-be904613a592": "Sali 5",
-      "51b7dbf3-9073-4aa9-83b9-16d7c36e10dc": "Sali 6",
-      "243aeb8f-a664-49ca-8b34-c572701e51f0": "Sali 7",
-      "f2d3ad4a-3b93-4aaf-822b-1a5dd20b5760": "Sali 8",
-      "df17b57d-1c1e-4cde-a427-597e1b40e358": "Sali 9",
-      "acfa44e5-423d-4ecb-8ba5-021e026f621f": "Sali 10"
+      "51b7dbf3-9073-4aa9-83b9-16d7c36e10dc": "Sali 6"
     }
   },
   "00ee3f25-3ec3-4977-aede-7c4f7ba6a62a": {

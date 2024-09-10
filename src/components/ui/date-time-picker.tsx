@@ -583,9 +583,18 @@ interface TimePickerRef {
 
 const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
   (
-    { date, onChange, hourCycle = 24, granularity = "second", icon, disabled },
+    {
+      date: propDate,
+      onChange,
+      hourCycle = 24,
+      granularity = "second",
+      icon,
+      disabled,
+    },
     ref
   ) => {
+    const date = new Date(propDate);
+
     const minuteRef = React.useRef<HTMLInputElement>(null);
     const hourRef = React.useRef<HTMLInputElement>(null);
     const secondRef = React.useRef<HTMLInputElement>(null);
@@ -718,7 +727,7 @@ const DateTimePicker = React.forwardRef<DateTimePickerRef, DateTimePickerProps>(
   (
     {
       locale = enUS,
-      value,
+      value: propValue,
       onChange,
       hourCycle = 24,
       yearRange = 50,
@@ -730,6 +739,7 @@ const DateTimePicker = React.forwardRef<DateTimePickerRef, DateTimePickerProps>(
     },
     ref
   ) => {
+    const value = new Date(propValue);
     const [month, setMonth] = React.useState<Date>(value ?? new Date());
     const buttonRef = useRef<HTMLButtonElement>(null);
     /**

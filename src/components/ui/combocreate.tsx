@@ -16,14 +16,15 @@ import {
 import { Option } from "@/types/data/options";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { number } from "zod";
-import {
-  keepPreviousData,
-  useQuery,
-  UseQueryResult,
-} from "@tanstack/react-query";
-import { useCrimesSearch, useResolvedLanguage } from "@/hooks/queries";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useResolvedLanguage } from "@/hooks/queries";
 import { QUERY_KEYS } from "@/lib/queryKeys";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type ComboCreateProps = {
   options: Option[];
@@ -82,6 +83,7 @@ export function ComboCreate({
   const [query, setQuery] = useState("");
 
   const divRef = useRef<HTMLDivElement | null>(null);
+  const spanRef = useRef<HTMLSpanElement | null>(null);
 
   const { t } = useTranslation();
 
@@ -126,26 +128,47 @@ export function ComboCreate({
     }
   };
 
+  const triggerHasOverflow = () => {
+    if (spanRef.current) {
+      return spanRef.current.scrollWidth > spanRef.current.clientWidth;
+    }
+    return false;
+  };
+
   return (
     <div className={cn("block", className)} ref={divRef}>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className={cn(
-              "w-full justify-between font-normal",
-              triggerClassName
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className={cn(
+                    "w-full justify-between font-normal",
+                    triggerClassName
+                  )}
+                  disabled={disabled}
+                >
+                  <span
+                    className="max-w-full overflow-hidden text-ellipsis"
+                    ref={spanRef}
+                  >
+                    {value() === "" ? placeholder() : value()}
+                  </span>
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+            </TooltipTrigger>
+            {triggerHasOverflow() && (
+              <TooltipContent>
+                <p>{value()}</p>
+              </TooltipContent>
             )}
-            disabled={disabled}
-          >
-            <span className="max-w-full overflow-hidden text-ellipsis">
-              {value() === "" ? placeholder() : value()}
-            </span>
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
+          </Tooltip>
+        </TooltipProvider>
         <PopoverContent
           className="p-0"
           style={{ width: `${divRef.current?.offsetWidth ?? 500}px` }}

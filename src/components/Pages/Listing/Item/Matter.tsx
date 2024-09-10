@@ -1,13 +1,11 @@
 import { Col, Row } from "@/components/ui/rowcol";
 import { Heading } from "@/components/ui/headings";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { UseCaseValues } from "@/hooks/useCases";
 import { ReactNode } from "react";
 import { ShieldAlert, ShieldOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { ComboCreate, ComboCreateCrime } from "@/components/ui/combocreate";
-import { useCrimes, useCrimesSearch } from "@/hooks/queries";
+import { ComboCreateCrime } from "@/components/ui/combocreate";
 
 type MatterProps = UseCaseValues & {
   className?: string;

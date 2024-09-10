@@ -63,7 +63,7 @@ export function ListingMenu({ listing, onOpenCaseSheet }: ListingMenuProps) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onOpenCaseSheet}>
-          <PlusCircle className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 h-4 w-4" />
           <span>{t("strings:Luo uusi")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => openCSV.mutate({ type: "criminal" })}>

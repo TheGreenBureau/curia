@@ -40,11 +40,14 @@ export const useListingsPath = () =>
     queryFn: window.api.listingsPath,
   });
 
-export const useRecents = () =>
-  useQuery({
-    queryKey: [QUERY_KEYS.recents],
+export const useRecents = () => {
+  const lang = useResolvedLanguage();
+
+  return useQuery({
+    queryKey: [QUERY_KEYS.recents, lang],
     queryFn: window.api.recents,
   });
+};
 
 export const useListings = () =>
   useQuery({

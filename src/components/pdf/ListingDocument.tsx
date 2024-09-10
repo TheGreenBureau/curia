@@ -142,7 +142,9 @@ export const ListingDocument = ({
             style={{ flexDirection: "column", width: "50%", marginRight: 20 }}
           >
             <Text style={styles.topTextUpper}>{court.name}</Text>
-            <Text>{department}</Text>
+            {department.toLowerCase() !== "ei osastoja" && (
+              <Text>{department}</Text>
+            )}
             <Text>{room}</Text>
           </View>
           <View style={{ flexDirection: "column" }}>

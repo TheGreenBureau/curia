@@ -10,7 +10,7 @@ import {
   Download,
 } from "lucide-react";
 import clsx from "clsx";
-import { useDefaults, useRecents } from "@/hooks/queries";
+import { useCourts, useDefaults, useRecents } from "@/hooks/queries";
 import {
   useMutateCreateListing,
   useMutateDeleteListings,
@@ -18,7 +18,7 @@ import {
   useMutateOpenListing,
 } from "@/hooks/mutations";
 import styles from "./landing.module.css";
-import { cn, formatListingName } from "@/lib/utils";
+import { cn, formatListingName, isKey } from "@/lib/utils";
 import { badgeVariants } from "@/components/ui/badge";
 import { Defaults } from "@/types/config/defaults";
 import { v4 as uuidv4 } from "uuid";
@@ -42,6 +42,7 @@ import {
 import { Heading } from "@/components/ui/headings";
 import { useStore } from "@/hooks/useStore";
 import { Label } from "@/components/ui/label";
+import { format } from "date-fns";
 
 export function Landing() {
   const view = useStore((state) => state.welcomeView);
@@ -86,7 +87,8 @@ export function Landing() {
 }
 
 function LandingInitial() {
-  const { data, isSuccess } = useRecents();
+  const recents = useRecents();
+  const courts = useCourts();
   const view = useStore((state) => state.welcomeView);
   const setView = useStore((state) => state.setWelcomeView);
   const mountDirection = useStore((state) => state.mountDirection);
@@ -95,6 +97,29 @@ function LandingInitial() {
   const { mutate } = useMutateOpenListing();
 
   const { t } = useTranslation();
+
+  const formatRecentLabel = (recent: Listing) => {
+    if (!courts.isSuccess) {
+      return "";
+    }
+
+    const court = courts.data.find((c) => c.id === recent.court);
+
+    if (!court) {
+      return `${t("strings:Tuntematon")} | ${format(
+        recent.date,
+        "dd.MM.yyyy"
+      )}`;
+    }
+
+    const room = isKey(court.rooms, recent.room)
+      ? court.rooms[recent.room]
+      : "";
+
+    return `${court.name} | ${
+      room !== "" ? room : t("strings:Ei salia")
+    } | ${format(recent.date, "dd.MM.yyyy")}`;
+  };
 
   return (
     <div className={cn(view !== undefined && styles[mountDirection])}>
@@ -128,15 +153,15 @@ function LandingInitial() {
       <Heading level="h4" className="text-center mt-12 font-semibold">
         {t("strings:Viimeisimmät juttuluettelot")}
       </Heading>
-      {isSuccess && (
+      {recents.isSuccess && (
         <>
-          {!data || data.length === 0 ? (
+          {!recents.data || recents.data.length === 0 ? (
             <p className="mt-4 text-center">
               {t("strings:Ei juttuluetteloita")}
             </p>
           ) : (
             <div className="flex flex-col justify-center items-center ml-auto mr-auto gap-2 mt-4">
-              {data.map((r) => (
+              {recents.data.map((r) => (
                 <a
                   className={clsx(
                     badgeVariants({ variant: "default" }),
@@ -145,7 +170,7 @@ function LandingInitial() {
                   key={r.id}
                   onClick={() => mutate(r.id)}
                 >
-                  {formatListingName(r)}
+                  {formatRecentLabel(r)}
                 </a>
               ))}
             </div>
