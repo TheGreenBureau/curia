@@ -1,4 +1,5 @@
 import { QUERY_KEYS } from "@/lib/queryKeys";
+import { ListingDocumentProps } from "@/types/data/listing";
 import {
   QueryCache,
   useMutation,

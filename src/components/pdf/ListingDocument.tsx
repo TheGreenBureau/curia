@@ -7,40 +7,30 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
-import { Court } from "@/types/data/court";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { Case } from "@/types/data/case";
 import { Officer, OfficerType } from "@/types/data/persons";
 import { Option } from "@/types/data/options";
-
-export type ListingDocumentProps = {
-  court: Court;
-  department: string;
-  room: string;
-  date: Date;
-  sessionBrake?: Date;
-  cases: Case[];
-  courtTitles: Option[];
-  prosecutorTitles: Option[];
-  laymanTitles: Option[];
-  crimes: Option[];
-};
+import { ListingDocumentProps } from "@/types/data/listing";
+import FiraSansRegular from "@/fonts/Fira_Sans/FiraSans-Regular.ttf";
+import FiraSansBold from "@/fonts/Fira_Sans/FiraSans-Bold.ttf";
+import FiraSansItalic from "@/fonts/Fira_Sans/FiraSans-Italic.ttf";
 
 Font.register({
   family: "Fira Sans",
   fonts: [
-    { src: "src/fonts/Fira_Sans/FiraSans-Regular.ttf" },
-    { src: "src/fonts/Fira_Sans/FiraSans-Bold.ttf", fontWeight: "bold" },
+    { src: FiraSansRegular },
+    { src: FiraSansBold, fontWeight: "bold" },
     {
-      src: "src/fonts/Fira_Sans/FiraSans-Italic.ttf",
+      src: FiraSansItalic,
       fontStyle: "italic",
       fontWeight: "normal",
     },
   ],
 });
 
-Font.register({
+/*Font.register({
   family: "Open Sans",
   fonts: [
     { src: "src/fonts/Open_Sans/static/OpenSans-Regular.ttf" },
@@ -51,7 +41,7 @@ Font.register({
       fontWeight: "normal",
     },
   ],
-});
+});*/
 
 Font.registerHyphenationCallback((word) => [word]);
 

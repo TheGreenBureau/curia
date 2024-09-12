@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useMutateCurrentListing } from "@/hooks/mutations";
 import { useCurrentListing, useDefaults } from "@/hooks/queries";
 import { v4 as uuidv4 } from "uuid";
+import { ComboCreateCrime } from "@/components/ui/combocreate";
 
 type CaseSheetProps = {
   getCase: () => Case;
@@ -148,11 +149,11 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
                 <Label htmlFor="matter" className="text-right">
                   {t("strings:Asia")}
                 </Label>
-                <Input
-                  id="matter"
-                  value={currentCase.matter}
+                <ComboCreateCrime
                   className="col-span-3"
-                  onChange={(e) => updateCase("matter", e.target.value)}
+                  placeholder={t("strings:Kirjoita tai valitse...")}
+                  value={currentCase.matter}
+                  onChange={(value) => updateCase("matter", value)}
                 />
               </div>
 

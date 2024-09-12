@@ -1,4 +1,6 @@
-import { Case } from "./case";
+import { Case } from "@/types/data/case";
+import { Court } from "@/types/data/court";
+import { Option } from "@/types/data/options";
 
 export type Listing = {
   id: string;
@@ -18,4 +20,17 @@ export type PersonListingProps = {
   matter: string;
   caseID: string;
   caseIndex: number;
+};
+
+export type ListingDocumentProps = {
+  court: Court;
+  department: string;
+  room: string;
+  date: Date;
+  sessionBrake?: Date;
+  cases: Case[];
+  courtTitles: Option[];
+  prosecutorTitles: Option[];
+  laymanTitles: Option[];
+  crimes: Option[];
 };

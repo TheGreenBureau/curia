@@ -23,6 +23,7 @@ import { attachHandles } from "./ipc";
 import { Defaults } from "@/types/config/defaults";
 import { produce } from "immer";
 import { getCrimesAsOptions } from "../staticData/crimes";
+import { v4 as uuidv4 } from "uuid";
 
 let cachedConfig: AppConfig;
 
@@ -32,8 +33,18 @@ const createEmptyDefaults = (): Defaults => {
     office: "",
     department: "",
     room: "",
-    presiding: null,
-    secretary: null,
+    presiding: {
+      id: uuidv4(),
+      name: "Mikki Hiiri",
+      title: "judge",
+      type: "presiding",
+    },
+    secretary: {
+      id: uuidv4(),
+      name: "Hessu Hopo",
+      title: "secretary",
+      type: "secretary",
+    },
     break: null,
   };
 };

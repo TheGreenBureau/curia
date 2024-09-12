@@ -76,7 +76,7 @@ export function Listing() {
     if (view === undefined) {
       setView("initial");
     }
-  });
+  }, []);
 
   if (listing.isSuccess && courts.isSuccess) {
     const court = courts.data.find((c) => c.id === listing.data.court);

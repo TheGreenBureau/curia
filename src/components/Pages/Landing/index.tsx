@@ -42,7 +42,10 @@ import {
 import { Heading } from "@/components/ui/headings";
 import { useStore } from "@/hooks/useStore";
 import { Label } from "@/components/ui/label";
-import { format } from "date-fns";
+import { format, isAfter, isBefore } from "date-fns";
+import { Row } from "@/components/ui/rowcol";
+import { ListingDateSelector } from "./ListingDateSelector";
+import { RowSelectionState } from "@tanstack/react-table";
 
 export function Landing() {
   const view = useStore((state) => state.welcomeView);
@@ -292,8 +295,11 @@ function LandingNew() {
 }
 
 function LandingOpen() {
-  const { columns, data, isSuccess, isError } = useOpenListingsData();
+  const { columns, data, listings, isSuccess, isError } = useOpenListingsData();
   const [alertOpen, setAlertOpen] = useState(false);
+  const [selections, setSelections] = useState<RowSelectionState>({});
+  const [dateSelection, setDateSelections] = useState<RowSelectionState>({});
+  const [selectionActive, setSelectionActive] = useState(false);
 
   const remove = useMutateDeleteListings();
   const add = useMutateImportListing();
@@ -380,6 +386,57 @@ function LandingOpen() {
             filter="global"
             getRowId={(row) => row.id}
             onRowsDeleted={remove.mutate}
+            selections={selections}
+            onSelectionsChanged={setSelections}
+            additionalFilters={[
+              <ListingDateSelector
+                selectionActive={selectionActive}
+                onClearSelection={() => {
+                  const dateKeys = Object.keys(dateSelection);
+                  const filteredKeys = Object.keys(selections).filter(
+                    (key) => !dateKeys.includes(key)
+                  );
+
+                  setSelections(
+                    filteredKeys.reduce((prev, next) => {
+                      return {
+                        ...prev,
+                        [next]: selections[next],
+                      };
+                    }, {})
+                  );
+
+                  setDateSelections({});
+                  setSelectionActive(false);
+                }}
+                onDateSelected={({ date, type }) => {
+                  let dateSelections: RowSelectionState = {};
+
+                  dateSelections = listings
+                    .filter((listing) => {
+                      return type === "before"
+                        ? isBefore(listing.date, date)
+                        : isAfter(listing.date, date);
+                    })
+                    .reduce((prev, next) => {
+                      return {
+                        ...prev,
+                        [next.id]: true,
+                      };
+                    }, dateSelections);
+
+                  if (Object.keys(dateSelections).length > 0) {
+                    setSelections({
+                      ...selections,
+                      ...dateSelections,
+                    });
+
+                    setDateSelections(dateSelections);
+                    setSelectionActive(true);
+                  }
+                }}
+              />,
+            ]}
           />
         </div>
         <Separator className="mb-6" />

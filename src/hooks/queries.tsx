@@ -16,10 +16,12 @@ export const useResolvedLanguage = () => {
 export const useCurrentListing = (
   placeholderData?:
     | "keepPrevious"
-    | PlaceholderDataFunction<Listing, Error, Listing, "currentListing"[]>
-) =>
-  useQuery({
-    queryKey: [QUERY_KEYS.currentListing],
+    | PlaceholderDataFunction<Listing, Error, Listing>
+) => {
+  const lang = useResolvedLanguage();
+
+  return useQuery({
+    queryKey: [QUERY_KEYS.currentListing, lang],
     queryFn: window.api.currentListing,
     placeholderData: !placeholderData
       ? undefined
@@ -27,6 +29,7 @@ export const useCurrentListing = (
       ? (previous) => previous
       : placeholderData,
   });
+};
 
 export const useDefaults = () =>
   useQuery({

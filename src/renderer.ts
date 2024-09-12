@@ -28,5 +28,6 @@
 
 import "./index.css";
 import "./app/globals.css";
+import "./app/fonts.css";
 
 import "./App";

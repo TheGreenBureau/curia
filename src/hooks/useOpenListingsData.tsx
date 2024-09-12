@@ -177,5 +177,5 @@ export const useOpenListingsData = () => {
       })
     : [];
 
-  return { columns, data, ...rest };
+  return { columns, data, listings, ...rest };
 };

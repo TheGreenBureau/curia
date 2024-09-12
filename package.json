@@ -1,6 +1,6 @@
 {
-  "name": "@purplebureau/curia",
-  "productName": "Curia",
+  "name": "curia",
+  "productName": "curia",
   "version": "1.0.0",
   "description": "Työpöytäsovellus juttuluetteloiden hallintaan",
   "main": ".vite/build/main.js",
@@ -50,6 +50,7 @@
     "@dnd-kit/modifiers": "^7.0.0",
     "@dnd-kit/sortable": "^8.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@fontsource/fira-sans": "^5.0.22",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.1",

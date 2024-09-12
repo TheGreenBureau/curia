@@ -1,6 +1,6 @@
 import type { Defaults } from "./defaults";
 import type { Court } from "@/types/data/court";
-import type { Listing } from "@/types/data/listing";
+import type { Listing, ListingDocumentProps } from "@/types/data/listing";
 import { Case, CaseType } from "@/types/data/case";
 import type { Option } from "@/types/data/options";
 import { SummonsQueryType } from "@/types/data/persons";

@@ -94,7 +94,7 @@
   "Seuraava": "Seuraava",
   "Tuntematon": "Tuntematon",
   "Juttuja ei voitu noutaa": "Juttuja ei voitu noutaa.",
-  "Suodata...": "Suodata...",
+  "Suodata juttulistoja": "Suodata juttulistoja",
   "Poista valitut": "Poista valitut",
   "Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?": "Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?",
   "Peruuta": "Peruuta",
@@ -160,5 +160,10 @@
   "SJÄ": "ÅK",
   "PDF": "PDF",
   "Tallenna PDF": "Tallenna PDF",
-  "Julkinen": "Julkinen"
+  "Julkinen": "Julkinen",
+  "Ennen": "Ennen",
+  "Jälkeen": "Jälkeen",
+  "Poista valinnat": "Poista valinnat",
+  "Kirjoita...": "Kirjoita...",
+  "Valitse päivämäärällä": "Valitse päivämäärällä"
 }

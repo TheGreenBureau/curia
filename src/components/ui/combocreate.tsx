@@ -46,6 +46,11 @@ export function ComboCreateCrime({
   const [query, setQuery] = useState("");
 
   const lang = useResolvedLanguage();
+
+  useEffect(() => {
+    setQuery("");
+  }, [lang]);
+
   const crimes = useQuery({
     queryKey: [QUERY_KEYS.crimes, lang, query],
     queryFn: async () => await window.api.crimesSearch({ lang, query }),
@@ -57,7 +62,9 @@ export function ComboCreateCrime({
       {...props}
       options={crimes.data ?? []}
       onQueryChange={setQuery}
-      triggerClassName="text-lg uppercase font-medium"
+      triggerClassName={cn(
+        props.value && props.value !== "" && "text-lg uppercase font-medium"
+      )}
       minQueryLength={3}
     />
   );
@@ -135,6 +142,31 @@ export function ComboCreate({
     return false;
   };
 
+  const filterAndSortOptions = () => {
+    const filtered = options.filter((option) =>
+      option.label.toLowerCase().includes(query.toLowerCase())
+    );
+    const sorted = filtered.sort((a, b) => {
+      const labelA = a.label.toLowerCase();
+      const labelB = b.label.toLowerCase();
+      const lowQuery = query.toLowerCase();
+
+      if (labelA.startsWith(lowQuery) && !labelB.startsWith(lowQuery)) {
+        return -1;
+      }
+
+      if (labelB.startsWith(lowQuery) && !labelA.startsWith(lowQuery)) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const filteredSortedOptions = filterAndSortOptions();
+
   return (
     <div className={cn("block", className)} ref={divRef}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -153,7 +185,10 @@ export function ComboCreate({
                   disabled={disabled}
                 >
                   <span
-                    className="max-w-full overflow-hidden text-ellipsis"
+                    className={cn(
+                      "max-w-full overflow-hidden text-ellipsis",
+                      value() === "" && "text-muted-foreground"
+                    )}
                     ref={spanRef}
                   >
                     {value() === "" ? placeholder() : value()}
@@ -173,14 +208,7 @@ export function ComboCreate({
           className="p-0"
           style={{ width: `${divRef.current?.offsetWidth ?? 500}px` }}
         >
-          <Command
-            filter={(value, search) => {
-              if (value.toLowerCase().includes(search.toLowerCase())) {
-                return 1;
-              }
-              return 0;
-            }}
-          >
+          <Command shouldFilter={false}>
             <CommandInput
               placeholder={placeholder()}
               value={query}
@@ -245,7 +273,7 @@ export function ComboCreate({
                         {query}
                       </CommandItem>
                     )}
-                  {options.map((option) => (
+                  {filteredSortedOptions.map((option) => (
                     <CommandItem
                       key={option.value}
                       value={option.label}

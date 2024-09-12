@@ -6,12 +6,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  ListingDocument,
-  ListingDocumentProps,
-} from "@/components/pdf/ListingDocument";
+import { ListingDocument } from "@/components/pdf/ListingDocument";
 import { useTranslation } from "react-i18next";
 import { PDFViewer } from "@react-pdf/renderer";
+import { ListingDocumentProps } from "@/types/data/listing";
 
 type DocumentDialogProps = ListingDocumentProps;
 

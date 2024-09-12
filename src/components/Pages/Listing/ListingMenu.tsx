@@ -5,22 +5,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Listing } from "@/types/data/listing";
+import { Listing, ListingDocumentProps } from "@/types/data/listing";
 import { Button } from "@/components/ui/button";
 import { isDateArraySortedByTime, sortDates } from "@/lib/utils";
 import { produce } from "immer";
 import { useMutateCurrentListing, useMutateOpenCSV } from "@/hooks/mutations";
 import { useTranslation } from "react-i18next";
 import { Clock, Text, Plus, Save } from "lucide-react";
-import {
-  ListingDocumentProps,
-  ListingDocument,
-} from "@/components/pdf/ListingDocument";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { ListingDocument } from "@/components/pdf/ListingDocument";
 import { Row } from "@/components/ui/rowcol";
 import { DocumentDialog } from "./DocumentDialog";
 import { format } from "date-fns";
 import { Office } from "@/types/data/court";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 type ListingMenuProps = ListingDocumentProps & {
   listing: Listing;
@@ -37,7 +34,7 @@ export function ListingMenu({
   const updateListing = useMutateCurrentListing();
   const openCSV = useMutateOpenCSV();
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const sortCasesByTime = () => {
     const sorted = produce(listing.cases, (draft) => {
@@ -62,7 +59,6 @@ export function ListingMenu({
   };
 
   const formatSaveName = () => {
-    console.log(Object.keys(rest.court.offices).length);
     return `${[
       format(rest.date, "yyyy-MM-dd"),
       rest.court.abbreviation,
