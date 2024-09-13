@@ -103,7 +103,12 @@ export function DataTable<TData, TValue>({
       <div className="flex flex-col items-start py-4 gap-2 w-full">
         {filter === "global" && (
           <Col className="w-full">
-            <Heading level="h4">{t("strings:Suodata juttulistoja")}</Heading>
+            <Heading
+              level="h4"
+              className={cn(globalFilter !== "" && "text-teal-500")}
+            >
+              {t("strings:Suodata juttulistoja")}
+            </Heading>
             <Input
               placeholder={t("strings:Kirjoita...")}
               value={globalFilter}

@@ -244,7 +244,7 @@ export function Combobox({
             <CommandInput
               placeholder={placeholderSearch ?? t("strings:Etsi...")}
             />
-            <CommandList className="scrollbar scrollbar-thumb-slate-500 scrollbar-w-2">
+            <CommandList className="scrollbar scrollbar-thumb-slate-500 scrollbar-w-2 max-h-48">
               <CommandEmpty>
                 {searchEmpty ?? t("strings:Ei tuloksia")}
               </CommandEmpty>

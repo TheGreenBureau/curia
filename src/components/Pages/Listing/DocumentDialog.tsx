@@ -26,10 +26,7 @@ export function DocumentDialog(props: DocumentDialogProps) {
           <DialogTitle>{t("strings:Esikatselu")}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-row justify-center h-[80vh]">
-          <PDFViewer
-            showToolbar={false}
-            className="w-[50rem] h-full rounded-lg"
-          >
+          <PDFViewer showToolbar={false} className="w-full h-full rounded-lg ">
             <ListingDocument {...props} />
           </PDFViewer>
         </div>

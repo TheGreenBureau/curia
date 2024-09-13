@@ -153,7 +153,7 @@ function LandingInitial() {
           }}
         >
           <FolderOpen className="mr-2 h-6 w-6" />
-          {t("strings:Avaa")}
+          {t("strings:Selaa")}
         </Button>
       </div>
       <Heading level="h4" className="text-center mt-12 font-semibold">
@@ -322,7 +322,7 @@ function LandingOpen() {
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>{t("strings:Virhe")}</AlertTitle>
         <AlertDescription>
-          {t("strings:Juttuja ei voitu noutaa")}
+          {t("strings:Juttuluetteloita ei voitu noutaa")}
         </AlertDescription>
       </Alert>
     );
@@ -376,7 +376,7 @@ function LandingOpen() {
         </AlertDialog>
         <p>
           {t(
-            "strings:Avaa aikaisempi, tallennettu juttuluettelo tai tuo luettelo tiedostosta."
+            "strings:Avaa tallennettu juttuluettelo, tuo luettelo tiedostosta tai poista tallennettuja luetteloita."
           )}
         </p>
         <div className="container mx-auto py-2">
@@ -390,6 +390,7 @@ function LandingOpen() {
             onSelectionsChanged={setSelections}
             additionalFilters={[
               <ListingDateSelector
+                key="listingDateSelector"
                 selectionActive={selectionActive}
                 onClearSelection={() => {
                   const dateKeys = Object.keys(dateSelection);

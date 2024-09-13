@@ -46,15 +46,15 @@ export function ListingDateSelector({
 
   return (
     <Col className="w-full">
-      <Heading level="h4">{t("strings:Valitse päivämäärällä")}</Heading>
+      <Heading level="h4" className={cn(selectionActive && "text-teal-500")}>
+        {t("strings:Valitse päivämäärällä")}
+      </Heading>
       <Row className="items-center gap-4 w-full">
         <Select
           value={type}
           onValueChange={(value) => setType(value as "before" | "after")}
         >
-          <SelectTrigger
-            className={cn(selectionActive && "border-teal-500", className)}
-          >
+          <SelectTrigger className={cn("max-w-52", className)}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

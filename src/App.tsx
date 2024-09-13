@@ -31,7 +31,7 @@ function Pages() {
   const current = useCurrentListing();
 
   return (
-    <div className="overflow-hidden relative">
+    <div className="overflow-x-hidden relative scrollbar scrollbar-thumb-slate-500 scrollbar-w-2">
       {!current.data ? <Landing /> : <Listing />}
       <div className={cn("absolute right-8 top-4 flex align-middle gap-2")}>
         <Settings />
