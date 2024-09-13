@@ -1,9 +1,8 @@
 import type { Defaults } from "./defaults";
 import type { Court } from "@/types/data/court";
-import type { Listing, ListingDocumentProps } from "@/types/data/listing";
-import { Case, CaseType } from "@/types/data/case";
+import type { Listing } from "@/types/data/listing";
+import { CaseType } from "@/types/data/case";
 import type { Option } from "@/types/data/options";
-import { SummonsQueryType } from "@/types/data/persons";
 
 export interface ConfigResult {
   listingsLocation: string;
@@ -77,5 +76,7 @@ export type ListingsAPI = {
   court: ActionWithArg<Court | null, { courtId: string; lang: string }>;
   openCSV: ActionWithArg<{ errors?: string[] }, { type: CaseType }>;
 };
+
+// All the available API calls from window
 
 export type ApplicationAPI = ConfigAPI & ListingsAPI;
