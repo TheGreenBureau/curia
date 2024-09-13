@@ -34,30 +34,44 @@ import {
 
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "./input";
+import { Col, Row } from "./rowcol";
+import { Label } from "./label";
+import { Heading } from "./headings";
+import { Separator } from "./separator";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filter?: "global";
+  additionalFilters?: ReactNode[];
   getRowId: (row: TData) => string;
   onRowsDeleted?: (rowIds: string[]) => void;
+  selections?: RowSelectionState;
+  onSelectionsChanged?: (selections: RowSelectionState) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   filter,
+  additionalFilters,
   getRowId,
   onRowsDeleted,
+  selections,
+  onSelectionsChanged,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [rowSelectionInternal, setRowSelectionInternal] =
+    useState<RowSelectionState>({});
+
+  const rowSelection = selections ?? rowSelectionInternal;
+  const setRowSelection = onSelectionsChanged ?? setRowSelectionInternal;
 
   const table = useReactTable({
     data,
@@ -86,18 +100,30 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4 justify-between">
+      <div className="flex flex-col items-start py-4 gap-2 w-full">
         {filter === "global" && (
-          <Input
-            placeholder={t("strings:Suodata...")}
-            value={globalFilter}
-            onChange={(event) => {
-              table.setGlobalFilter(event.target.value);
-            }}
-            className="max-w-sm"
-          />
+          <Col className="w-full">
+            <Heading
+              level="h4"
+              className={cn(globalFilter !== "" && "text-teal-500")}
+            >
+              {t("strings:Suodata juttulistoja")}
+            </Heading>
+            <Input
+              placeholder={t("strings:Kirjoita...")}
+              value={globalFilter}
+              onChange={(event) => {
+                table.setGlobalFilter(event.target.value);
+              }}
+              className="w-full"
+            />
+          </Col>
         )}
+        {additionalFilters && additionalFilters.map((filter) => filter)}
       </div>
+      <Heading level="h3" className="mb-4">
+        {t("strings:Juttuluettelot")}
+      </Heading>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

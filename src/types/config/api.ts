@@ -1,9 +1,8 @@
 import type { Defaults } from "./defaults";
 import type { Court } from "@/types/data/court";
 import type { Listing } from "@/types/data/listing";
-import { Case, CaseType } from "@/types/data/case";
+import { CaseType } from "@/types/data/case";
 import type { Option } from "@/types/data/options";
-import { SummonsQueryType } from "@/types/data/persons";
 
 export interface ConfigResult {
   listingsLocation: string;
@@ -46,8 +45,13 @@ export type ConfigAPI = {
       offices: Option[];
       departments: Option[];
       rooms: Option[];
+      currentCourt: Court | null;
     },
-    { courtId: string | undefined | null; lang: string }
+    {
+      courtId: string | undefined | null;
+      officeId: string | undefined | null;
+      lang: string;
+    }
   >;
   courts: ActionWithArg<Court[], { lang: string }>;
   crimes: ActionWithArg<Option[], { lang: string }>;
@@ -72,5 +76,7 @@ export type ListingsAPI = {
   court: ActionWithArg<Court | null, { courtId: string; lang: string }>;
   openCSV: ActionWithArg<{ errors?: string[] }, { type: CaseType }>;
 };
+
+// All the available API calls from window
 
 export type ApplicationAPI = ConfigAPI & ListingsAPI;

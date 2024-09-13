@@ -35,17 +35,22 @@ export const selectFile = async (type: "jtl" | "csv") => {
   }
 };
 
-export const selectSaveLocation = async (filename?: string) => {
+export const selectSaveLocation = async (
+  filename?: string,
+  filetype?: { name: string; extensions: string[] }
+) => {
   const { filePath } = await dialog.showSaveDialog(
     BrowserWindow.getFocusedWindow() || undefined,
     {
       title: t("strings:Valitse vietävän tiedoston sijainti ja nimi"),
       defaultPath: filename,
       filters: [
-        {
-          name: t("strings:Juttuluettelo"),
-          extensions: ["jtl"],
-        },
+        filetype
+          ? filetype
+          : {
+              name: t("strings:Juttuluettelo"),
+              extensions: ["jtl"],
+            },
       ],
       properties: ["showOverwriteConfirmation"],
     }

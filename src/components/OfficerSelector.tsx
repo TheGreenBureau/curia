@@ -115,7 +115,9 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
         <div className="grid gap-4 w-full">
           <div className="grid grid-cols-4 items-center gap-4">
             <Heading level="h5" className="col-start-2 col-span-3">
-              {t("strings:Pöytäkirjanpitäjä")}
+              {t("strings:Pöytäkirjanpitäjä", "Pöytäkirjanpitäjä", {
+                count: 1,
+              })}
             </Heading>
             <Label htmlFor="secretary-name" className="text-right">
               {t("strings:Nimi")}

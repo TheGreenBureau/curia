@@ -2,5 +2,58 @@
   "workbench.editor.customLabels.patterns": {
     "src/components/**/index.tsx": "${dirname}.${extname}"
   },
-  "workbench.editor.customLabels.enabled": true
+  "workbench.editor.customLabels.enabled": true,
+  "json.schemas": [
+    {
+      "fileMatch": ["**/courts.json"],
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "patternProperties": {
+          "^.*$": {
+            "type": "object",
+            "required": ["name", "abbreviation", "departments", "offices"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "abbreviation": {
+                "type": "string"
+              },
+              "departments": {
+                "type": "object",
+                "patternProperties": {
+                  "^.*$": {
+                    "type": "string"
+                  }
+                }
+              },
+              "offices": {
+                "type": "object",
+                "patternProperties": {
+                  "^.*$": {
+                    "type": "object",
+                    "required": ["name", "rooms"],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "rooms": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^.*$": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

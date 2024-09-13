@@ -1,4 +1,4 @@
-import { Listing } from "@/types/data/listing";
+import { Listing, ListingDocumentProps } from "@/types/data/listing";
 import writeFileAtomic from "write-file-atomic";
 import { jsonTypeParse } from "@/lib/utils";
 import { LISTINGS_EXT, RECENT } from "./paths";
@@ -10,13 +10,11 @@ import { attachHandles } from "./ipc";
 import { ListingsAPI } from "@/types/config/api";
 import { getCourt } from "@/lib/staticData/courts";
 import { getConfig } from "./configHandles";
-import { parse } from "csv-parse/sync";
-import { Case, CaseCSV, CaseType, isCaseCSV } from "@/types/data/case";
-import { v4 as uuidv4 } from "uuid";
-import { Defaults } from "@/types/config/defaults";
-import { Civilian, CivilianType, Officer } from "@/types/data/persons";
 import { produce } from "immer";
 import { parseCSV } from "../csv";
+import { format } from "date-fns";
+import { ListingDocument } from "@/components/pdf/ListingDocument";
+import { renderToFile } from "@react-pdf/renderer";
 
 let currentListing: Listing | null = null;
 

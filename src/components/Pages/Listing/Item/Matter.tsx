@@ -47,7 +47,6 @@ export function Matter({
             <ShieldOff
               className="h-4 w-4 cursor-pointer hover:opacity-80"
               onClick={() => {
-                console.log("Clicked");
                 saveCase({
                   ...currentCase,
                   confidential: true,

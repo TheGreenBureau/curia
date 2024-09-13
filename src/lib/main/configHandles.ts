@@ -7,7 +7,9 @@ import { selectDirectory } from "@/lib/main/files";
 import { ConfigAPI, ConfigResult } from "@/types/config/api";
 import {
   getCourt,
-  getCourtDetails,
+  getCourtDepartments,
+  getCourtOffices,
+  getOfficeRooms,
   getCourts,
   getCourtsFull,
 } from "@/lib/staticData/courts";
@@ -21,6 +23,7 @@ import { attachHandles } from "./ipc";
 import { Defaults } from "@/types/config/defaults";
 import { produce } from "immer";
 import { getCrimesAsOptions } from "../staticData/crimes";
+import { v4 as uuidv4 } from "uuid";
 
 let cachedConfig: AppConfig;
 
@@ -30,8 +33,18 @@ const createEmptyDefaults = (): Defaults => {
     office: "",
     department: "",
     room: "",
-    presiding: null,
-    secretary: null,
+    presiding: {
+      id: uuidv4(),
+      name: "Mikki Hiiri",
+      title: "judge",
+      type: "presiding",
+    },
+    secretary: {
+      id: uuidv4(),
+      name: "Hessu Hopo",
+      title: "secretary",
+      type: "secretary",
+    },
     break: null,
   };
 };
@@ -193,7 +206,7 @@ const configHandles: ConfigAPI = {
     return getSummonsStatuses(lang);
   },
 
-  courtSelections: async ({ courtId, lang }) => {
+  courtSelections: async ({ courtId, officeId, lang }) => {
     const courts = getCourts(lang);
 
     const currentCourt = getCourt(courtId, lang);
@@ -204,18 +217,33 @@ const configHandles: ConfigAPI = {
         offices: [],
         departments: [],
         rooms: [],
+        currentCourt: null,
       };
     }
 
-    const offices = getCourtDetails("offices", currentCourt);
-    const departments = getCourtDetails("departments", currentCourt);
-    const rooms = getCourtDetails("rooms", currentCourt);
+    const offices = getCourtOffices(currentCourt);
+    const departments = getCourtDepartments(currentCourt);
+
+    const currentOffice = currentCourt.offices[officeId];
+
+    if (!currentOffice) {
+      return {
+        courts,
+        offices,
+        departments,
+        rooms: [],
+        currentCourt,
+      };
+    }
+
+    const rooms = getOfficeRooms(currentOffice);
 
     return {
       courts,
       offices,
       departments,
       rooms,
+      currentCourt,
     };
   },
 

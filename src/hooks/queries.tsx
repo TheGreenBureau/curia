@@ -16,10 +16,12 @@ export const useResolvedLanguage = () => {
 export const useCurrentListing = (
   placeholderData?:
     | "keepPrevious"
-    | PlaceholderDataFunction<Listing, Error, Listing, "currentListing"[]>
-) =>
-  useQuery({
-    queryKey: [QUERY_KEYS.currentListing],
+    | PlaceholderDataFunction<Listing, Error, Listing>
+) => {
+  const lang = useResolvedLanguage();
+
+  return useQuery({
+    queryKey: [QUERY_KEYS.currentListing, lang],
     queryFn: window.api.currentListing,
     placeholderData: !placeholderData
       ? undefined
@@ -27,6 +29,7 @@ export const useCurrentListing = (
       ? (previous) => previous
       : placeholderData,
   });
+};
 
 export const useDefaults = () =>
   useQuery({
@@ -55,12 +58,16 @@ export const useListings = () =>
     queryFn: window.api.listings,
   });
 
-export const useCourtSelections = (courtId: string | null | undefined) => {
+export const useCourtSelections = (
+  courtId: string | null | undefined,
+  officeId: string | undefined | null
+) => {
   const lang = useResolvedLanguage();
 
   return useQuery({
-    queryKey: [QUERY_KEYS.courtOptions, lang, courtId],
-    queryFn: async () => await window.api.courtSelections({ courtId, lang }),
+    queryKey: [QUERY_KEYS.courtOptions, lang, courtId, officeId],
+    queryFn: async () =>
+      await window.api.courtSelections({ courtId, officeId, lang }),
     placeholderData: keepPreviousData,
   });
 };

@@ -32,15 +32,24 @@ export const useOpenListingsData = () => {
     return courts.find((c) => c.id === courtId);
   };
 
-  const getOptionValue = (
-    courtId: string,
-    prop: "departments" | "offices" | "rooms",
-    optionId: string
-  ) => {
+  const getDepartment = (courtId: string, departmentId: string) => {
     const court = getCourt(courtId);
 
-    if (court && isKey(court[prop], optionId)) {
-      return court[prop][optionId];
+    if (court && isKey(court.departments, departmentId)) {
+      return court.departments[departmentId];
+    }
+
+    return "-";
+  };
+
+  const getRoom = (courtId: string, officeId: string, roomId: string) => {
+    const court = getCourt(courtId);
+
+    const office =
+      court && isKey(court.offices, officeId) ? court.offices[officeId] : null;
+
+    if (office && isKey(office.rooms, roomId)) {
+      return office.rooms[roomId];
     }
 
     return "-";
@@ -158,12 +167,8 @@ export const useOpenListingsData = () => {
         const listingData: ListingData = {
           id: listing.id,
           court: court ? court.abbreviation : t("strings:Tuntematon"),
-          department: getOptionValue(
-            listing.court,
-            "departments",
-            listing.department
-          ),
-          room: getOptionValue(listing.court, "rooms", listing.room),
+          department: getDepartment(listing.court, listing.department),
+          room: getRoom(listing.court, listing.office, listing.room),
           date: format(listing.date, "dd.MM.yyyy"),
           creation: format(listing.creationDate, "dd.MM.yyyy"),
         };
@@ -172,5 +177,5 @@ export const useOpenListingsData = () => {
       })
     : [];
 
-  return { columns, data, ...rest };
+  return { columns, data, listings, ...rest };
 };

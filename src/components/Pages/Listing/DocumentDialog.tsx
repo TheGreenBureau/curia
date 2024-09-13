@@ -6,12 +6,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  ListingDocument,
-  ListingDocumentProps,
-} from "@/components/pdf/ListingDocument";
+import { ListingDocument } from "@/components/pdf/ListingDocument";
 import { useTranslation } from "react-i18next";
 import { PDFViewer } from "@react-pdf/renderer";
+import { ListingDocumentProps } from "@/types/data/listing";
 
 type DocumentDialogProps = ListingDocumentProps;
 
@@ -28,10 +26,7 @@ export function DocumentDialog(props: DocumentDialogProps) {
           <DialogTitle>{t("strings:Esikatselu")}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-row justify-center h-[80vh]">
-          <PDFViewer
-            showToolbar={false}
-            className="w-[50rem] h-full rounded-lg"
-          >
+          <PDFViewer showToolbar={false} className="w-full h-full rounded-lg ">
             <ListingDocument {...props} />
           </PDFViewer>
         </div>

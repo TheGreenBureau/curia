@@ -1,6 +1,6 @@
 import fiCourts from "@/locales/fi/courts.json";
 import svCourts from "@/locales/sv/courts.json";
-import { Court, CourtDetailType } from "@/types/data/court";
+import { Court, CourtDetailType, Office } from "@/types/data/court";
 import { Option } from "@/types/data/options";
 import { getLocalizedData, isKey, keys, optionsFromObject } from "@/lib/utils";
 
@@ -25,46 +25,42 @@ export const getCourt = (
   return null;
 };
 
-export const getCourtDetail = (
+export const getCourtDepartment = (
   courtId: string | undefined,
-  detailId: string | undefined,
-  type: CourtDetailType,
+  departmentId: string | undefined,
   lang: string
 ): string => {
-  if (!courtId || !detailId) {
+  if (!courtId || !departmentId) {
     return "";
   }
 
   const court = getCourt(courtId, lang);
   if (!court) return "";
 
-  const detail = court[type];
-
-  if (isKey(detail, detailId)) {
-    return detail[detailId];
+  if (isKey(court.departments, departmentId)) {
+    return court.departments[departmentId];
   }
 
   return "";
 };
 
-export const getCourtFirstDetail = (
-  courtId: string,
-  type: CourtDetailType,
+export const getCourtOffice = (
+  courtId: string | undefined,
+  officeId: string | undefined,
   lang: string
-): Option | null => {
+): string => {
+  if (!courtId || !officeId) {
+    return "";
+  }
+
   const court = getCourt(courtId, lang);
+  if (!court) return "";
 
-  if (!court) return null;
+  if (isKey(court.offices, officeId)) {
+    return court.offices[officeId].name;
+  }
 
-  const detail = court[type];
-  const keys = Object.keys(detail);
-
-  if (keys.length === 0) return null;
-
-  return {
-    value: keys[0],
-    label: detail[keys[0]],
-  };
+  return "";
 };
 
 export const getCourts = (lang: string): Option[] => {
@@ -79,11 +75,21 @@ export const getCourts = (lang: string): Option[] => {
   });
 };
 
-export const getCourtDetails = (
-  type: CourtDetailType,
-  court: Court
-): Option[] => {
-  return optionsFromObject(court[type]);
+export const getCourtDepartments = (court: Court): Option[] => {
+  return optionsFromObject(court.departments);
+};
+
+export const getCourtOffices = (court: Court): Option[] => {
+  return Object.keys(court.offices).map((k) => {
+    return {
+      value: k,
+      label: court.offices[k].name,
+    };
+  });
+};
+
+export const getOfficeRooms = (office: Office): Option[] => {
+  return optionsFromObject(office.rooms);
 };
 
 export const getCourtsFull = (lang: string) => {

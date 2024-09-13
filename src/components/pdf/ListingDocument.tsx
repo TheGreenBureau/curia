@@ -7,40 +7,30 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
-import { Court } from "@/types/data/court";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { Case } from "@/types/data/case";
 import { Officer, OfficerType } from "@/types/data/persons";
 import { Option } from "@/types/data/options";
-
-export type ListingDocumentProps = {
-  court: Court;
-  department: string;
-  room: string;
-  date: Date;
-  sessionBrake?: Date;
-  cases: Case[];
-  courtTitles: Option[];
-  prosecutorTitles: Option[];
-  laymanTitles: Option[];
-  crimes: Option[];
-};
+import { ListingDocumentProps } from "@/types/data/listing";
+import FiraSansRegular from "@/fonts/Fira_Sans/FiraSans-Regular.ttf";
+import FiraSansBold from "@/fonts/Fira_Sans/FiraSans-Bold.ttf";
+import FiraSansItalic from "@/fonts/Fira_Sans/FiraSans-Italic.ttf";
 
 Font.register({
   family: "Fira Sans",
   fonts: [
-    { src: "src/fonts/Fira_Sans/FiraSans-Regular.ttf" },
-    { src: "src/fonts/Fira_Sans/FiraSans-Bold.ttf", fontWeight: "bold" },
+    { src: FiraSansRegular },
+    { src: FiraSansBold, fontWeight: "bold" },
     {
-      src: "src/fonts/Fira_Sans/FiraSans-Italic.ttf",
+      src: FiraSansItalic,
       fontStyle: "italic",
       fontWeight: "normal",
     },
   ],
 });
 
-Font.register({
+/*Font.register({
   family: "Open Sans",
   fonts: [
     { src: "src/fonts/Open_Sans/static/OpenSans-Regular.ttf" },
@@ -51,7 +41,7 @@ Font.register({
       fontWeight: "normal",
     },
   ],
-});
+});*/
 
 Font.registerHyphenationCallback((word) => [word]);
 
@@ -61,10 +51,10 @@ const styles = StyleSheet.create({
     gap: 2,
     fontFamily: "Fira Sans",
     fontSize: 14,
-    paddingBottom: 30,
+    paddingBottom: 40,
     paddingTop: 40,
-    paddingLeft: 30,
-    paddingRight: 30,
+    paddingLeft: 40,
+    paddingRight: 40,
   },
   section: {
     marginTop: 20,
@@ -142,9 +132,10 @@ export const ListingDocument = ({
             style={{ flexDirection: "column", width: "50%", marginRight: 20 }}
           >
             <Text style={styles.topTextUpper}>{court.name}</Text>
-            {department.toLowerCase() !== "ei osastoja" && (
-              <Text>{department}</Text>
-            )}
+            {department.toLowerCase() !== "ei osastoja" &&
+              department.toLowerCase() !== "inga avdelningar" && (
+                <Text>{department}</Text>
+              )}
             <Text>{room}</Text>
           </View>
           <View style={{ flexDirection: "column" }}>
@@ -299,6 +290,7 @@ function CaseView({ currentCase, index, crimes }: CaseViewProps) {
               .filter((c) => c.type === "defendant")
               .map((defendant) => (
                 <View
+                  key={defendant.id}
                   style={{
                     flexDirection: "row",
                     maxWidth: "100%",

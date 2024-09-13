@@ -1,5 +1,5 @@
 import { useMutateDefaults } from "@/hooks/mutations";
-import { useCurrentListing, useDefaults } from "@/hooks/queries";
+import { useDefaults } from "@/hooks/queries";
 import { useTranslation } from "react-i18next";
 import {
   Dialog,

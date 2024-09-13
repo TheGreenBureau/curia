@@ -1,18 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/headings";
 import { Separator } from "@/components/ui/separator";
-import {
-  useMutateCurrentListing,
-  useMutateDeselectListing,
-  useMutateOpenCSV,
-} from "@/hooks/mutations";
+import { useMutateDeselectListing, useMutateOpenCSV } from "@/hooks/mutations";
 import {
   useCourts,
   useCrimes,
   useCurrentListing,
   useTitles,
 } from "@/hooks/queries";
-import { cn, isDateArraySortedByTime, isKey, sortDates } from "@/lib/utils";
+import { cn, isKey } from "@/lib/utils";
 import { format } from "date-fns";
 import { ChevronLeft, CircleSlash2 } from "lucide-react";
 import { SessionEditSheet } from "./SessionEditSheet";
@@ -26,7 +22,6 @@ import { CaseSheet } from "./CaseSheet";
 import { Case } from "@/types/data/case";
 import { Defaults } from "@/types/config/defaults";
 import { Officer } from "@/types/data/persons";
-import { produce } from "immer";
 import { CaseList } from "./CaseList";
 import { Row } from "@/components/ui/rowcol";
 import { DocumentDialog } from "./DocumentDialog";
@@ -81,10 +76,15 @@ export function Listing() {
     if (view === undefined) {
       setView("initial");
     }
-  });
+  }, []);
 
   if (listing.isSuccess && courts.isSuccess) {
     const court = courts.data.find((c) => c.id === listing.data.court);
+
+    const office =
+      court && isKey(court.offices, listing.data.office)
+        ? court.offices[listing.data.office]
+        : null;
 
     const department =
       court && isKey(court.departments, listing.data.department)
@@ -92,8 +92,8 @@ export function Listing() {
         : "";
 
     const room =
-      court && isKey(court.rooms, listing.data.room)
-        ? court.rooms[listing.data.room]
+      court && office && isKey(office.rooms, listing.data.room)
+        ? office.rooms[listing.data.room]
         : "";
 
     return (
@@ -145,28 +145,25 @@ export function Listing() {
                   </Heading>
                 </>
               )}
-              {listing.data.cases.length > 0 && (
-                <Row className="justify-end flex-1 items-center">
+              {listing.data.cases.length > 0 &&
+                titles.isSuccess &&
+                crimes.isSuccess && (
                   <ListingMenu
                     listing={listing.data}
                     onOpenCaseSheet={() => setCaseSheetOpen(true)}
+                    court={court}
+                    office={office}
+                    department={department}
+                    room={room}
+                    date={listing.data.date}
+                    cases={listing.data.cases}
+                    courtTitles={titles.data.court}
+                    prosecutorTitles={titles.data.prosecutor}
+                    laymanTitles={titles.data.layman}
+                    sessionBrake={listing?.data?.break}
+                    crimes={crimes.data}
                   />
-                  {titles.isSuccess && crimes.isSuccess && (
-                    <DocumentDialog
-                      court={court}
-                      department={department}
-                      room={room}
-                      date={listing.data.date}
-                      cases={listing.data.cases}
-                      courtTitles={titles.data.court}
-                      prosecutorTitles={titles.data.prosecutor}
-                      laymanTitles={titles.data.layman}
-                      sessionBrake={listing?.data?.break}
-                      crimes={crimes.data}
-                    />
-                  )}
-                </Row>
-              )}
+                )}
             </div>
           </div>
         </div>
@@ -179,16 +176,14 @@ export function Listing() {
               {t("strings:Juttuluettelo on toistaiseksi tyhjä.")}
             </AlertDescription>
             <div className="flex flex-row gap-4 mt-2">
-              <CaseSheet
-                getCase={() => createNewCase()}
-                open={caseSheetOpen}
-                onOpenChange={(open) => setCaseSheetOpen(open)}
-              />
+              <Button variant="outline" onClick={() => setCaseSheetOpen(true)}>
+                {t("strings:Uusi juttu")}
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => openCSV.mutate({ type: "criminal" })}
               >
-                Tuo CSV
+                {t("strings:Tuo CSV")}
               </Button>
             </div>
           </Alert>
