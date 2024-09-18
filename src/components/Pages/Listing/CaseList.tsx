@@ -47,7 +47,7 @@ export function CaseList() {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
+    if (over && active.id !== over.id) {
       const oldIndex = cases.findIndex((c) => c.id === active.id);
       const newIndex = cases.findIndex((c) => c.id === over.id);
 
@@ -61,7 +61,9 @@ export function CaseList() {
   function handleDragOver(event: DragOverEvent) {
     const { over } = event;
 
-    setOverId(over.id);
+    if (over) {
+      setOverId(over.id);
+    }
   }
 
   const getDestinationIndex = () => {
@@ -71,11 +73,15 @@ export function CaseList() {
   const getOverlayCase = () => {
     const active = cases.find((c) => c.id === activeId);
 
+    if (!active) return null;
+
     return {
       ...active,
       time: new Date(active.time),
     };
   };
+
+  const overlayCase = getOverlayCase();
 
   const dragIndex = (original: number) => {
     if (!activeId || !overId || activeId === overId) {
@@ -108,6 +114,8 @@ export function CaseList() {
     return original;
   };
 
+  const rootElement = document.getElementById("app");
+
   return (
     <div className="flex flex-col gap-4">
       <DndContext
@@ -130,18 +138,19 @@ export function CaseList() {
             />
           ))}
         </SortableContext>
-        {createPortal(
-          <DragOverlay>
-            {activeId ? (
-              <Item
-                item={getOverlayCase()}
-                index={getDestinationIndex()}
-                className="dark:border-sy-06"
-              />
-            ) : null}
-          </DragOverlay>,
-          document.getElementById("app")
-        )}
+        {rootElement &&
+          createPortal(
+            <DragOverlay>
+              {overlayCase ? (
+                <Item
+                  item={overlayCase}
+                  index={getDestinationIndex()}
+                  className="dark:border-sy-06"
+                />
+              ) : null}
+            </DragOverlay>,
+            rootElement
+          )}
       </DndContext>
     </div>
   );

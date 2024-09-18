@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Case } from "@/types/data/case";
 import { OfficerSheet } from "./OfficerSheet";
+import { useResources } from "@/hooks/useResources";
 
 type OfficerListProps = {
   currentCase: Case;
@@ -66,14 +67,16 @@ type OfficerItemProps = {
 };
 
 export function OfficerItem({ officer, currentCase }: OfficerItemProps) {
-  const { t } = useTranslation();
+  const { positionAbbreviations } = useResources();
 
   return (
     <Row className="gap-3">
       <Col className="w-12 items-end">
-        <Badge variant={officer.type} className="m-0 w-12 justify-center">
-          {t(`positionAbbreviations:${officer.type}_abr`)}
-        </Badge>
+        {positionAbbreviations.isSuccess && (
+          <Badge variant={officer.type} className="m-0 w-12 justify-center">
+            {positionAbbreviations.data[`${officer.type}_abr`] ?? "???"}
+          </Badge>
+        )}
       </Col>
       <Col>
         <OfficerSheet getOfficer={() => officer} currentCase={currentCase}>

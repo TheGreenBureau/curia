@@ -1,32 +1,30 @@
-import { useCurrentListing } from "@/hooks/queries";
 import { useMutateCurrentListing } from "@/hooks/mutations";
 import { useEffect, useState } from "react";
 import { Case } from "@/types/data/case";
 import { produce } from "immer";
 import { Listing } from "@/types/data/listing";
 import { UseQueryResult } from "@tanstack/react-query";
+import { useStore } from "@/hooks/useStore";
 
 export const useCases = () => {
   const [cases, setCases] = useState<Case[]>([]);
 
-  const listing = useCurrentListing((previous) =>
-    produce(previous, (draft) => {
-      draft.cases = cases;
-    })
-  );
+  const listing = useStore((state) => state.currentListing);
 
   useEffect(() => {
-    if (listing.isSuccess) {
-      setCases(listing.data.cases);
-    }
-  }, [listing.data]);
+    setCases(listing ? listing.cases : []);
+  }, [listing]);
 
   const updateListing = useMutateCurrentListing();
 
   const updateCases = (cases: Case[]) => {
+    if (!listing) {
+      return;
+    }
+
     setCases(cases);
     updateListing.mutate(
-      produce(listing.data, (draft) => {
+      produce(listing, (draft) => {
         draft.cases = cases;
       })
     );
@@ -39,21 +37,21 @@ export type UseCaseValues = {
   currentCase: Case;
   updateCase: (updated: Case) => void;
   saveCase: (updated?: Case) => void;
-  listingQuery: UseQueryResult<Listing, Error>;
+  currentListing: Listing | null;
 };
 
 export const useCase = (item: Case): UseCaseValues => {
-  const [currentCase, setCurrentCase] = useState<Case | null>({
+  const [currentCase, setCurrentCase] = useState<Case>({
     ...item,
     time: new Date(item.time),
   });
 
-  const listingQuery = useCurrentListing();
+  const currentListing = useStore((state) => state.currentListing);
   const updateListing = useMutateCurrentListing();
 
   useEffect(() => {
-    if (listingQuery.isSuccess) {
-      const foundCase = listingQuery.data.cases.find(
+    if (currentListing) {
+      const foundCase = currentListing.cases.find(
         (c) => c.id === currentCase.id
       );
 
@@ -64,7 +62,7 @@ export const useCase = (item: Case): UseCaseValues => {
         });
       }
     }
-  }, [listingQuery.data]);
+  }, [currentListing]);
 
   const updateCase = (updated: Case) => {
     setCurrentCase(updated);
@@ -75,8 +73,12 @@ export const useCase = (item: Case): UseCaseValues => {
       setCurrentCase(updated);
     }
 
+    if (!currentListing) {
+      return;
+    }
+
     updateListing.mutate(
-      produce(listingQuery.data, (draft) => {
+      produce(currentListing, (draft) => {
         const currentCaseIndex = draft.cases.findIndex((c) => c.id === item.id);
 
         if (currentCaseIndex === -1) {
@@ -92,6 +94,6 @@ export const useCase = (item: Case): UseCaseValues => {
     currentCase,
     updateCase,
     saveCase,
-    listingQuery,
+    currentListing,
   };
 };

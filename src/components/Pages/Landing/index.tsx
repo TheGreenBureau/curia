@@ -10,7 +10,8 @@ import {
   Download,
 } from "lucide-react";
 import clsx from "clsx";
-import { useCourts, useDefaults, useRecents } from "@/hooks/queries";
+import { useDefaults, useRecents } from "@/hooks/queries";
+import { useResources } from "@/hooks/useResources";
 import {
   useMutateCreateListing,
   useMutateDeleteListings,
@@ -18,7 +19,7 @@ import {
   useMutateOpenListing,
 } from "@/hooks/mutations";
 import styles from "./landing.module.css";
-import { cn, formatListingName, isKey } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { badgeVariants } from "@/components/ui/badge";
 import { Defaults } from "@/types/config/defaults";
 import { v4 as uuidv4 } from "uuid";
@@ -43,7 +44,6 @@ import { Heading } from "@/components/ui/headings";
 import { useStore } from "@/hooks/useStore";
 import { Label } from "@/components/ui/label";
 import { format, isAfter, isBefore } from "date-fns";
-import { Row } from "@/components/ui/rowcol";
 import { ListingDateSelector } from "./ListingDateSelector";
 import { RowSelectionState } from "@tanstack/react-table";
 
@@ -82,7 +82,7 @@ export function Landing() {
     <div className="ml-auto mr-auto mt-20 w-fit max-w-[80%] flex flex-col justify-center gap-2">
       <CuriaLogo className="w-36 ml-auto mr-auto" />
       <Heading level="h2" className="text-center mt-6">
-        {t("strings:Tervetuloa Curiaan!")}
+        {t("Tervetuloa Curiaan!")}
       </Heading>
       {content()}
     </div>
@@ -91,7 +91,7 @@ export function Landing() {
 
 function LandingInitial() {
   const recents = useRecents();
-  const courts = useCourts();
+  const { courts } = useResources();
   const view = useStore((state) => state.welcomeView);
   const setView = useStore((state) => state.setWelcomeView);
   const mountDirection = useStore((state) => state.mountDirection);
@@ -109,29 +109,24 @@ function LandingInitial() {
     const court = courts.data.find((c) => c.id === recent.court);
 
     if (!court) {
-      return `${t("strings:Tuntematon")} | ${format(
-        recent.date,
-        "dd.MM.yyyy"
-      )}`;
+      return `${t("Tuntematon")} | ${format(recent.date, "dd.MM.yyyy")}`;
     }
 
-    const office = court.offices[recent.office];
+    const office = court.offices.find((o) => o.id === recent.office);
 
-    const room =
-      office && isKey(office.rooms, recent.room)
-        ? office.rooms[recent.room]
-        : "";
+    const room = office ? office.rooms.find((r) => r.id === recent.room) : null;
 
-    return `${court.name} | ${
-      room !== "" ? room : t("strings:Ei salia")
-    } | ${format(recent.date, "dd.MM.yyyy")}`;
+    return `${court.name} | ${room ? room.name : t("Ei salia")} | ${format(
+      recent.date,
+      "dd.MM.yyyy"
+    )}`;
   };
 
   return (
     <div className={cn(view !== undefined && styles[mountDirection])}>
       <p className="text-center">
         {t(
-          "strings:Aloita luomalla uusi tai valitsemalla aiemmin luotu juttuluettelo."
+          "Aloita luomalla uusi tai valitsemalla aiemmin luotu juttuluettelo."
         )}
       </p>
       <div className="flex flex-row ml-auto mr-auto justify-center w-full gap-4">
@@ -143,7 +138,7 @@ function LandingInitial() {
           }}
         >
           <SquarePlus className="mr-2 h-6 w-6" />
-          {t("strings:Luo uusi")}
+          {t("Luo uusi")}
         </Button>
         <Button
           className="h-14 mt-4"
@@ -153,18 +148,16 @@ function LandingInitial() {
           }}
         >
           <FolderOpen className="mr-2 h-6 w-6" />
-          {t("strings:Selaa")}
+          {t("Selaa")}
         </Button>
       </div>
       <Heading level="h4" className="text-center mt-12 font-semibold">
-        {t("strings:Viimeisimmät juttuluettelot")}
+        {t("Viimeisimmät juttuluettelot")}
       </Heading>
       {recents.isSuccess && (
         <>
           {!recents.data || recents.data.length === 0 ? (
-            <p className="mt-4 text-center">
-              {t("strings:Ei juttuluetteloita")}
-            </p>
+            <p className="mt-4 text-center">{t("Ei juttuluetteloita")}</p>
           ) : (
             <div className="flex flex-col justify-center items-center ml-auto mr-auto gap-2 mt-4">
               {recents.data.map((r) => (
@@ -198,6 +191,7 @@ function LandingNew() {
     secretary: null,
     break: null,
   });
+  const [valid, setValid] = useState(false);
 
   const { data } = useDefaults();
   const { mutate } = useMutateCreateListing();
@@ -221,6 +215,7 @@ function LandingNew() {
 
     const newListing: Listing = {
       ...selections,
+      break: selections.break ?? undefined,
       id: uuidv4(),
       creationDate: new Date(),
       date: date,
@@ -238,9 +233,7 @@ function LandingNew() {
       )}
     >
       <p>
-        {t(
-          "strings:Valitse uuden juttuluettelon tuomioistuimen tiedot ja päivämäärä."
-        )}
+        {t("Valitse uuden juttuluettelon tuomioistuimen tiedot ja päivämäärä.")}
       </p>
       <div className="flex flex-col w-full items-center justify-center gap-4 my-4">
         <CourtSelector
@@ -252,9 +245,10 @@ function LandingNew() {
               ...values,
             });
           }}
+          isValid={setValid}
         />
         <div className="grid grid-cols-4 items-center w-full gap-4">
-          <Label className="text-right">{t("strings:Päivämäärä")}</Label>
+          <Label className="text-right">{t("Päivämäärä")}</Label>
           <div className="col-span-3">
             <DateTimePicker
               value={date}
@@ -267,17 +261,8 @@ function LandingNew() {
         </div>
       </div>
       <Separator className="my-4" />
-      <Button
-        className="w-100"
-        disabled={Boolean(
-          selections.court === "" ||
-            selections.office === "" ||
-            selections.department === "" ||
-            selections.room === ""
-        )}
-        onClick={handleCreateClick}
-      >
-        {t("strings:Luo")}
+      <Button className="w-100" disabled={!valid} onClick={handleCreateClick}>
+        {t("Luo")}
       </Button>
       <Button
         variant="ghost"
@@ -295,7 +280,7 @@ function LandingNew() {
 }
 
 function LandingOpen() {
-  const { columns, data, listings, isSuccess, isError } = useOpenListingsData();
+  const { columns, data, listingsQuery } = useOpenListingsData();
   const [alertOpen, setAlertOpen] = useState(false);
   const [selections, setSelections] = useState<RowSelectionState>({});
   const [dateSelection, setDateSelections] = useState<RowSelectionState>({});
@@ -316,19 +301,19 @@ function LandingOpen() {
 
   const { t } = useTranslation();
 
-  if (isError) {
+  if (listingsQuery.isError) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>{t("strings:Virhe")}</AlertTitle>
+        <AlertTitle>{t("Virhe")}</AlertTitle>
         <AlertDescription>
-          {t("strings:Juttuluetteloita ei voitu noutaa")}
+          {t("Juttuluetteloita ei voitu noutaa")}
         </AlertDescription>
       </Alert>
     );
   }
 
-  if (isSuccess) {
+  if (listingsQuery.isSuccess) {
     return (
       <div
         className={cn(
@@ -342,17 +327,17 @@ function LandingOpen() {
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t("strings:Virhe")}</AlertDialogTitle>
+              <AlertDialogTitle>{t("Virhe")}</AlertDialogTitle>
               <AlertDialogDescription>
                 {!remove.isSuccess ? (
                   t(
-                    "strings:Juttuluetteloiden poistamisessa tapahtui määrittämätön virhe."
+                    "Juttuluetteloiden poistamisessa tapahtui määrittämätön virhe."
                   )
                 ) : (
                   <div>
                     <p>
                       {t(
-                        "strings:Kaikkia juttuluettelotiedostoja ei voitu poistaa. Seuraavat tiedostot ovat poistamatta"
+                        "Kaikkia juttuluettelotiedostoja ei voitu poistaa. Seuraavat tiedostot ovat poistamatta"
                       )}
                     </p>
                     <ul>
@@ -360,23 +345,21 @@ function LandingOpen() {
                         <li>{error}</li>
                       ))}
                     </ul>
-                    <p>
-                      {t("strings:Poista tiedostot kansiosta manuaalisesti.")}
-                    </p>
+                    <p>{t("Poista tiedostot kansiosta manuaalisesti.")}</p>
                   </div>
                 )}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogAction onClick={remove.reset}>
-                {t("strings:Jatka")}
+                {t("Jatka")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
         <p>
           {t(
-            "strings:Avaa tallennettu juttuluettelo, tuo luettelo tiedostosta tai poista tallennettuja luetteloita."
+            "Avaa tallennettu juttuluettelo, tuo luettelo tiedostosta tai poista tallennettuja luetteloita."
           )}
         </p>
         <div className="container mx-auto py-2">
@@ -413,7 +396,7 @@ function LandingOpen() {
                 onDateSelected={({ date, type }) => {
                   let dateSelections: RowSelectionState = {};
 
-                  dateSelections = listings
+                  dateSelections = (listingsQuery.data ?? [])
                     .filter((listing) => {
                       return type === "before"
                         ? isBefore(listing.date, date)
@@ -443,7 +426,7 @@ function LandingOpen() {
         <Separator className="mb-6" />
         <Button variant="default" onClick={() => add.mutate()}>
           <Download className="h-4 w-4 mr-2" />
-          {t("strings:Tuo tiedostosta")}
+          {t("Tuo tiedostosta")}
         </Button>
         <Button
           variant="ghost"

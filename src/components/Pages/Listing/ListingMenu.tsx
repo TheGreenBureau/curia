@@ -66,14 +66,14 @@ export function ListingMenu({
       rest.room ?? null,
     ]
       .filter((p) => p !== null)
-      .join(" ")}, ${(t("strings:Julkinen") as string).toUpperCase()}.pdf`;
+      .join(" ")}, ${(t("Julkinen") as string).toUpperCase()}.pdf`;
   };
 
   return (
     <Row className="justify-end flex-1 items-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline">{t("strings:Muokkaa")}</Button>
+          <Button variant="outline">{t("Muokkaa")}</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
@@ -84,7 +84,7 @@ export function ListingMenu({
             className="cursor-pointer"
           >
             <Clock className="mr-2 h-4 w-4" />
-            <span>{t("strings:Aikajärjestys")}</span>
+            <span>{t("Aikajärjestys")}</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -92,14 +92,16 @@ export function ListingMenu({
             className="cursor-pointer"
           >
             <Plus className="mr-2 h-4 w-4" />
-            <span>{t("strings:Luo uusi")}</span>
+            <span>{t("Luo uusi")}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => openCSV.mutate({ type: "criminal" })}
+            onClick={() =>
+              openCSV.mutate({ type: "criminal", currentListing: listing })
+            }
           >
             <Text className="mr-2 h-4 w-4" />
-            <span>{t("strings:Tuo CSV")}</span>
+            <span>{t("Tuo CSV")}</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
@@ -108,7 +110,7 @@ export function ListingMenu({
               document={<ListingDocument {...rest} />}
               fileName={formatSaveName()}
             >
-              {t("strings:Tallenna PDF")}
+              {t("Tallenna PDF")}
             </PDFDownloadLink>
           </DropdownMenuItem>
         </DropdownMenuContent>

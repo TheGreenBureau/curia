@@ -10,7 +10,7 @@ import {
   Column,
   RowSelectionState,
   ColumnFiltersState,
-  FilterFn,
+  OnChangeFn,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -38,10 +38,8 @@ import { ReactNode, useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "./input";
-import { Col, Row } from "./rowcol";
-import { Label } from "./label";
+import { Col } from "./rowcol";
 import { Heading } from "./headings";
-import { Separator } from "./separator";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -51,7 +49,7 @@ interface DataTableProps<TData, TValue> {
   getRowId: (row: TData) => string;
   onRowsDeleted?: (rowIds: string[]) => void;
   selections?: RowSelectionState;
-  onSelectionsChanged?: (selections: RowSelectionState) => void;
+  onSelectionsChanged?: OnChangeFn<RowSelectionState>;
 }
 
 export function DataTable<TData, TValue>({
@@ -107,10 +105,10 @@ export function DataTable<TData, TValue>({
               level="h4"
               className={cn(globalFilter !== "" && "text-teal-500")}
             >
-              {t("strings:Suodata juttulistoja")}
+              {t("Suodata juttulistoja")}
             </Heading>
             <Input
-              placeholder={t("strings:Kirjoita...")}
+              placeholder={t("Kirjoita...")}
               value={globalFilter}
               onChange={(event) => {
                 table.setGlobalFilter(event.target.value);
@@ -122,7 +120,7 @@ export function DataTable<TData, TValue>({
         {additionalFilters && additionalFilters.map((filter) => filter)}
       </div>
       <Heading level="h3" className="mb-4">
-        {t("strings:Juttuluettelot")}
+        {t("Juttuluettelot")}
       </Heading>
       <div className="rounded-md border">
         <Table>
@@ -167,7 +165,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  {t("strings:Ei tuloksia")}
+                  {t("Ei tuloksia")}
                 </TableCell>
               </TableRow>
             )}
@@ -186,22 +184,20 @@ export function DataTable<TData, TValue>({
                   hasSelectedRows && "scale-100"
                 )}
               >
-                {t("strings:Poista valitut")}
+                {t("Poista valitut")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>
-                  {t("strings:Poista valitut")}
-                </AlertDialogTitle>
+                <AlertDialogTitle>{t("Poista valitut")}</AlertDialogTitle>
                 <AlertDialogDescription>
                   {t(
-                    "strings:Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?"
+                    "Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?"
                   )}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>{t("strings:Peruuta")}</AlertDialogCancel>
+                <AlertDialogCancel>{t("Peruuta")}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => {
                     const selectedFiltered = table
@@ -211,7 +207,7 @@ export function DataTable<TData, TValue>({
                     onRowsDeleted(selectedFiltered);
                   }}
                 >
-                  {t("strings:Jatka")}
+                  {t("Jatka")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -223,7 +219,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          {t("strings:Edellinen")}
+          {t("Edellinen")}
         </Button>
         <Button
           variant="outline"
@@ -231,7 +227,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          {t("strings:Seuraava")}
+          {t("Seuraava")}
         </Button>
       </div>
     </div>

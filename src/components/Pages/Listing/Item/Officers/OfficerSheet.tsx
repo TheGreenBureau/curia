@@ -29,17 +29,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Officer, OfficerType } from "@/types/data/persons";
+import { Officer, OfficerType, OfficerTypeSchema } from "@/types/data/persons";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { produce } from "immer";
 import { Save, Trash2 } from "lucide-react";
 import { PropsWithChildren, useState } from "react";
 import { useMutateCurrentListing } from "@/hooks/mutations";
-import { useCurrentListing, useTitles } from "@/hooks/queries";
+import { useStore } from "@/hooks/useStore";
+import { useResources } from "@/hooks/useResources";
 import { v4 as uuidv4 } from "uuid";
 import { Case } from "@/types/data/case";
-import { ComboboxFree } from "@/components/ui/combobox";
+import { ComboCreate } from "@/components/ui/combocreate";
+import { optionsFromRecord } from "@/lib/dataFormat";
 
 type OfficerSheetProps = {
   getOfficer: () => Officer;
@@ -54,9 +56,18 @@ export function OfficerSheet({
   const [officer, setOfficer] = useState<Officer | null>(null);
   const [originalName, setOriginalName] = useState("");
 
-  const currentListing = useCurrentListing();
+  const currentListing = useStore((state) => state.currentListing);
   const updateListing = useMutateCurrentListing();
-  const titlesQuery = useTitles();
+  const { courtTitles, prosecutorTitles, laymanTitles, officerPositions } =
+    useResources();
+
+  const titleOptions = {
+    court: optionsFromRecord(courtTitles.data),
+    prosecutor: optionsFromRecord(prosecutorTitles.data),
+    layman: optionsFromRecord(laymanTitles.data),
+  };
+
+  const positionOptions = optionsFromRecord(officerPositions.data);
 
   const { t } = useTranslation();
 
@@ -64,6 +75,10 @@ export function OfficerSheet({
     key: K,
     value: Officer[K]
   ) => {
+    if (!officer) {
+      return;
+    }
+
     setOfficer(
       produce(officer, (draft) => {
         draft[key] = value;
@@ -73,17 +88,17 @@ export function OfficerSheet({
 
   const isNew = !officer || officer.id === "";
 
-  if (currentListing.isSuccess && titlesQuery.isSuccess) {
+  if (currentListing) {
     const titles = () => {
+      if (!officer) return [];
+
       switch (officer.type) {
-        case "presiding":
-        case "secretary":
-        case "member":
-          return titlesQuery.data.court;
+        case "prosecutor":
+          return titleOptions.prosecutor;
         case "layman":
-          return titlesQuery.data.layman;
+          return titleOptions.layman;
         default:
-          return titlesQuery.data.prosecutor;
+          return titleOptions.court;
       }
     };
 
@@ -113,9 +128,7 @@ export function OfficerSheet({
           <SheetContent side="right" className="sm:max-w-md">
             <SheetHeader>
               <SheetTitle>
-                {isNew
-                  ? t("strings:Lisää uusi virkamies")
-                  : t("strings:Muokkaa virkamiestä")}
+                {isNew ? t("Lisää uusi virkamies") : t("Muokkaa virkamiestä")}
               </SheetTitle>
               <SheetDescription>
                 {descriptionArray.join(" | ")}
@@ -123,43 +136,39 @@ export function OfficerSheet({
             </SheetHeader>
             <div className="grid gap-4 w-full mt-6">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">{t("strings:Asema")}</Label>
+                <Label className="text-right">{t("Asema")}</Label>
                 <div className="col-span-3">
                   <Select
                     value={officer.type}
                     onValueChange={(value) => {
-                      if (value !== officer.type) {
-                        setOfficer({
-                          ...officer,
-                          title: "",
-                          type: value as OfficerType,
-                        });
-                        return;
-                      }
+                      try {
+                        const officerType = OfficerTypeSchema.parse(value);
 
-                      updateOfficer("type", value as OfficerType);
+                        if (officerType !== officer.type) {
+                          setOfficer({
+                            ...officer,
+                            title: "",
+                            type: officerType,
+                          });
+                          return;
+                        }
+
+                        updateOfficer("type", officerType);
+                      } catch (e) {
+                        console.log(e);
+                      }
                     }}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("strings:Valitse")} />
+                      <SelectValue placeholder={t("Valitse")} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="presiding">
-                          {t("officerPositions:presiding")}
-                        </SelectItem>
-                        <SelectItem value="secretary">
-                          {t("officerPositions:secretary")}
-                        </SelectItem>
-                        <SelectItem value="member">
-                          {t("officerPositions:member")}
-                        </SelectItem>
-                        <SelectItem value="layman">
-                          {t("officerPositions:layman")}
-                        </SelectItem>
-                        <SelectItem value="prosecutor">
-                          {t("officerPositions:prosecutor")}
-                        </SelectItem>
+                        {positionOptions.map((option) => (
+                          <SelectItem value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -168,7 +177,7 @@ export function OfficerSheet({
 
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="officer-name" className="text-right">
-                  {t("strings:Nimi")}
+                  {t("Nimi")}
                 </Label>
                 <Input
                   id="officer-name"
@@ -179,15 +188,15 @@ export function OfficerSheet({
               </div>
 
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">{t("strings:Virkanimike")}</Label>
-                <ComboboxFree
+                <Label className="text-right">{t("Virkanimike")}</Label>
+                <ComboCreate
                   className="col-span-3"
+                  triggerClassName="col-span-3"
                   options={titles()}
                   value={officer.title ?? ""}
                   onChange={(currentValue) =>
                     updateOfficer("title", currentValue)
                   }
-                  placeholderSelect={t("strings:Kirjoita tai valitse...")}
                 />
               </div>
             </div>
@@ -198,28 +207,26 @@ export function OfficerSheet({
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="mr-4">
                       <Trash2 className="mr-4" />
-                      {t("strings:Poista")}
+                      {t("Poista")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>
-                        {t("strings:Poista virkamies")}
+                        {t("Poista virkamies")}
                       </AlertDialogTitle>
                       <AlertDialogDescription>
                         {t(
-                          "strings:Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?"
+                          "Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?"
                         )}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>
-                        {t("strings:Peruuta")}
-                      </AlertDialogCancel>
+                      <AlertDialogCancel>{t("Peruuta")}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => {
                           updateListing.mutate(
-                            produce(currentListing.data, (draft) => {
+                            produce(currentListing, (draft) => {
                               const foundCaseIndex = draft.cases.findIndex(
                                 (c) => c.id === currentCase.id
                               );
@@ -240,7 +247,7 @@ export function OfficerSheet({
                           );
                         }}
                       >
-                        {t("strings:Jatka")}
+                        {t("Jatka")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -251,7 +258,7 @@ export function OfficerSheet({
                   variant="outline"
                   onClick={() => {
                     updateListing.mutate(
-                      produce(currentListing.data, (draft) => {
+                      produce(currentListing, (draft) => {
                         const foundCaseIndex = draft.cases.findIndex(
                           (c) => c.id === currentCase.id
                         );
@@ -277,7 +284,7 @@ export function OfficerSheet({
                   }}
                 >
                   <Save className="mr-4" />
-                  {t("strings:Tallenna")}
+                  {t("Tallenna")}
                 </Button>
               </SheetClose>
             </SheetFooter>

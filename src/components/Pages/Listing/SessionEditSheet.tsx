@@ -10,7 +10,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CourtSelector } from "@/components/CourtSelector";
-import { useCurrentListing } from "@/hooks/queries";
 import { useMutateCurrentListing } from "@/hooks/mutations";
 import { Pencil, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -34,7 +33,7 @@ type SessionEditSheetProps = {
 };
 
 export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
-  const [currentDate, setCurrentDate] = useState<Date | undefined>(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [currentBreak, setCurrentBreak] = useState<Date | undefined>(() => {
     const date = new Date();
     date.setHours(12, 0, 0, 0);
@@ -47,6 +46,7 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
     department: "",
     room: "",
   });
+  const [valid, setValid] = useState(false);
 
   const updateListing = useMutateCurrentListing();
 
@@ -77,10 +77,10 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
       </SheetTrigger>
       <SheetContent side="left" className="sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>{t("strings:Muokkaa tietoja")}</SheetTitle>
+          <SheetTitle>{t("Muokkaa tietoja")}</SheetTitle>
           <SheetDescription>
             {t(
-              "strings:Tässä voit muokata tuomioistuimeen ja päivämäärään liittyviä yleisiä tietoja."
+              "Tässä voit muokata tuomioistuimeen ja päivämäärään liittyviä yleisiä tietoja."
             )}
           </SheetDescription>
         </SheetHeader>
@@ -91,14 +91,15 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
             onChange={(values) => {
               setValues({ ...values });
             }}
+            isValid={setValid}
           />
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">{t("strings:Päivämäärä")}</Label>
+            <Label className="text-right">{t("Päivämäärä")}</Label>
             <div className="col-span-3">
               <DateTimePicker
                 value={currentDate}
                 locale={locales[language]}
-                onChange={(selected) => setCurrentDate(selected)}
+                onChange={(selected) => setCurrentDate(selected ?? new Date())}
                 granularity="day"
                 displayFormat={{ hour24: "dd.MM.yyyy" }}
               />
@@ -106,9 +107,7 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
           </div>
 
           <div className="grid grid-cols-8 items-center gap-4">
-            <Label className="text-right col-span-2">
-              {t("strings:Tauko")}
-            </Label>
+            <Label className="text-right col-span-2">{t("Tauko")}</Label>
             <div className="col-span-1">
               <Checkbox
                 className="h-5 w-5"
@@ -138,6 +137,7 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
               variant="outline"
               className="mt-6 "
               size="lg"
+              disabled={!valid}
               onClick={() => {
                 updateListing.mutate(
                   produce(getListing(), (draft) => {
@@ -152,7 +152,7 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
               }}
             >
               <Save className="mr-4" />
-              {t("strings:Tallenna")}
+              {t("Tallenna")}
             </Button>
           </SheetClose>
         </SheetFooter>

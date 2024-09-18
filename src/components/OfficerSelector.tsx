@@ -1,8 +1,7 @@
-import { useTitles } from "@/hooks/queries";
+import { useResources } from "@/hooks/useResources";
 import { useTranslation } from "react-i18next";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { ComboboxFree } from "@/components/ui/combobox";
 import { Officer } from "@/types/data/persons";
 import { produce } from "immer";
 import { v4 as uuidv4 } from "uuid";
@@ -10,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/headings";
 import { Label } from "./ui/label";
 import { ComboCreate } from "./ui/combocreate";
+import { optionsFromRecord } from "@/lib/dataFormat";
 
 type OfficerValues = {
   presiding: Officer | null;
@@ -22,7 +22,9 @@ type OfficerSelectorProps = {
 };
 
 export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
-  const { data, isPending, isFetching, isSuccess, isError } = useTitles();
+  const { courtTitles } = useResources();
+
+  const titleOptions = optionsFromRecord(courtTitles.data);
 
   const { t } = useTranslation();
 
@@ -52,6 +54,8 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
 
     onChange(
       produce(values, (draft) => {
+        if (!draft[type]) return;
+
         draft[type][prop] = value;
 
         if (prop === "name" && value === "") {
@@ -61,28 +65,26 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
     );
   };
 
-  if (isError) {
+  if (courtTitles.isError) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>{t("strings:Virhe")}</AlertTitle>
-        <AlertDescription>
-          {t("strings:Valintoja ei voitu noutaa.")}
-        </AlertDescription>
+        <AlertTitle>{t("Virhe")}</AlertTitle>
+        <AlertDescription>{t("Valintoja ei voitu noutaa.")}</AlertDescription>
       </Alert>
     );
   }
 
-  if (isSuccess) {
+  if (courtTitles.isSuccess) {
     return (
       <div className="flex flex-col items-center w-full gap-4">
         <div className="grid gap-4 w-full">
           <div className="grid grid-cols-4 items-center gap-4">
             <Heading level="h5" className="col-start-2 col-span-3">
-              {t("strings:Puheenjohtaja")}
+              {t("Puheenjohtaja")}
             </Heading>
             <Label htmlFor="presiding-name" className="text-right">
-              {t("strings:Nimi")}
+              {t("Nimi")}
             </Label>
             <Input
               id="presiding-name"
@@ -93,13 +95,13 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               onClear={() => handleChange("presiding", "name", "")}
               className="col-span-3"
             />
-            <Label className="text-right">{t("strings:Virkanimike")}</Label>
+            <Label className="text-right">{t("Virkanimike")}</Label>
             <ComboCreate
               className="col-span-3"
-              options={data.court}
+              options={titleOptions}
               disabled={
-                isPending ||
-                isFetching ||
+                courtTitles.isPending ||
+                courtTitles.isFetching ||
                 !values.presiding ||
                 values.presiding.name === ""
               }
@@ -107,8 +109,8 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               onChange={(currentValue) =>
                 handleChange("presiding", "title", currentValue)
               }
-              placeholder={t("strings:Kirjoita tai valitse...")}
-              placeholderDisabled={t("strings:Valitse edeltävä")}
+              placeholder={t("Kirjoita tai valitse...")}
+              placeholderDisabled={t("Valitse edeltävä")}
             />
           </div>
         </div>
@@ -120,7 +122,7 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               })}
             </Heading>
             <Label htmlFor="secretary-name" className="text-right">
-              {t("strings:Nimi")}
+              {t("Nimi")}
             </Label>
             <Input
               id="secretary-name"
@@ -131,13 +133,13 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               onClear={() => handleChange("secretary", "name", "")}
               className="col-span-3"
             />
-            <Label className="text-right">{t("strings:Virkanimike")}</Label>
+            <Label className="text-right">{t("Virkanimike")}</Label>
             <ComboCreate
               className="col-span-3"
-              options={data.court}
+              options={titleOptions}
               disabled={
-                isPending ||
-                isFetching ||
+                courtTitles.isPending ||
+                courtTitles.isFetching ||
                 !values.secretary ||
                 values.secretary.name === ""
               }
@@ -145,8 +147,8 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               onChange={(currentValue) => {
                 handleChange("secretary", "title", currentValue);
               }}
-              placeholder={t("strings:Kirjoita tai valitse...")}
-              placeholderDisabled={t("strings:Valitse edeltävä")}
+              placeholder={t("Kirjoita tai valitse...")}
+              placeholderDisabled={t("Valitse edeltävä")}
             />
           </div>
         </div>

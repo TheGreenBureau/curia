@@ -53,7 +53,7 @@ export function Officers({
       </Row>
       {currentCase.officers.length === 0 ? (
         <p className="text-muted-foreground min-w-[15.75rem] max-w-48">
-          {t("strings:Ei henkilöitä")}
+          {t("Ei henkilöitä")}
         </p>
       ) : (
         <OfficerList currentCase={currentCase} />

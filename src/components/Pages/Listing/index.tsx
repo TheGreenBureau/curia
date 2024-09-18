@@ -1,19 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/headings";
 import { Separator } from "@/components/ui/separator";
-import { useMutateDeselectListing, useMutateOpenCSV } from "@/hooks/mutations";
-import {
-  useCourts,
-  useCrimes,
-  useCurrentListing,
-  useTitles,
-} from "@/hooks/queries";
+import { useMutateOpenCSV } from "@/hooks/mutations";
+import { useCrimes } from "@/hooks/queries";
+import { useResources } from "@/hooks/useResources";
+import { useStore } from "@/hooks/useStore";
 import { cn, isKey } from "@/lib/utils";
 import { format } from "date-fns";
 import { ChevronLeft, CircleSlash2 } from "lucide-react";
 import { SessionEditSheet } from "./SessionEditSheet";
 import styles from "./listing.module.css";
-import { useStore } from "@/hooks/useStore";
 import { useEffect, useState } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -23,9 +19,8 @@ import { Case } from "@/types/data/case";
 import { Defaults } from "@/types/config/defaults";
 import { Officer } from "@/types/data/persons";
 import { CaseList } from "./CaseList";
-import { Row } from "@/components/ui/rowcol";
-import { DocumentDialog } from "./DocumentDialog";
 import { ListingMenu } from "@/components/Pages/Listing/ListingMenu";
+import { optionsFromRecord } from "@/lib/dataFormat";
 
 const createNewCase = (defaults?: Defaults): Case => {
   const date = new Date();
@@ -56,17 +51,23 @@ const createNewCase = (defaults?: Defaults): Case => {
 export function Listing() {
   const [caseSheetOpen, setCaseSheetOpen] = useState(false);
 
-  const listing = useCurrentListing();
-  const courts = useCourts();
+  const currentListing = useStore((state) => state.currentListing);
+  const setCurrentListing = useStore((state) => state.setCurrentListing);
+
+  const {
+    courts,
+    courtTitles,
+    prosecutorTitles,
+    laymanTitles,
+    isSuccess: resourcesIsSuccess,
+  } = useResources();
   const crimes = useCrimes();
-  const deselectListing = useMutateDeselectListing();
   const openCSV = useMutateOpenCSV();
 
   const setMountDirection = useStore((state) => state.setMountDirection);
   const setShowSettings = useStore((state) => state.setShowSettings);
   const view = useStore((state) => state.welcomeView);
   const setView = useStore((state) => state.setWelcomeView);
-  const titles = useTitles();
 
   const { t } = useTranslation();
 
@@ -78,23 +79,19 @@ export function Listing() {
     }
   }, []);
 
-  if (listing.isSuccess && courts.isSuccess) {
-    const court = courts.data.find((c) => c.id === listing.data.court);
+  if (currentListing && courts.isSuccess) {
+    const court = courts.data.find((c) => c.id === currentListing.court);
+    const department = court?.departments.find(
+      (d) => d.id === currentListing.department
+    );
+    const office = court?.offices.find((o) => o.id === currentListing.office);
+    const room = office?.rooms.find((r) => r.id === currentListing.room);
 
-    const office =
-      court && isKey(court.offices, listing.data.office)
-        ? court.offices[listing.data.office]
-        : null;
-
-    const department =
-      court && isKey(court.departments, listing.data.department)
-        ? court.departments[listing.data.department]
-        : "";
-
-    const room =
-      court && office && isKey(office.rooms, listing.data.room)
-        ? office.rooms[listing.data.room]
-        : "";
+    const titles = {
+      court: optionsFromRecord(courtTitles.data),
+      prosecutor: optionsFromRecord(prosecutorTitles.data),
+      layman: optionsFromRecord(laymanTitles.data),
+    };
 
     return (
       <div className={cn("flex flex-col px-8 py-10 gap-4", styles.mountRight)}>
@@ -108,59 +105,58 @@ export function Listing() {
             variant="ghost"
             size="icon"
             className="rounded-full mr-4"
-            onClick={() => deselectListing.mutate()}
+            onClick={() => setCurrentListing(null)}
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <div className="flex flex-col w-full">
             <div className="flex flex-row gap-4 items-center w-full">
               <Heading level="h2" className="mt-0">
-                {court.name}
+                {court?.name ?? t("Tuntematon")}
               </Heading>
               <SessionEditSheet
                 getListing={() => {
-                  return { ...listing.data };
+                  return { ...currentListing };
                 }}
               />
             </div>
             <div className="flex flex-row gap-4 items-center w-full flex-1">
-              {listing.data.date && (
-                <Heading level="h4" className="mt-0">
-                  {format(listing.data.date, "dd.MM.yyyy")}
-                </Heading>
-              )}
-              {listing.data.department && (
+              <Heading level="h4" className="mt-0">
+                {format(currentListing.date, "dd.MM.yyyy")}
+              </Heading>
+              {department && (
                 <>
                   <Separator orientation="vertical" className="h-8" />
                   <Heading level="h4" className="mt-0">
-                    {department}
+                    {department.name}
                   </Heading>
                 </>
               )}
-              {listing.data.room && (
+              {room && (
                 <>
                   <Separator orientation="vertical" className="h-8" />
                   <Heading level="h4" className="mt-0">
-                    {room}
+                    {room.name}
                   </Heading>
                 </>
               )}
-              {listing.data.cases.length > 0 &&
-                titles.isSuccess &&
-                crimes.isSuccess && (
+              {currentListing.cases.length > 0 &&
+                resourcesIsSuccess &&
+                crimes.isSuccess &&
+                court && (
                   <ListingMenu
-                    listing={listing.data}
+                    listing={currentListing}
                     onOpenCaseSheet={() => setCaseSheetOpen(true)}
                     court={court}
-                    office={office}
-                    department={department}
-                    room={room}
-                    date={listing.data.date}
-                    cases={listing.data.cases}
-                    courtTitles={titles.data.court}
-                    prosecutorTitles={titles.data.prosecutor}
-                    laymanTitles={titles.data.layman}
-                    sessionBrake={listing?.data?.break}
+                    office={office ?? null}
+                    department={department?.name ?? ""}
+                    room={room?.name ?? ""}
+                    date={currentListing.date}
+                    cases={currentListing.cases}
+                    courtTitles={titles.court}
+                    prosecutorTitles={titles.prosecutor}
+                    laymanTitles={titles.layman}
+                    sessionBrake={currentListing.break}
                     crimes={crimes.data}
                   />
                 )}
@@ -168,22 +164,24 @@ export function Listing() {
           </div>
         </div>
         <Separator />
-        {listing.data.cases.length === 0 ? (
+        {currentListing.cases.length === 0 ? (
           <Alert>
             <CircleSlash2 className="h-4 w-4" />
-            <AlertTitle>{t("strings:Ei juttuja")}</AlertTitle>
+            <AlertTitle>{t("Ei juttuja")}</AlertTitle>
             <AlertDescription className="text-muted-foreground flex flex-row gap-4 items-center">
-              {t("strings:Juttuluettelo on toistaiseksi tyhjä.")}
+              {t("Juttuluettelo on toistaiseksi tyhjä.")}
             </AlertDescription>
             <div className="flex flex-row gap-4 mt-2">
               <Button variant="outline" onClick={() => setCaseSheetOpen(true)}>
-                {t("strings:Uusi juttu")}
+                {t("Uusi juttu")}
               </Button>
               <Button
                 variant="outline"
-                onClick={() => openCSV.mutate({ type: "criminal" })}
+                onClick={() =>
+                  openCSV.mutate({ type: "criminal", currentListing })
+                }
               >
-                {t("strings:Tuo CSV")}
+                {t("Tuo CSV")}
               </Button>
             </div>
           </Alert>

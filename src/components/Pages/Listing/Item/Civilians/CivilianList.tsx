@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Case } from "@/types/data/case";
 import { CivilianSheet } from "@/components/Pages/Listing/Item/Civilians/CivilianSheet";
+import { useResources } from "@/hooks/useResources";
 
 type CivilianListProps = {
   currentCase: Case;
@@ -69,14 +70,16 @@ type CivilianItemProps = {
 };
 
 export function CivilianItem({ civilian, currentCase }: CivilianItemProps) {
-  const { t } = useTranslation();
+  const { positionAbbreviations } = useResources();
 
   return (
     <Row className="gap-3">
       <Col className="w-12 items-end">
-        <Badge variant={civilian.type} className="m-0 w-12 justify-center">
-          {t(`positionAbbreviations:${civilian.type}_abr`)}
-        </Badge>
+        {positionAbbreviations.isSuccess && (
+          <Badge variant={civilian.type} className="m-0 w-12 justify-center">
+            {positionAbbreviations.data[`${civilian.type}_abr`] ?? "???"}
+          </Badge>
+        )}
       </Col>
       <Col>
         <CivilianSheet getCivilian={() => civilian} currentCase={currentCase}>

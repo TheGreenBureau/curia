@@ -23,9 +23,9 @@ export function LocationSelector() {
       return (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>{t("strings:Virhe")}</AlertTitle>
+          <AlertTitle>{t("Virhe")}</AlertTitle>
           <AlertDescription>
-            {t("strings:Juttuluetteloiden sijaintia ei voitu noutaa.")}
+            {t("Juttuluetteloiden sijaintia ei voitu noutaa.")}
           </AlertDescription>
         </Alert>
       );
@@ -36,9 +36,9 @@ export function LocationSelector() {
         <AlertTitle className="uppercase font-dosis">
           {path.data
             ? path.data.isDefault
-              ? t("strings:Oletus")
-              : t("strings:Muokattu")
-            : t("strings:Tuntematon")}
+              ? t("Oletus")
+              : t("Muokattu")
+            : t("Tuntematon")}
         </AlertTitle>
         <AlertDescription>{path.data?.listingsLocation ?? ""}</AlertDescription>
       </Alert>
@@ -49,16 +49,16 @@ export function LocationSelector() {
     <div>
       <div className="flex flex-col items-center gap-2">
         <ShowPath />
-        <div className="flex flex-row w-full items-center justify-center">
+        <div className="flex flex-row w-full items-center justify-center gap-2">
           <Button className="w-full" onClick={() => choose.mutate()}>
-            {t("strings:Valitse sijainti")}
+            {t("Valitse sijainti")}
           </Button>
           <Button
             className="w-full"
             onClick={() => setToDefault.mutate()}
             disabled={path.data?.isDefault ?? true}
           >
-            {t("strings:Aseta oletussijaintiin")}
+            {t("Aseta oletussijaintiin")}
           </Button>
         </div>
       </div>

@@ -1,19 +1,22 @@
-import { Case } from "@/types/data/case";
+import { Case, CaseSchema } from "@/types/data/case";
 import { Court } from "@/types/data/court";
 import { Option } from "@/types/data/options";
+import { z } from "zod";
 
-export type Listing = {
-  id: string;
-  creationDate: Date;
-  date: Date;
-  court: string;
-  office: string;
-  department: string;
-  room: string;
-  cases: Case[];
-  break?: Date;
-  notes?: string;
-};
+export const ListingSchema = z.object({
+  id: z.string(),
+  creationDate: z.coerce.date(),
+  date: z.coerce.date(),
+  court: z.string(),
+  office: z.string(),
+  department: z.string(),
+  room: z.string(),
+  cases: CaseSchema.array(),
+  break: z.coerce.date().optional(),
+  notes: z.string().optional(),
+});
+
+export type Listing = z.infer<typeof ListingSchema>;
 
 export type PersonListingProps = {
   caseNumber: string;

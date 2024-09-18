@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Option } from "@/types/data/options";
-import { CSSProperties, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Input } from "./input";
 
@@ -87,11 +87,11 @@ export function ComboboxFree({
 
   const placeholder = () => {
     if (disabled) {
-      return placeholderDisabled ?? t("strings:Valitse");
+      return placeholderDisabled ?? t("Valitse");
     }
 
     if (value() === "") {
-      return placeholderSelect ?? t("strings:Valitse");
+      return placeholderSelect ?? t("Valitse");
     }
   };
 
@@ -110,7 +110,7 @@ export function ComboboxFree({
             onKeyUp={(e) => {
               e.preventDefault();
 
-              if (e.key === "ArrowDown") {
+              if (e.key === "ArrowDown" && contentRef.current) {
                 contentRef.current.focus();
               }
             }}
@@ -196,11 +196,11 @@ export function Combobox({
 
   const placeholder = () => {
     if (disabled) {
-      return placeholderDisabled ?? t("strings:Valitse");
+      return placeholderDisabled ?? t("Valitse");
     }
 
     if (value === "") {
-      return placeholderSelect ?? t("strings:Valitse");
+      return placeholderSelect ?? t("Valitse");
     }
   };
 
@@ -241,13 +241,9 @@ export function Combobox({
                 : 0;
             }}
           >
-            <CommandInput
-              placeholder={placeholderSearch ?? t("strings:Etsi...")}
-            />
+            <CommandInput placeholder={placeholderSearch ?? t("Etsi...")} />
             <CommandList className="scrollbar scrollbar-thumb-slate-500 scrollbar-w-2 max-h-48">
-              <CommandEmpty>
-                {searchEmpty ?? t("strings:Ei tuloksia")}
-              </CommandEmpty>
+              <CommandEmpty>{searchEmpty ?? t("Ei tuloksia")}</CommandEmpty>
               <CommandGroup>
                 {options.map((opt) => (
                   <CommandItem

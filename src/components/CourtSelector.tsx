@@ -1,4 +1,5 @@
-import { useCourtSelections } from "@/hooks/queries";
+import { useResources } from "@/hooks/useResources";
+import { optionsFromData } from "@/lib/dataFormat";
 import { produce } from "immer";
 import { useTranslation } from "react-i18next";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -6,7 +7,6 @@ import { AlertCircle } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { Heading } from "@/components/ui/headings";
 import { Label } from "./ui/label";
-import { useEffect } from "react";
 
 type CourtValues = {
   court: string;
@@ -20,6 +20,7 @@ type CourtSelectorProps = {
   onChange: (values: CourtValues) => void;
   values: CourtValues;
   hasTitle?: boolean;
+  isValid?: (valid: boolean) => void;
 };
 
 export function CourtSelector({
@@ -27,159 +28,201 @@ export function CourtSelector({
   onChange,
   values,
   hasTitle,
+  isValid,
 }: CourtSelectorProps) {
-  const { data, isPending, isFetching, isError, isSuccess } =
-    useCourtSelections(courtId, values.office);
+  const { courts } = useResources();
 
   const { t } = useTranslation();
 
-  useEffect(() => {
-    if (data?.currentCourt) {
-      if (data.departments.length === 1) {
-        onChange(
-          produce(values, (draft) => {
-            draft.department = data.departments[0].value;
-            draft.office =
-              data.offices.length === 1 ? data.offices[0].value : values.office;
-          })
-        );
-      }
-    }
-  }, [data?.currentCourt]);
-
-  const handleSelectionChange = (
-    type: "court" | "office" | "department" | "room",
-    value: string
-  ) => {
-    if (values[type] === value) {
-      return;
-    }
-
-    switch (type) {
-      case "court":
-        onChange(
-          produce(values, (draft) => {
-            draft.court = value;
-            draft.department = "";
-            draft.office = "";
-            draft.room = "";
-          })
-        );
-        break;
-      case "department":
-        onChange(
-          produce(values, (draft) => {
-            draft.department = value;
-            draft.office =
-              data.offices.length === 1 ? data.offices[0].value : "";
-            draft.room = "";
-          })
-        );
-        break;
-      case "office":
-        onChange(
-          produce(values, (draft) => {
-            draft.office = value;
-            draft.room = "";
-          })
-        );
-        break;
-      default:
-        onChange(
-          produce(values, (draft) => {
-            draft.room = value;
-          })
-        );
-        break;
-    }
-  };
-
-  if (isError) {
+  if (courts.isError) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>{t("strings:Virhe")}</AlertTitle>
-        <AlertDescription>
-          {t("strings:Valintoja ei voitu noutaa.")}
-        </AlertDescription>
+        <AlertTitle>{t("Virhe")}</AlertTitle>
+        <AlertDescription>{t("Valintoja ei voitu noutaa.")}</AlertDescription>
       </Alert>
     );
   }
 
-  if (isSuccess) {
+  if (courts.isSuccess) {
+    const currentCourt = courts.data.find((c) => c.id === values.court);
+    const currentOffice = currentCourt
+      ? currentCourt.offices.find((o) => o.id === values.office)
+      : null;
+
+    const options = {
+      courts: optionsFromData(courts.data),
+      departments: currentCourt
+        ? optionsFromData(currentCourt.departments)
+        : [],
+      offices: currentCourt ? optionsFromData(currentCourt.offices) : [],
+      rooms: currentOffice ? optionsFromData(currentOffice.rooms) : [],
+    };
+
+    const handleSelectionChange = (
+      type: "court" | "office" | "department" | "room",
+      value: string
+    ) => {
+      if (values[type] === value) {
+        return;
+      }
+
+      const court = courts.data?.find(
+        (c) => c.id === (type === "court" ? value : values.court)
+      );
+      const departments = court?.departments;
+      const offices = court?.offices;
+
+      const department =
+        departments && departments.length === 1 ? departments[0].id : "";
+      const office = offices && offices.length === 1 ? offices[0].id : "";
+
+      const rooms =
+        office !== "" && offices?.find((o) => o.id === office)?.rooms;
+
+      const room = rooms && rooms.length === 1 ? rooms[0].id : "";
+
+      switch (type) {
+        case "court":
+          onChange(
+            produce(values, (draft) => {
+              draft.court = value;
+              draft.department = department;
+              draft.office = office;
+              draft.room = room;
+            })
+          );
+          break;
+        case "department":
+          if (!currentCourt) break;
+
+          onChange(
+            produce(values, (draft) => {
+              draft.department = value;
+            })
+          );
+          break;
+        case "office":
+          onChange(
+            produce(values, (draft) => {
+              draft.office = value;
+              draft.room = room;
+            })
+          );
+          break;
+        default:
+          onChange(
+            produce(values, (draft) => {
+              draft.room = value;
+            })
+          );
+          break;
+      }
+    };
+
+    const validated = () => {
+      let valid = true;
+
+      if (values.court === "" || values.office === "" || values.room === "") {
+        valid = false;
+      }
+
+      if (values.department === "" && options.departments.length > 0) {
+        valid = false;
+      }
+
+      return valid;
+    };
+
+    if (isValid) {
+      isValid(validated());
+    }
+
     return (
       <div className="flex flex-col gap-4 w-full items-center">
         <div className="grid gap-4 w-full">
           <div className="grid grid-cols-4 items-start gap-4">
             {hasTitle && (
               <Heading level="h5" className="col-span-3 col-start-2">
-                {t("strings:Istunto")}
+                {t("Istunto")}
               </Heading>
             )}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">{t("strings:Tuomioistuin")}</Label>
+            <Label className="text-right">{t("Tuomioistuin")}</Label>
             <Combobox
               className="col-span-3"
-              options={data.courts}
-              disabled={isPending || isFetching}
+              options={options.courts}
+              disabled={courts.isPending || courts.isFetching}
               value={values.court}
               onChange={(currentValue) =>
                 handleSelectionChange("court", currentValue)
               }
-              placeholderSelect={t("strings:Valitse")}
+              placeholderSelect={t("Valitse")}
             />
           </div>
+          {options.departments.length > 0 && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">{t("Osasto")}</Label>
+              <Combobox
+                className="col-span-3"
+                options={options.departments}
+                disabled={
+                  courts.isPending ||
+                  courts.isFetching ||
+                  !currentCourt ||
+                  currentCourt.departments.length <= 1
+                }
+                value={values.department}
+                onChange={(currentValue) =>
+                  handleSelectionChange("department", currentValue)
+                }
+                placeholderSelect={t("Valitse")}
+                placeholderDisabled={t("Valitse edeltävä")}
+              />
+            </div>
+          )}
+          {options.offices.length > 1 && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">{t("Kanslia")}</Label>
+              <Combobox
+                className="col-span-3"
+                options={options.offices}
+                disabled={
+                  courts.isPending ||
+                  courts.isFetching ||
+                  (options.departments.length > 0 &&
+                    values.department === "") ||
+                  !currentCourt ||
+                  currentCourt.offices.length <= 1
+                }
+                value={values.office}
+                onChange={(currentValue) =>
+                  handleSelectionChange("office", currentValue)
+                }
+                placeholderSelect={t("Valitse")}
+                placeholderDisabled={t("Valitse edeltävä")}
+              />
+            </div>
+          )}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">{t("strings:Osasto")}</Label>
+            <Label className="text-right">{t("Sali")}</Label>
             <Combobox
               className="col-span-3"
-              options={data.departments}
+              options={options.rooms}
               disabled={
-                isPending ||
-                isFetching ||
-                values.court === "" ||
-                data.departments.length === 1
+                courts.isPending ||
+                courts.isFetching ||
+                values.office === "" ||
+                !currentOffice ||
+                currentOffice.rooms.length <= 1
               }
-              value={values.department}
-              onChange={(currentValue) =>
-                handleSelectionChange("department", currentValue)
-              }
-              placeholderSelect={t("strings:Valitse")}
-              placeholderDisabled={t("strings:Valitse edeltävä")}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">{t("strings:Kanslia")}</Label>
-            <Combobox
-              className="col-span-3"
-              options={data.offices}
-              disabled={
-                isPending ||
-                isFetching ||
-                values.department === "" ||
-                data.offices.length === 1
-              }
-              value={values.office}
-              onChange={(currentValue) =>
-                handleSelectionChange("office", currentValue)
-              }
-              placeholderSelect={t("strings:Valitse")}
-              placeholderDisabled={t("strings:Valitse edeltävä")}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">{t("strings:Sali")}</Label>
-            <Combobox
-              className="col-span-3"
-              options={data.rooms}
-              disabled={isPending || isFetching || values.office === ""}
               value={values.room}
               onChange={(currentValue) =>
                 handleSelectionChange("room", currentValue)
               }
-              placeholderSelect={t("strings:Valitse")}
-              placeholderDisabled={t("strings:Valitse edeltävä")}
+              placeholderSelect={t("Valitse")}
+              placeholderDisabled={t("Valitse edeltävä")}
             />
           </div>
         </div>
