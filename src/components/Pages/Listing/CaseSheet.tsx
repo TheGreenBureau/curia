@@ -27,7 +27,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { useMutateCurrentListing } from "@/hooks/mutations";
-import { useCurrentListing, useDefaults } from "@/hooks/queries";
+import { useDefaults } from "@/hooks/queries";
+import { useStore } from "@/hooks/useStore";
 import { v4 as uuidv4 } from "uuid";
 import { ComboCreateCrime } from "@/components/ui/combocreate";
 
@@ -40,7 +41,7 @@ type CaseSheetProps = {
 export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
   const [currentCase, setCurrentCase] = useState<Case | null>(null);
 
-  const currentListing = useCurrentListing();
+  const currentListing = useStore((state) => state.currentListing);
   const updateListing = useMutateCurrentListing();
   const defaults = useDefaults();
 
@@ -51,8 +52,8 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
       const given = getCase();
       if (given.id === "") {
         given.officers = [
-          defaults.data.presiding,
-          defaults.data.secretary,
+          defaults.data?.presiding ?? null,
+          defaults.data?.secretary ?? null,
         ].filter((o) => o !== null);
       }
       setCurrentCase(given);
@@ -60,6 +61,8 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
   }, [open]);
 
   const updateCase = <K extends keyof Case>(key: K, value: Case[K]) => {
+    if (!currentCase) return;
+
     setCurrentCase(
       produce(currentCase, (draft) => {
         draft[key] = value;
@@ -69,28 +72,26 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
 
   const isNew = currentCase && currentCase.id === "";
 
-  if (currentListing.isSuccess && defaults.isSuccess) {
+  if (currentCase && defaults.isSuccess) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
         {currentCase && (
           <SheetContent side="right" className="sm:max-w-md">
             <SheetHeader>
               <SheetTitle>
-                {currentCase.id === ""
-                  ? t("strings:Uusi juttu")
-                  : t("strings:Muokkaa tietoja")}
+                {currentCase.id === "" ? t("Uusi juttu") : t("Muokkaa tietoja")}
               </SheetTitle>
               <SheetDescription>
                 {currentCase.id === ""
-                  ? t("strings:Syötä uuden jutun tiedot.")
+                  ? t("Syötä uuden jutun tiedot.")
                   : t(
-                      "strings:Muokkaa jutun tietoja ja klikkaa tallenna, kun olet valmis."
+                      "Muokkaa jutun tietoja ja klikkaa tallenna, kun olet valmis."
                     )}
               </SheetDescription>
             </SheetHeader>
             <div className="grid gap-4 w-full mt-6">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">{t("strings:Asiatyyppi")}</Label>
+                <Label className="text-right">{t("Asiatyyppi")}</Label>
                 <div className="col-span-3">
                   <Select
                     value={currentCase.type}
@@ -99,15 +100,15 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
                     }
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t("strings:Valitse")} />
+                      <SelectValue placeholder={t("Valitse")} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
                         <SelectItem value="criminal">
-                          {t("strings:Rikosasia")}
+                          {t("Rikosasia")}
                         </SelectItem>
                         <SelectItem value="civil">
-                          {t("strings:Siviiliasia")}
+                          {t("Siviiliasia")}
                         </SelectItem>
                       </SelectGroup>
                     </SelectContent>
@@ -119,7 +120,7 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
 
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="case-number" className="text-right">
-                  {t("strings:Asianumero")}
+                  {t("Asianumero")}
                 </Label>
                 <Input
                   id="case-number"
@@ -132,7 +133,7 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
               {currentCase.type === "criminal" && (
                 <div className={"grid grid-cols-4 items-center gap-4"}>
                   <Label htmlFor="prosecutor-number" className="text-right">
-                    {t("strings:Asianro sjä")}
+                    {t("Asianro sjä")}
                   </Label>
                   <Input
                     id="prosecutor-number"
@@ -147,22 +148,24 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
 
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="matter" className="text-right">
-                  {t("strings:Asia")}
+                  {t("Asia")}
                 </Label>
                 <ComboCreateCrime
                   className="col-span-3"
-                  placeholder={t("strings:Kirjoita tai valitse...")}
+                  placeholder={t("Kirjoita tai valitse...")}
                   value={currentCase.matter}
                   onChange={(value) => updateCase("matter", value)}
                 />
               </div>
 
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">{t("strings:Kellonaika")}</Label>
+                <Label className="text-right">{t("Kellonaika")}</Label>
                 <div className="col-span-3">
                   <TimePicker
                     date={currentCase.time}
-                    onChange={(date) => updateCase("time", date)}
+                    onChange={(date) =>
+                      updateCase("time", date ?? currentCase.time)
+                    }
                     granularity="minute"
                   />
                 </div>
@@ -196,7 +199,7 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
               )}
             </div>
             <SheetFooter>
-              {currentListing.isSuccess && (
+              {currentListing && (
                 <SheetClose asChild>
                   <Button
                     variant="outline"
@@ -204,7 +207,7 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
                     size="lg"
                     onClick={() => {
                       updateListing.mutate(
-                        produce(currentListing.data, (draft) => {
+                        produce(currentListing, (draft) => {
                           if (isNew) {
                             draft.cases.push({
                               ...currentCase,
@@ -224,7 +227,7 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
                     }}
                   >
                     <Save className="mr-4" />
-                    {t("strings:Tallenna")}
+                    {t("Tallenna")}
                   </Button>
                 </SheetClose>
               )}

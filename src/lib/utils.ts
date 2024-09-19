@@ -3,9 +3,6 @@ import { twMerge } from "tailwind-merge";
 import type { Option } from "@/types/data/options";
 import { compareAsc, compareDesc, format } from "date-fns";
 import type { ArrayOptions, SortDirection } from "@/types/data/queries";
-import { Listing } from "@/types/data/listing";
-import i18next, { t } from "i18next";
-import { getCourt, getCourts } from "./staticData/courts";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -112,16 +109,16 @@ export const jsonTypeParse = <T>(str: string) => {
   }
 };
 
-export const setAllNull = <T>(obj: T) => {
-  Object.keys(obj).forEach((key) => (obj[key as keyof T] = null));
-};
-
 export const sortDates = (
   a: Date | undefined | null,
   b: Date | undefined | null,
   direction: SortDirection
 ) => {
   if (!a && !b) return 0;
+
+  if (!a) return 1;
+
+  if (!b) return -1;
 
   switch (direction) {
     case "asc":
@@ -174,30 +171,6 @@ export const dateString = (date: Date, time?: boolean) => {
   }
 
   return day;
-};
-
-export const formatListingName = (listing: Listing) => {
-  if (!listing.court) {
-    return `${t("strings:Juttuluettelo")} ${dateString(listing.creationDate)}`;
-  }
-
-  const court = getCourt(listing.court, i18next.resolvedLanguage);
-  const office = court.offices[listing.office];
-
-  const room =
-    court && office
-      ? isKey(office.rooms, listing.room)
-        ? office.rooms[listing.room]
-        : ""
-      : "";
-
-  let fileName = `${court?.name ?? ""} | ${dateString(listing.date)}`;
-
-  if (room !== "") {
-    fileName = `${fileName} | ${room}`;
-  }
-
-  return fileName;
 };
 
 export const getNodeText = (node: React.ReactNode): string => {

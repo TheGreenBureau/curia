@@ -7,47 +7,44 @@
     {
       "fileMatch": ["**/courts.json"],
       "schema": {
-        "type": "object",
-        "additionalProperties": false,
-        "patternProperties": {
-          "^.*$": {
-            "type": "object",
-            "required": ["name", "abbreviation", "departments", "offices"],
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "abbreviation": {
-                "type": "string"
-              },
-              "departments": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["id", "name", "abbreviation", "offices", "departments"],
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "abbreviation": { "type": "string" },
+            "offices": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "patternProperties": {
-                  "^.*$": {
-                    "type": "string"
-                  }
-                }
-              },
-              "offices": {
-                "type": "object",
-                "patternProperties": {
-                  "^.*$": {
-                    "type": "object",
-                    "required": ["name", "rooms"],
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "rooms": {
-                        "type": "object",
-                        "patternProperties": {
-                          "^.*$": {
-                            "type": "string"
-                          }
-                        }
+                "required": ["id", "name", "rooms"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "rooms": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["id", "name"],
+                      "properties": {
+                        "id": { "type": "string" },
+                        "name": { "type": "string" }
                       }
                     }
                   }
+                }
+              }
+            },
+            "departments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "name"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "name": { "type": "string" }
                 }
               }
             }

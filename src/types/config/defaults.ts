@@ -1,4 +1,3 @@
-import type { Option } from "../data/options";
 import type { Officer } from "../data/persons";
 
 export type Defaults = {

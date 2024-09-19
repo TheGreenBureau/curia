@@ -1,34 +1,11 @@
 import { QUERY_KEYS } from "@/lib/queryKeys";
-import { Listing } from "@/types/data/listing";
-import {
-  keepPreviousData,
-  PlaceholderDataFunction,
-  useQuery,
-} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 export const useResolvedLanguage = () => {
   const { i18n } = useTranslation();
 
-  return i18n.resolvedLanguage ?? "fi";
-};
-
-export const useCurrentListing = (
-  placeholderData?:
-    | "keepPrevious"
-    | PlaceholderDataFunction<Listing, Error, Listing>
-) => {
-  const lang = useResolvedLanguage();
-
-  return useQuery({
-    queryKey: [QUERY_KEYS.currentListing, lang],
-    queryFn: window.api.currentListing,
-    placeholderData: !placeholderData
-      ? undefined
-      : placeholderData === "keepPrevious"
-      ? (previous) => previous
-      : placeholderData,
-  });
+  return i18n.resolvedLanguage === "sv" ? "sv" : "fi";
 };
 
 export const useDefaults = () =>
@@ -57,56 +34,6 @@ export const useListings = () =>
     queryKey: [QUERY_KEYS.listings],
     queryFn: window.api.listings,
   });
-
-export const useCourtSelections = (
-  courtId: string | null | undefined,
-  officeId: string | undefined | null
-) => {
-  const lang = useResolvedLanguage();
-
-  return useQuery({
-    queryKey: [QUERY_KEYS.courtOptions, lang, courtId, officeId],
-    queryFn: async () =>
-      await window.api.courtSelections({ courtId, officeId, lang }),
-    placeholderData: keepPreviousData,
-  });
-};
-
-export const useTitles = () => {
-  const lang = useResolvedLanguage();
-
-  return useQuery({
-    queryKey: [QUERY_KEYS.titleOptions, lang],
-    queryFn: async () => await window.api.titles({ lang }),
-  });
-};
-
-export const useCourts = () => {
-  const lang = useResolvedLanguage();
-
-  return useQuery({
-    queryKey: [QUERY_KEYS.courts, lang],
-    queryFn: async () => await window.api.courts({ lang }),
-  });
-};
-
-export const useSummons = () => {
-  const lang = useResolvedLanguage();
-
-  return useQuery({
-    queryKey: [QUERY_KEYS.summons, lang],
-    queryFn: async () => await window.api.summons({ lang }),
-  });
-};
-
-export const useSummonsStatuses = () => {
-  const lang = useResolvedLanguage();
-
-  return useQuery({
-    queryKey: [QUERY_KEYS.summonStatus, lang],
-    queryFn: async () => await window.api.summonsStatuses({ lang }),
-  });
-};
 
 export const useCrimes = () => {
   const lang = useResolvedLanguage();

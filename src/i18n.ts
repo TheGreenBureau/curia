@@ -1,38 +1,38 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
+import ChainedBackend, { ChainedBackendOptions } from "i18next-chained-backend";
+import resourcesToBackend from "i18next-resources-to-backend";
+import HttpBackend from "i18next-http-backend";
 import strings from "@/locales/fi/strings.json";
-import officerPositions from "@/locales/fi/officerPositions.json";
-import positionAbbreviations from "@/locales/fi/positionAbbreviations.json";
-import civilianPositions from "@/locales/fi/civilianPositions.json";
-
 import svStrings from "@/locales/sv/strings.json";
-import svOfficerPositions from "@/locales/sv/officerPositions.json";
-import svCivilianPositions from "@/locales/sv/civilianPositions.json";
-import svPositionAbbreviations from "@/locales/sv/positionAbbreviations.json";
 
 export const defaultNS = "strings";
 export const resources = {
   fi: {
     strings,
-    officerPositions,
-    positionAbbreviations,
-    civilianPositions,
   },
   sv: {
     strings: svStrings,
-    officerPositions: svOfficerPositions,
-    positionAbbreviations: svPositionAbbreviations,
-    civilianPositions: svCivilianPositions,
   },
 } as const;
 
-i18next.use(initReactI18next).init({
-  debug: true,
-  fallbackLng: "fi",
-  defaultNS,
-  ns: ["strings"],
-  nsSeparator: ":",
-  resources,
-});
+i18next
+  .use(initReactI18next)
+  .use(ChainedBackend)
+  .init<ChainedBackendOptions>({
+    debug: true,
+    fallbackLng: "fi",
+    defaultNS,
+    ns: ["strings"],
+    backend: {
+      backends: [HttpBackend, resourcesToBackend(resources)],
+      backendOptions: [
+        {
+          loadPath:
+            "https://raw.githubusercontent.com/TheGreenBureau/curia-resources/main/{{ns}}/{{lng}}.json",
+        },
+      ],
+    },
+  });
 
 export default i18next;

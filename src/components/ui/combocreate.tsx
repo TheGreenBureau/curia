@@ -127,11 +127,11 @@ export function ComboCreate({
 
   const placeholder = () => {
     if (disabled) {
-      return placeholderDisabled ?? t("strings:Valitse");
+      return placeholderDisabled ?? t("Valitse");
     }
 
     if (value() === "") {
-      return placeholderSelect ?? t("strings:Valitse");
+      return placeholderSelect ?? t("Valitse");
     }
   };
 
@@ -300,7 +300,7 @@ export function ComboCreate({
                 </CommandGroup>
               ) : (
                 <p className="p-4 italic text-sm">
-                  {t("strings:Etsintään vaaditaan vähintään 3 merkkiä")}
+                  {t("Etsintään vaaditaan vähintään 3 merkkiä")}
                 </p>
               )}
             </CommandList>

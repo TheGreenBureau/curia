@@ -7,3 +7,6 @@ export const CONFIG_FILE_PATH = path.join(DATADIR, "config.json");
 
 export const LISTINGS_EXT = ".jtl";
 export const RECENT = path.join(DATADIR, "recent.json");
+
+export const dataDirFilePath = (filename: string) =>
+  path.join(DATADIR, filename);

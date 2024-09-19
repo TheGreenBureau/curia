@@ -6,7 +6,6 @@ import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Heading } from "@/components/ui/headings";
 import {
   GripVertical,
-  Plus,
   Trash,
   NotebookPen,
   User,
@@ -62,7 +61,7 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
             <Row>
               <Col className="w-28">
                 <Heading level="h4" className="m-0">
-                  {t("strings:Nro")}
+                  {t("Nro")}
                 </Heading>
                 <Row className="gap-2 items-center justify-start">
                   <Heading level="h2" className="m-0">
@@ -76,35 +75,35 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
                 </Row>
               </Col>
               <Row className="gap-10 justify-start mr-10 w-full">
-                <Time heading={t("strings:Kellonaika")} {...caseQuery} />
+                <Time heading={t("Kellonaika")} {...caseQuery} />
 
-                <Matter heading={t("strings:Asia")} {...caseQuery} />
+                <Matter heading={t("Asia")} {...caseQuery} />
 
                 <CaseNumbers
                   className="hidden casenumbers:flex"
                   {...caseQuery}
                   heading={
                     currentCase.type === "civil"
-                      ? t("strings:Asianumero")
-                      : t("strings:Asianumerot")
+                      ? t("Asianumero")
+                      : t("Asianumerot")
                   }
                 />
 
                 <Officers
                   className="hidden officers:flex"
                   currentCase={currentCase}
-                  heading={t("strings:Virkamiehet")}
+                  heading={t("Virkamiehet")}
                 />
 
                 <Civilians
                   className="hidden civilians:flex"
                   currentCase={currentCase}
-                  heading={t("strings:Siviilit")}
+                  heading={t("Siviilit")}
                 />
 
                 <Notes
                   className="hidden notes:flex"
-                  heading={t("strings:Huomioita")}
+                  heading={t("Huomioita")}
                   {...caseQuery}
                 />
               </Row>
@@ -115,8 +114,8 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
                 icon={Hash}
                 triggerContent={
                   currentCase.type === "civil"
-                    ? t("strings:Asianumero")
-                    : t("strings:Asianumerot")
+                    ? t("Asianumero")
+                    : t("Asianumerot")
                 }
                 className="casenumbers:hidden"
               >
@@ -124,48 +123,45 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
                   {...caseQuery}
                   heading={
                     currentCase.type === "civil"
-                      ? t("strings:Asianumero")
-                      : t("strings:Asianumerot")
+                      ? t("Asianumero")
+                      : t("Asianumerot")
                   }
                 />
               </MenuSubItem>
               <MenuSubItem
                 icon={Scale}
-                triggerContent={t("strings:Virkamiehet")}
+                triggerContent={t("Virkamiehet")}
                 className="officers:hidden"
               >
                 <Officers
                   currentCase={currentCase}
-                  heading={t("strings:Virkamiehet")}
+                  heading={t("Virkamiehet")}
                 />
               </MenuSubItem>
               <MenuSubItem
                 icon={User}
-                triggerContent={t("strings:Siviilit")}
+                triggerContent={t("Siviilit")}
                 className="civilians:hidden"
               >
-                <Civilians
-                  currentCase={currentCase}
-                  heading={t("strings:Siviilit")}
-                />
+                <Civilians currentCase={currentCase} heading={t("Siviilit")} />
               </MenuSubItem>
               <MenuSubItem
                 icon={NotebookPen}
-                triggerContent={t("strings:Huomioita")}
+                triggerContent={t("Huomioita")}
                 className="notes:hidden"
               >
-                <Notes {...caseQuery} heading={t("strings:Huomioita")} />
+                <Notes {...caseQuery} heading={t("Huomioita")} />
               </MenuSubItem>
               <DropdownMenuSeparator className="notes:hidden" />
               <MenuItem onClick={() => setDeleteDialogOpen(true)} icon={Trash}>
-                {t("strings:Poista")}
+                {t("Poista")}
               </MenuItem>
             </ItemMenu>
 
-            {currentCase && caseQuery.listingQuery.isSuccess && (
+            {currentCase && caseQuery.currentListing && (
               <DeleteCaseDialog
                 currentCase={currentCase}
-                currentListing={caseQuery.listingQuery.data}
+                currentListing={caseQuery.currentListing}
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
               />

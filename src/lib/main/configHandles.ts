@@ -2,23 +2,14 @@ import { AppConfig } from "@/types/config/app";
 import writeFileAtomic from "write-file-atomic";
 import { jsonTypeParse } from "../utils";
 import fs from "fs/promises";
-import { DEFAULT_LISTINGS_DIR, CONFIG_FILE_PATH, RECENT } from "./paths";
+import {
+  DEFAULT_LISTINGS_DIR,
+  CONFIG_FILE_PATH,
+  RECENT,
+  dataDirFilePath,
+} from "./paths";
 import { selectDirectory } from "@/lib/main/files";
 import { ConfigAPI, ConfigResult } from "@/types/config/api";
-import {
-  getCourt,
-  getCourtDepartments,
-  getCourtOffices,
-  getOfficeRooms,
-  getCourts,
-  getCourtsFull,
-} from "@/lib/staticData/courts";
-import { getTitles } from "@/lib/staticData/titles";
-import { getSummons, getSummonsStatuses } from "@/lib/staticData/summons";
-import {
-  getCivilianPositions,
-  getOfficerPositions,
-} from "@/lib/staticData/positions";
 import { attachHandles } from "./ipc";
 import { Defaults } from "@/types/config/defaults";
 import { produce } from "immer";
@@ -75,6 +66,10 @@ export const getConfig = async (): Promise<AppConfig> => {
 
     const rawData = await fs.readFile(CONFIG_FILE_PATH, { encoding: "utf8" });
     const data = jsonTypeParse<AppConfig>(rawData);
+
+    if (!data) {
+      throw new Error("Invalid config data");
+    }
 
     cachedConfig = data;
     return data;
@@ -166,89 +161,12 @@ const configHandles: ConfigAPI = {
 
   defaults: getDefaults,
 
-  titles: async ({ lang }) => {
-    const court = getTitles("court", lang);
-    const layman = getTitles("layman", lang);
-    const prosecutor = getTitles("prosecutor", lang);
-
-    return {
-      court,
-      layman,
-      prosecutor,
-    };
+  saveDataFile: async ({ data, filename }) => {
+    await writeFileAtomic(dataDirFilePath(filename), data, "utf8");
   },
 
-  civilians: async ({ lang }) => {
-    const civil = getCivilianPositions(lang, "civil");
-    const criminal = getCivilianPositions(lang, "criminal");
-
-    return {
-      civil,
-      criminal,
-    };
-  },
-
-  officers: async ({ lang }) => {
-    return getOfficerPositions(lang);
-  },
-
-  summons: async ({ lang }) => {
-    const defendant = getSummons(lang, "defendant");
-    const other = getSummons(lang, "other");
-
-    return {
-      defendant,
-      other,
-    };
-  },
-
-  summonsStatuses: async ({ lang }) => {
-    return getSummonsStatuses(lang);
-  },
-
-  courtSelections: async ({ courtId, officeId, lang }) => {
-    const courts = getCourts(lang);
-
-    const currentCourt = getCourt(courtId, lang);
-
-    if (!currentCourt) {
-      return {
-        courts,
-        offices: [],
-        departments: [],
-        rooms: [],
-        currentCourt: null,
-      };
-    }
-
-    const offices = getCourtOffices(currentCourt);
-    const departments = getCourtDepartments(currentCourt);
-
-    const currentOffice = currentCourt.offices[officeId];
-
-    if (!currentOffice) {
-      return {
-        courts,
-        offices,
-        departments,
-        rooms: [],
-        currentCourt,
-      };
-    }
-
-    const rooms = getOfficeRooms(currentOffice);
-
-    return {
-      courts,
-      offices,
-      departments,
-      rooms,
-      currentCourt,
-    };
-  },
-
-  courts: async ({ lang }) => {
-    return getCourtsFull(lang);
+  loadDataFile: async ({ filename }) => {
+    return await fs.readFile(dataDirFilePath(filename), { encoding: "utf8" });
   },
 
   crimes: async ({ lang }) => {

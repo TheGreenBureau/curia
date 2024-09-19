@@ -1,21 +1,24 @@
-import { Officer, Civilian } from "./persons";
+import { Officer, Civilian, OfficerSchema, CivilianSchema } from "./persons";
+import { z } from "zod";
 
 export const caseType = ["criminal", "civil"] as const;
 export type CaseType = (typeof caseType)[number];
 
-export type Case = {
-  id: string;
-  caseNumber: string;
-  prosecutorCaseNumber: string;
-  matter: string;
-  time: Date;
-  type: CaseType;
-  officers: Officer[];
-  civilians: Civilian[];
-  confidential?: boolean;
-  csv?: boolean;
-  notes?: string;
-};
+export const CaseSchema = z.object({
+  id: z.string(),
+  caseNumber: z.string(),
+  prosecutorCaseNumber: z.string(),
+  matter: z.string(),
+  time: z.coerce.date(),
+  type: z.enum(caseType),
+  officers: OfficerSchema.array(),
+  civilians: CivilianSchema.array(),
+  confidential: z.boolean().optional(),
+  csv: z.boolean().optional(),
+  notes: z.string().optional(),
+});
+
+export type Case = z.infer<typeof CaseSchema>;
 
 export type CaseCSV = {
   "asia ID": string;

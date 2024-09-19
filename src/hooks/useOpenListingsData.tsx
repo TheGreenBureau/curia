@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import { SortableHeader } from "@/components/ui/data-table";
 import { compareAsc, format, parse } from "date-fns";
 import { isKey } from "@/lib/utils";
-import { useCourts, useListings } from "@/hooks/queries";
+import { useListings } from "@/hooks/queries";
+import { useResources } from "@/hooks/useResources";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useMutateOpenListing } from "@/hooks/mutations";
@@ -19,43 +20,35 @@ export type ListingData = {
 };
 
 export const useOpenListingsData = () => {
-  const { data: courts, isSuccess: courtsIsSuccess } = useCourts();
-
-  const { data: listings, ...rest } = useListings();
-
+  const { courts } = useResources();
+  const listingsQuery = useListings();
   const open = useMutateOpenListing();
 
   const { t } = useTranslation();
   const helper = createColumnHelper<ListingData>();
 
   const getCourt = (courtId: string) => {
-    return courts.find((c) => c.id === courtId);
+    return courts.data?.find((c) => c.id === courtId);
   };
 
   const getDepartment = (courtId: string, departmentId: string) => {
     const court = getCourt(courtId);
 
-    if (court && isKey(court.departments, departmentId)) {
-      return court.departments[departmentId];
-    }
-
-    return "-";
+    return (
+      (court && court.departments.find((d) => d.id === departmentId)?.name) ??
+      "-"
+    );
   };
 
   const getRoom = (courtId: string, officeId: string, roomId: string) => {
     const court = getCourt(courtId);
 
-    const office =
-      court && isKey(court.offices, officeId) ? court.offices[officeId] : null;
+    const office = court && court.offices.find((o) => o.id === officeId);
 
-    if (office && isKey(office.rooms, roomId)) {
-      return office.rooms[roomId];
-    }
-
-    return "-";
+    return (office && office.rooms.find((r) => r.id === roomId)?.name) ?? "-";
   };
 
-  const columns: ColumnDef<ListingData>[] = courtsIsSuccess
+  const columns: ColumnDef<ListingData, any>[] = courts.isSuccess
     ? [
         {
           id: "select",
@@ -88,7 +81,7 @@ export const useOpenListingsData = () => {
         },
         helper.accessor("court", {
           header: ({ column }) => (
-            <SortableHeader column={column} label={t("strings:Tuomioistuin")} />
+            <SortableHeader column={column} label={t("Tuomioistuin")} />
           ),
           cell: ({ cell }) => (
             <div className="text-center">{cell.getValue()}</div>
@@ -97,7 +90,7 @@ export const useOpenListingsData = () => {
 
         helper.accessor("date", {
           header: ({ column }) => (
-            <SortableHeader column={column} label={t("strings:Päivämäärä")} />
+            <SortableHeader column={column} label={t("Päivämäärä")} />
           ),
           sortingFn: (rowA, rowB) => {
             const a = parse(rowA.original.date, "dd.MM.yyyy", new Date());
@@ -112,7 +105,7 @@ export const useOpenListingsData = () => {
 
         helper.accessor("department", {
           header: ({ column }) => (
-            <SortableHeader column={column} label={t("strings:Osasto")} />
+            <SortableHeader column={column} label={t("Osasto")} />
           ),
           cell: ({ cell }) => (
             <div className="text-center">{cell.getValue()}</div>
@@ -121,7 +114,7 @@ export const useOpenListingsData = () => {
 
         helper.accessor("room", {
           header: ({ column }) => (
-            <SortableHeader column={column} label={t("strings:Sali")} />
+            <SortableHeader column={column} label={t("Sali")} />
           ),
           cell: ({ cell }) => (
             <div className="text-center">{cell.getValue()}</div>
@@ -130,7 +123,7 @@ export const useOpenListingsData = () => {
 
         helper.accessor("creation", {
           header: ({ column }) => (
-            <SortableHeader column={column} label={t("strings:Luomisaika")} />
+            <SortableHeader column={column} label={t("Luomisaika")} />
           ),
           sortingFn: (rowA, rowB) => {
             const a = parse(rowA.original.creation, "dd.MM.yyyy", new Date());
@@ -145,7 +138,7 @@ export const useOpenListingsData = () => {
 
         {
           id: "open",
-          header: t("strings:Avaa"),
+          header: t("Avaa"),
           cell: ({ row }) => (
             <Button
               variant="ghost"
@@ -161,12 +154,12 @@ export const useOpenListingsData = () => {
       ]
     : [];
 
-  const data = rest.isSuccess
-    ? listings.map((listing) => {
+  const data = listingsQuery.isSuccess
+    ? listingsQuery.data.map((listing) => {
         const court = getCourt(listing.court);
         const listingData: ListingData = {
           id: listing.id,
-          court: court ? court.abbreviation : t("strings:Tuntematon"),
+          court: court ? court.abbreviation : t("Tuntematon"),
           department: getDepartment(listing.court, listing.department),
           room: getRoom(listing.court, listing.office, listing.room),
           date: format(listing.date, "dd.MM.yyyy"),
@@ -177,5 +170,5 @@ export const useOpenListingsData = () => {
       })
     : [];
 
-  return { columns, data, listings, ...rest };
+  return { columns, data, listingsQuery };
 };

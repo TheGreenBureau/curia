@@ -1,21 +1,18 @@
 import { QUERY_KEYS } from "@/lib/queryKeys";
-import { ListingDocumentProps } from "@/types/data/listing";
-import {
-  QueryCache,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useStore } from "@/hooks/useStore";
+import { Listing } from "@/types/data/listing";
 
 export const useMutateCurrentListing = () => {
   const queryClient = useQueryClient();
+  const setCurrentListing = useStore((state) => state.setCurrentListing);
 
   return useMutation({
-    mutationFn: window.api.updateListing,
+    mutationFn: async (data: Listing) => {
+      setCurrentListing(data);
+      await window.api.updateListing(data);
+    },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.currentListing],
-      });
       await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.recents],
       });
@@ -56,13 +53,12 @@ export const useMutateDefaults = () => {
 
 export const useMutateOpenListing = () => {
   const queryClient = useQueryClient();
+  const setCurrentListing = useStore((state) => state.setCurrentListing);
 
   return useMutation({
     mutationFn: window.api.openListing,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.currentListing],
-      });
+    onSuccess: async (data) => {
+      setCurrentListing(data);
       await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.recents],
       });
@@ -72,44 +68,14 @@ export const useMutateOpenListing = () => {
 
 export const useMutateCreateListing = () => {
   const queryClient = useQueryClient();
+  const setCurrentListing = useStore((state) => state.setCurrentListing);
 
   return useMutation({
     mutationFn: window.api.createListing,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.currentListing],
-      });
+    onSuccess: async (data) => {
+      setCurrentListing(data);
       await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.recents],
-      });
-    },
-  });
-};
-
-export const useMutateUpdateListing = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: window.api.updateListing,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.currentListing],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.recents],
-      });
-    },
-  });
-};
-
-export const useMutateDeselectListing = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: window.api.deselectCurrentListing,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.currentListing],
       });
     },
   });
@@ -125,9 +91,6 @@ export const useMutateDeleteListings = () => {
         queryKey: [QUERY_KEYS.listings],
       });
       await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.currentListing],
-      });
-      await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.recents],
       });
     },
@@ -136,13 +99,12 @@ export const useMutateDeleteListings = () => {
 
 export const useMutateImportListing = () => {
   const queryClient = useQueryClient();
+  const setCurrentListing = useStore((state) => state.setCurrentListing);
 
   return useMutation({
     mutationFn: window.api.importListing,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.currentListing],
-      });
+    onSuccess: async (data) => {
+      setCurrentListing(data);
       await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.recents],
       });
@@ -151,14 +113,12 @@ export const useMutateImportListing = () => {
 };
 
 export const useMutateOpenCSV = () => {
-  const queryClient = useQueryClient();
+  const setCurrentListing = useStore((state) => state.setCurrentListing);
 
   return useMutation({
     mutationFn: window.api.openCSV,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.currentListing],
-      });
+    onSuccess: async (data) => {
+      setCurrentListing(data.listing);
     },
   });
 };

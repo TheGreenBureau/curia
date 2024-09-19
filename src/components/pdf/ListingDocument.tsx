@@ -139,9 +139,7 @@ export const ListingDocument = ({
             <Text>{room}</Text>
           </View>
           <View style={{ flexDirection: "column" }}>
-            <Text style={styles.topTextUpper}>
-              {t("strings:Juttuluettelo")}
-            </Text>
+            <Text style={styles.topTextUpper}>{t("Juttuluettelo")}</Text>
             <Text>{format(date, "dd.MM.yyyy")}</Text>
           </View>
         </View>
@@ -159,14 +157,14 @@ export const ListingDocument = ({
           officerInfo={memberInfo}
           presidingInfo={presidingInfo}
           titles={courtTitles}
-          title={t("strings:Jäsenet")}
+          title={t("Jäsenet")}
         />
 
         <OfficerView
           officerInfo={laymanInfo}
           presidingInfo={presidingInfo}
           titles={laymanTitles}
-          title={t("strings:Lautamiehet")}
+          title={t("Lautamiehet")}
         />
 
         <OfficerView
@@ -189,7 +187,7 @@ export const ListingDocument = ({
 
         {sessionBrake && (
           <View style={styles.section}>
-            <Text>{`${t("strings:Tauko kello")} ${format(
+            <Text>{`${t("Tauko kello")} ${format(
               sessionBrake,
               "HH:mm"
             )}`}</Text>
@@ -242,7 +240,7 @@ function CaseView({ currentCase, index, crimes }: CaseViewProps) {
         >
           <Text>{format(currentCase.time, "HH:mm")}</Text>
           {currentCase.confidential && (
-            <Text style={{ marginTop: 5 }}>{t("strings:Salainen")}</Text>
+            <Text style={{ marginTop: 5 }}>{t("Salainen")}</Text>
           )}
         </View>
         <View

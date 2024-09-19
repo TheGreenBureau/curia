@@ -19,11 +19,11 @@ export function DocumentDialog(props: DocumentDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">{t("strings:Esikatselu")}</Button>
+        <Button variant="outline">{t("Esikatselu")}</Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
-          <DialogTitle>{t("strings:Esikatselu")}</DialogTitle>
+          <DialogTitle>{t("Esikatselu")}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-row justify-center h-[80vh]">
           <PDFViewer showToolbar={false} className="w-full h-full rounded-lg ">

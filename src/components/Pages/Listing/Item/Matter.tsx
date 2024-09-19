@@ -61,7 +61,7 @@ export function Matter({
               currentCase.confidential && "scale-100"
             )}
           >
-            {t("strings:Salainen")}
+            {t("Salainen")}
           </Heading>
         </Row>
       )}
@@ -77,7 +77,7 @@ export function Matter({
             matter: value,
           });
         }}
-        placeholder={t("strings:Kirjoita tai valitse...")}
+        placeholder={t("Kirjoita tai valitse...")}
       />
     </Col>
   );

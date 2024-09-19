@@ -1,6 +1,5 @@
 import {
   AlertDialog,
-  AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -9,8 +8,6 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { MenuItem } from "@/components/Pages/Listing/Item/ItemMenu";
-import { Trash } from "lucide-react";
 import { useMutateCurrentListing } from "@/hooks/mutations";
 import { Case } from "@/types/data/case";
 import { Listing } from "@/types/data/listing";
@@ -40,17 +37,17 @@ export function DeleteCaseDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>
             <span>
-              {t("strings:Poista asia")} {currentCase.caseNumber}
+              {t("Poista asia")} {currentCase.caseNumber}
             </span>
           </AlertDialogTitle>
           <AlertDialogDescription>
             {t(
-              "strings:Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?"
+              "Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?"
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t("strings:Peruuta")}</AlertDialogCancel>
+          <AlertDialogCancel>{t("Peruuta")}</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
               updateListing.mutate(
@@ -62,7 +59,7 @@ export function DeleteCaseDialog({
               );
             }}
           >
-            {t("strings:Jatka")}
+            {t("Jatka")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -1,11 +1,14 @@
 import courtTitles from "@/locales/fi/courtTitles.json";
 import prosecutorTitles from "@/locales/fi/prosecutorTitles.json";
 import laymanTitles from "@/locales/fi/laymanTitles.json";
+import { z } from "zod";
 
-type PersonBase = {
-  id: string;
-  name: string;
-};
+export const PersonBaseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+export type PersonBase = z.infer<typeof PersonBaseSchema>;
 
 export const officerTypes = [
   "presiding",
@@ -16,15 +19,14 @@ export const officerTypes = [
 ] as const;
 export type OfficerType = (typeof officerTypes)[number];
 
-type PredefinedTitle =
-  | keyof typeof courtTitles
-  | keyof typeof laymanTitles
-  | keyof typeof prosecutorTitles;
+export const OfficerTypeSchema = z.enum(officerTypes);
 
-export type Officer = PersonBase & {
-  type: OfficerType;
-  title?: PredefinedTitle | string;
-};
+export const OfficerSchema = PersonBaseSchema.extend({
+  type: OfficerTypeSchema,
+  title: z.string().optional(),
+});
+
+export type Officer = z.infer<typeof OfficerSchema>;
 
 export const civilianTypes = [
   "defendant",
@@ -34,6 +36,8 @@ export const civilianTypes = [
   "plaintiff",
 ] as const;
 export type CivilianType = (typeof civilianTypes)[number];
+
+export const CivilianTypeSchema = z.enum(civilianTypes);
 
 const commonSummons = ["personal", "video"] as const;
 const defendantSpecificSummons = ["three", "nine"] as const;
@@ -45,11 +49,15 @@ export const defendantSummons = [
 ] as const;
 export type DefendantSummons = (typeof defendantSummons)[number];
 
+export const DefendantSummonsSchema = z.enum(defendantSummons);
+
 export const otherSummons = [
   ...commonSummons,
   ...otherSpecificSummons,
 ] as const;
 export type OtherSummons = (typeof otherSummons)[number];
+
+export const OtherSummonsSchema = z.enum(otherSummons);
 
 export const allSummons = [
   ...commonSummons,
@@ -66,15 +74,17 @@ export const summonsStatuses = [
 ] as const;
 export type SummonsStatuses = (typeof summonsStatuses)[number];
 
-export type Civilian = PersonBase & {
-  type: CivilianType;
-  counselor?: string;
-  trustee?: string;
-  representative?: string;
-  hasDemands?: boolean;
-  summonsType?: AllSummons;
-  summonsStatus?: SummonsStatuses;
-};
+export const CivilianSchema = PersonBaseSchema.extend({
+  type: CivilianTypeSchema,
+  counselor: z.string().optional(),
+  trustee: z.string().optional(),
+  representative: z.string().optional(),
+  hasDemands: z.boolean().optional(),
+  summonsType: z.enum(allSummons).optional(),
+  summonsStatus: z.enum(summonsStatuses).optional(),
+});
+
+export type Civilian = z.infer<typeof CivilianSchema>;
 
 export type SummonsQueryType = "defendant" | "other";
 

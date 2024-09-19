@@ -13,7 +13,6 @@ import { fi } from "date-fns/locale/fi";
 import { sv } from "date-fns/locale/sv";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
 import { Heading } from "@/components/ui/headings";
 
 type TimeType = "before" | "after";
@@ -47,7 +46,7 @@ export function ListingDateSelector({
   return (
     <Col className="w-full">
       <Heading level="h4" className={cn(selectionActive && "text-teal-500")}>
-        {t("strings:Valitse päivämäärällä")}
+        {t("Valitse päivämäärällä")}
       </Heading>
       <Row className="items-center gap-4 w-full">
         <Select
@@ -58,8 +57,8 @@ export function ListingDateSelector({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="before">{t("strings:Ennen")}</SelectItem>
-            <SelectItem value="after">{t("strings:Jälkeen")}</SelectItem>
+            <SelectItem value="before">{t("Ennen")}</SelectItem>
+            <SelectItem value="after">{t("Jälkeen")}</SelectItem>
           </SelectContent>
         </Select>
         <DateTimePicker
@@ -70,9 +69,7 @@ export function ListingDateSelector({
           displayFormat={{ hour24: "dd.MM.yyyy" }}
         />
         <Button variant="outline" onClick={handleClick} className="w-96">
-          {selectionActive
-            ? t("strings:Poista valinnat")
-            : t("strings:Valitse")}
+          {selectionActive ? t("Poista valinnat") : t("Valitse")}
         </Button>
       </Row>
     </Col>

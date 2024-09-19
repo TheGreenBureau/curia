@@ -1,22 +1,14 @@
-import { Listing, ListingDocumentProps } from "@/types/data/listing";
+import { Listing, ListingSchema } from "@/types/data/listing";
 import writeFileAtomic from "write-file-atomic";
-import { jsonTypeParse } from "@/lib/utils";
 import { LISTINGS_EXT, RECENT } from "./paths";
 import path from "path";
 import fs from "fs/promises";
 import { selectFile, selectSaveLocation } from "./files";
-import { formatListingName } from "@/lib/utils";
 import { attachHandles } from "./ipc";
 import { ListingsAPI } from "@/types/config/api";
-import { getCourt } from "@/lib/staticData/courts";
 import { getConfig } from "./configHandles";
 import { produce } from "immer";
 import { parseCSV } from "../csv";
-import { format } from "date-fns";
-import { ListingDocument } from "@/components/pdf/ListingDocument";
-import { renderToFile } from "@react-pdf/renderer";
-
-let currentListing: Listing | null = null;
 
 const listingPath = async (id: string) => {
   const { listingsDir } = await getConfig();
@@ -54,9 +46,8 @@ const readFromFile = async (id: string): Promise<Listing> => {
     encoding: "utf8",
   });
 
-  const listing = jsonTypeParse<Listing>(fileContent);
-
-  return listing;
+  const data = JSON.parse(fileContent);
+  return ListingSchema.parse(data);
 };
 
 const deleteFile = async (listingId: string): Promise<string> => {
@@ -68,9 +59,9 @@ const deleteFile = async (listingId: string): Promise<string> => {
 const listRecent = async (): Promise<Listing[]> => {
   try {
     const recentRaw = await fs.readFile(RECENT, { encoding: "utf8" });
-    const recent = jsonTypeParse<Listing[]>(recentRaw);
+    const data = JSON.parse(recentRaw);
 
-    return recent;
+    return ListingSchema.array().parse(data);
   } catch (err) {
     console.error(err);
 
@@ -123,7 +114,9 @@ const filesAsListings = async (files: string[]): Promise<Listing[]> => {
         encoding: "utf8",
       });
 
-      listings.push(jsonTypeParse<Listing>(content));
+      const data = JSON.parse(content);
+
+      listings.push(ListingSchema.parse(data));
     } catch {
       continue;
     }
@@ -155,16 +148,15 @@ const importListing = async (): Promise<Listing> => {
   }
 
   const rawData = await fs.readFile(filePath, { encoding: "utf8" });
-  const data = jsonTypeParse<Listing>(rawData);
+  const dataUntyped = JSON.parse(rawData);
 
-  if (!data) throw new Error("Wrong file type");
+  const data = ListingSchema.parse(dataUntyped);
 
   await writeToFile(data);
 
   try {
     await addToRecents(data);
   } finally {
-    currentListing = data;
     return data;
   }
 };
@@ -176,7 +168,6 @@ const listingsHandles: ListingsAPI = {
     try {
       await addToRecents(listing);
     } finally {
-      currentListing = listing;
       return listing;
     }
   },
@@ -187,30 +178,13 @@ const listingsHandles: ListingsAPI = {
     try {
       await addToRecents(result);
     } finally {
-      currentListing = result;
-
-      if (result === null) {
-        throw new Error("No listing found");
-      }
-
       return result;
     }
   },
 
   updateListing: async (listing: Listing) => {
     await writeToFile(listing);
-
-    currentListing = listing;
     return listing;
-  },
-
-  currentListing: async (): Promise<Listing | null> => {
-    return await Promise.resolve(currentListing);
-  },
-
-  deselectCurrentListing: async () => {
-    currentListing = null;
-    return await Promise.resolve();
   },
 
   deleteListings: async (listings: string[]) => {
@@ -233,19 +207,13 @@ const listingsHandles: ListingsAPI = {
       }
     }
 
-    if (currentListing && listings.includes(currentListing.id)) {
-      currentListing = null;
-    }
-
     return { deleted, errors };
   },
 
   importListing: importListing,
 
   exportListing: async (listing: Listing): Promise<Listing> => {
-    const filePath = await selectSaveLocation(
-      `${formatListingName(listing)}${LISTINGS_EXT}`
-    );
+    const filePath = await selectSaveLocation(`${listing.id}${LISTINGS_EXT}`);
 
     if (!filePath) throw new Error("Export cancelled");
 
@@ -263,11 +231,7 @@ const listingsHandles: ListingsAPI = {
   clearRecents: clearRecents,
   recents: listRecent,
 
-  court: async ({ courtId, lang }) => {
-    return getCourt(courtId, lang);
-  },
-
-  openCSV: async ({ type }) => {
+  openCSV: async ({ type, currentListing }) => {
     const { defaults } = await getConfig();
 
     const csv = await importCSV();
@@ -279,13 +243,7 @@ const listingsHandles: ListingsAPI = {
 
     await writeToFile(updatedListing);
 
-    currentListing = updatedListing;
-
-    if (parseResult.errors?.length > 0) {
-      return { errors: parseResult.errors };
-    }
-
-    return {};
+    return { listing: updatedListing, errors: parseResult.errors };
   },
 };
 

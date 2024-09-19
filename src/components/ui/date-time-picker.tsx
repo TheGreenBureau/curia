@@ -593,7 +593,7 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
     },
     ref
   ) => {
-    const date = new Date(propDate);
+    const date = propDate ? new Date(propDate) : null;
 
     const minuteRef = React.useRef<HTMLInputElement>(null);
     const hourRef = React.useRef<HTMLInputElement>(null);
@@ -720,7 +720,7 @@ type DateTimePickerProps = {
 >;
 
 type DateTimePickerRef = {
-  value?: Date;
+  value?: Date | null;
 } & Omit<HTMLButtonElement, "value">;
 
 const DateTimePicker = React.forwardRef<DateTimePickerRef, DateTimePickerProps>(
@@ -739,7 +739,7 @@ const DateTimePicker = React.forwardRef<DateTimePickerRef, DateTimePickerProps>(
     },
     ref
   ) => {
-    const value = new Date(propValue);
+    const value = propValue ? new Date(propValue) : null;
     const [month, setMonth] = React.useState<Date>(value ?? new Date());
     const buttonRef = useRef<HTMLButtonElement>(null);
     /**
@@ -815,7 +815,7 @@ const DateTimePicker = React.forwardRef<DateTimePickerRef, DateTimePickerProps>(
         <PopoverContent className="w-auto p-0">
           <Calendar
             mode="single"
-            selected={value}
+            selected={value ?? undefined}
             month={month}
             onSelect={(d) => handleSelect(d)}
             onMonthChange={handleSelect}

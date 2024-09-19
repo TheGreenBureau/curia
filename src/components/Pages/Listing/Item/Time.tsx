@@ -22,7 +22,7 @@ export function Time({ className, heading, currentCase, saveCase }: TimeProps) {
         onChange={(date) => {
           saveCase({
             ...currentCase,
-            time: date,
+            time: date ?? currentCase.time,
           });
         }}
         granularity="minute"

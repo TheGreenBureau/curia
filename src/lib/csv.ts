@@ -28,7 +28,7 @@ export const parseCSV = (
 
   for (let line of parsed) {
     if (isCaseCSV(line)) {
-      cases.push(processCSVLine(line, defaults, type));
+      cases.push(processCSVLine(line, type));
       continue;
     }
 
@@ -39,15 +39,11 @@ export const parseCSV = (
 
   return {
     cases: listingUpdatedCases,
-    errors: errors.length > 0 ? errors : undefined,
+    errors: errors,
   };
 };
 
-const processCSVLine = (
-  line: CaseCSV,
-  defaults: Defaults,
-  type: CaseType
-): Case => {
+const processCSVLine = (line: CaseCSV, type: CaseType): Case => {
   const dateparts = line.päiväys.trim().split(".");
   const timeparts = line.alkamiskelloaika.trim().split(":");
 
@@ -91,6 +87,10 @@ const processBearers = (
     const parts = person.split(" ").map((part) => part.trim());
     const positionString = parts.pop();
 
+    if (!positionString) {
+      continue;
+    }
+
     if (prosecPos.includes(positionString.toLowerCase())) {
       prosecutors.push({
         id: uuidv4(),
@@ -127,7 +127,7 @@ const processCivilians = (civs: string): Civilian[] => {
 
   return civs.split(",").map((person) => {
     const parts = person.split(" ").map((part) => part.trim());
-    const positionString = parts.pop();
+    const positionString = parts.pop() ?? "";
 
     const position = positions.find((p) =>
       p.variants.includes(positionString.toLowerCase())
@@ -162,7 +162,11 @@ const processCases = (
     if (!currentCase) {
       results.push({
         ...csv,
-        officers: [defaults.presiding, defaults.secretary, ...csv.officers],
+        officers: [
+          defaults.presiding,
+          defaults.secretary,
+          ...csv.officers,
+        ].filter((o) => o !== null),
       });
       continue;
     }
