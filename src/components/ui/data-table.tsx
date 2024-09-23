@@ -123,7 +123,7 @@ export function DataTable<TData, TValue>({
         {t("Juttuluettelot")}
       </Heading>
       <div className="rounded-md border">
-        <Table>
+        <Table className="scrollbar scrollbar-thumb-slate-500 scrollbar-w-2">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -142,7 +142,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="scrollbar scrollbar-thumb-slate-500 scrollbar-w-2">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

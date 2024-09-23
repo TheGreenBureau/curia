@@ -30,11 +30,11 @@ export function CourtSelector({
   hasTitle,
   isValid,
 }: CourtSelectorProps) {
-  const { courts } = useResources();
+  const resources = useResources();
 
   const { t } = useTranslation();
 
-  if (courts.isError) {
+  if (resources.isError) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -44,14 +44,16 @@ export function CourtSelector({
     );
   }
 
-  if (courts.isSuccess) {
-    const currentCourt = courts.data.find((c) => c.id === values.court);
+  if (resources.isSuccess) {
+    const currentCourt = resources.data.courts.find(
+      (c) => c.id === values.court
+    );
     const currentOffice = currentCourt
       ? currentCourt.offices.find((o) => o.id === values.office)
       : null;
 
     const options = {
-      courts: optionsFromData(courts.data),
+      courts: optionsFromData(resources.data.courts),
       departments: currentCourt
         ? optionsFromData(currentCourt.departments)
         : [],
@@ -67,7 +69,7 @@ export function CourtSelector({
         return;
       }
 
-      const court = courts.data?.find(
+      const court = resources.data.courts?.find(
         (c) => c.id === (type === "court" ? value : values.court)
       );
       const departments = court?.departments;
@@ -153,7 +155,7 @@ export function CourtSelector({
             <Combobox
               className="col-span-3"
               options={options.courts}
-              disabled={courts.isPending || courts.isFetching}
+              disabled={resources.isPending || resources.isFetching}
               value={values.court}
               onChange={(currentValue) =>
                 handleSelectionChange("court", currentValue)
@@ -168,8 +170,8 @@ export function CourtSelector({
                 className="col-span-3"
                 options={options.departments}
                 disabled={
-                  courts.isPending ||
-                  courts.isFetching ||
+                  resources.isPending ||
+                  resources.isFetching ||
                   !currentCourt ||
                   currentCourt.departments.length <= 1
                 }
@@ -189,8 +191,8 @@ export function CourtSelector({
                 className="col-span-3"
                 options={options.offices}
                 disabled={
-                  courts.isPending ||
-                  courts.isFetching ||
+                  resources.isPending ||
+                  resources.isFetching ||
                   (options.departments.length > 0 &&
                     values.department === "") ||
                   !currentCourt ||
@@ -211,8 +213,8 @@ export function CourtSelector({
               className="col-span-3"
               options={options.rooms}
               disabled={
-                courts.isPending ||
-                courts.isFetching ||
+                resources.isPending ||
+                resources.isFetching ||
                 values.office === "" ||
                 !currentOffice ||
                 currentOffice.rooms.length <= 1

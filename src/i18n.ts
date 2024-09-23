@@ -3,8 +3,8 @@ import { initReactI18next } from "react-i18next";
 import ChainedBackend, { ChainedBackendOptions } from "i18next-chained-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
 import HttpBackend from "i18next-http-backend";
-import strings from "@/locales/fi/strings.json";
-import svStrings from "@/locales/sv/strings.json";
+import strings from "@/locales/strings/fi.json";
+import svStrings from "@/locales/strings/sv.json";
 
 export const defaultNS = "strings";
 export const resources = {
@@ -21,6 +21,7 @@ i18next
   .use(ChainedBackend)
   .init<ChainedBackendOptions>({
     debug: true,
+    lng: localStorage.getItem("curia-ui-lang") === "sv" ? "sv" : "fi",
     fallbackLng: "fi",
     defaultNS,
     ns: ["strings"],

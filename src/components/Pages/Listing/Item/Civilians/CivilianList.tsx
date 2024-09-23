@@ -1,7 +1,6 @@
 import { Civilian } from "@/types/data/persons";
 import { produce } from "immer";
 import { Col, Row } from "@/components/ui/rowcol";
-import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Case } from "@/types/data/case";
 import { CivilianSheet } from "@/components/Pages/Listing/Item/Civilians/CivilianSheet";
@@ -70,14 +69,15 @@ type CivilianItemProps = {
 };
 
 export function CivilianItem({ civilian, currentCase }: CivilianItemProps) {
-  const { positionAbbreviations } = useResources();
+  const resources = useResources();
 
   return (
     <Row className="gap-3">
       <Col className="w-12 items-end">
-        {positionAbbreviations.isSuccess && (
+        {resources.isSuccess && (
           <Badge variant={civilian.type} className="m-0 w-12 justify-center">
-            {positionAbbreviations.data[`${civilian.type}_abr`] ?? "???"}
+            {resources.data.positionAbbreviations[`${civilian.type}_abr`] ??
+              "???"}
           </Badge>
         )}
       </Col>

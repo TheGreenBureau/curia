@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CuriaLogo } from "@/components/CuriaLogo";
+import { CuriaLogo, CuriaLogoSVG } from "@/components/CuriaLogo";
 import {
   SquarePlus,
   FolderOpen,
@@ -46,10 +46,13 @@ import { Label } from "@/components/ui/label";
 import { format, isAfter, isBefore } from "date-fns";
 import { ListingDateSelector } from "./ListingDateSelector";
 import { RowSelectionState } from "@tanstack/react-table";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
 
 export function Landing() {
   const view = useStore((state) => state.welcomeView);
   const setShowSettings = useStore((state) => state.setShowSettings);
+  const mountDirection = useStore((state) => state.mountDirection);
 
   useEffect(() => {
     switch (view) {
@@ -78,23 +81,45 @@ export function Landing() {
     }
   };
 
+  const container = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        ".view-container",
+        {
+          x: view === undefined ? 0 : mountDirection === "left" ? -100 : 100,
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.3,
+          ease: "power2.inOut",
+        }
+      );
+    },
+    { dependencies: [view], scope: container }
+  );
+
   return (
-    <div className="ml-auto mr-auto mt-20 w-fit max-w-[80%] flex flex-col justify-center gap-2">
-      <CuriaLogo className="w-36 ml-auto mr-auto" />
-      <Heading level="h2" className="text-center mt-6">
-        {t("Tervetuloa Curiaan!")}
+    <div
+      className="ml-auto mr-auto mt-20 w-fit max-w-[80%] flex flex-col justify-center gap-2"
+      ref={container}
+    >
+      <CuriaLogoSVG className={cn("w-36 ml-auto mr-auto")} />
+      <Heading level="h2" className={cn("text-center mt-6")}>
+        {t("Tervetuloa!")}
       </Heading>
-      {content()}
+      <div id="main-content">{content()}</div>
     </div>
   );
 }
 
 function LandingInitial() {
   const recents = useRecents();
-  const { courts } = useResources();
-  const view = useStore((state) => state.welcomeView);
+  const resources = useResources();
   const setView = useStore((state) => state.setWelcomeView);
-  const mountDirection = useStore((state) => state.mountDirection);
   const setMountDirection = useStore((state) => state.setMountDirection);
 
   const { mutate } = useMutateOpenListing();
@@ -102,11 +127,11 @@ function LandingInitial() {
   const { t } = useTranslation();
 
   const formatRecentLabel = (recent: Listing) => {
-    if (!courts.isSuccess) {
+    if (!resources.isSuccess) {
       return "";
     }
 
-    const court = courts.data.find((c) => c.id === recent.court);
+    const court = resources.data.courts.find((c) => c.id === recent.court);
 
     if (!court) {
       return `${t("Tuntematon")} | ${format(recent.date, "dd.MM.yyyy")}`;
@@ -123,7 +148,7 @@ function LandingInitial() {
   };
 
   return (
-    <div className={cn(view !== undefined && styles[mountDirection])}>
+    <div className="view-container">
       <p className="text-center">
         {t(
           "Aloita luomalla uusi tai valitsemalla aiemmin luotu juttuluettelo."
@@ -197,7 +222,6 @@ function LandingNew() {
   const { mutate } = useMutateCreateListing();
 
   const setView = useStore((state) => state.setWelcomeView);
-  const mountDirection = useStore((state) => state.mountDirection);
   const setMountDirection = useStore((state) => state.setMountDirection);
 
   useEffect(() => {
@@ -228,8 +252,7 @@ function LandingNew() {
   return (
     <div
       className={cn(
-        "flex flex-col w-full items-center justify-center",
-        styles[mountDirection]
+        "flex flex-col w-full items-center justify-center view-container"
       )}
     >
       <p>
@@ -290,7 +313,6 @@ function LandingOpen() {
   const add = useMutateImportListing();
 
   const setView = useStore((state) => state.setWelcomeView);
-  const mountDirection = useStore((state) => state.mountDirection);
   const setMountDirection = useStore((state) => state.setMountDirection);
 
   useEffect(() => {
@@ -301,145 +323,152 @@ function LandingOpen() {
 
   const { t } = useTranslation();
 
-  if (listingsQuery.isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>{t("Virhe")}</AlertTitle>
-        <AlertDescription>
-          {t("Juttuluetteloita ei voitu noutaa")}
-        </AlertDescription>
-      </Alert>
-    );
-  }
+  const content = () => {
+    if (listingsQuery.isError) {
+      return (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>{t("Virhe")}</AlertTitle>
+          <AlertDescription>
+            {t("Juttuluetteloita ei voitu noutaa")}
+          </AlertDescription>
+        </Alert>
+      );
+    }
 
-  if (listingsQuery.isSuccess) {
-    return (
-      <div
-        className={cn(
-          "flex flex-col w-full items-center justify-center",
-          styles[mountDirection]
-        )}
-      >
-        <AlertDialog
-          open={alertOpen}
-          onOpenChange={(open) => setAlertOpen(open)}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t("Virhe")}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {!remove.isSuccess ? (
-                  t(
-                    "Juttuluetteloiden poistamisessa tapahtui määrittämätön virhe."
-                  )
-                ) : (
-                  <div>
-                    <p>
-                      {t(
-                        "Kaikkia juttuluettelotiedostoja ei voitu poistaa. Seuraavat tiedostot ovat poistamatta"
-                      )}
-                    </p>
-                    <ul>
-                      {remove.data.errors.map((error) => (
-                        <li>{error}</li>
-                      ))}
-                    </ul>
-                    <p>{t("Poista tiedostot kansiosta manuaalisesti.")}</p>
-                  </div>
-                )}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogAction onClick={remove.reset}>
-                {t("Jatka")}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-        <p>
-          {t(
-            "Avaa tallennettu juttuluettelo, tuo luettelo tiedostosta tai poista tallennettuja luetteloita."
-          )}
-        </p>
-        <div className="container mx-auto py-2">
-          <DataTable
-            columns={columns}
-            data={data}
-            filter="global"
-            getRowId={(row) => row.id}
-            onRowsDeleted={remove.mutate}
-            selections={selections}
-            onSelectionsChanged={setSelections}
-            additionalFilters={[
-              <ListingDateSelector
-                key="listingDateSelector"
-                selectionActive={selectionActive}
-                onClearSelection={() => {
-                  const dateKeys = Object.keys(dateSelection);
-                  const filteredKeys = Object.keys(selections).filter(
-                    (key) => !dateKeys.includes(key)
-                  );
+    if (listingsQuery.isSuccess) {
+      return (
+        <>
+          <AlertDialog
+            open={alertOpen}
+            onOpenChange={(open) => setAlertOpen(open)}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t("Virhe")}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {!remove.isSuccess ? (
+                    t(
+                      "Juttuluetteloiden poistamisessa tapahtui määrittämätön virhe."
+                    )
+                  ) : (
+                    <div>
+                      <p>
+                        {t(
+                          "Kaikkia juttuluettelotiedostoja ei voitu poistaa. Seuraavat tiedostot ovat poistamatta"
+                        )}
+                      </p>
+                      <ul>
+                        {remove.data.errors.map((error) => (
+                          <li>{error}</li>
+                        ))}
+                      </ul>
+                      <p>{t("Poista tiedostot kansiosta manuaalisesti.")}</p>
+                    </div>
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction onClick={remove.reset}>
+                  {t("Jatka")}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <p>
+            {t(
+              "Avaa tallennettu juttuluettelo, tuo luettelo tiedostosta tai poista tallennettuja luetteloita."
+            )}
+          </p>
+          <div className="container mx-auto py-2">
+            <DataTable
+              columns={columns}
+              data={data}
+              filter="global"
+              getRowId={(row) => row.id}
+              onRowsDeleted={remove.mutate}
+              selections={selections}
+              onSelectionsChanged={setSelections}
+              additionalFilters={[
+                <ListingDateSelector
+                  key="listingDateSelector"
+                  selectionActive={selectionActive}
+                  onClearSelection={() => {
+                    const dateKeys = Object.keys(dateSelection);
+                    const filteredKeys = Object.keys(selections).filter(
+                      (key) => !dateKeys.includes(key)
+                    );
 
-                  setSelections(
-                    filteredKeys.reduce((prev, next) => {
-                      return {
-                        ...prev,
-                        [next]: selections[next],
-                      };
-                    }, {})
-                  );
+                    setSelections(
+                      filteredKeys.reduce((prev, next) => {
+                        return {
+                          ...prev,
+                          [next]: selections[next],
+                        };
+                      }, {})
+                    );
 
-                  setDateSelections({});
-                  setSelectionActive(false);
-                }}
-                onDateSelected={({ date, type }) => {
-                  let dateSelections: RowSelectionState = {};
+                    setDateSelections({});
+                    setSelectionActive(false);
+                  }}
+                  onDateSelected={({ date, type }) => {
+                    let dateSelections: RowSelectionState = {};
 
-                  dateSelections = (listingsQuery.data ?? [])
-                    .filter((listing) => {
-                      return type === "before"
-                        ? isBefore(listing.date, date)
-                        : isAfter(listing.date, date);
-                    })
-                    .reduce((prev, next) => {
-                      return {
-                        ...prev,
-                        [next.id]: true,
-                      };
-                    }, dateSelections);
+                    dateSelections = (listingsQuery.data ?? [])
+                      .filter((listing) => {
+                        return type === "before"
+                          ? isBefore(listing.date, date)
+                          : isAfter(listing.date, date);
+                      })
+                      .reduce((prev, next) => {
+                        return {
+                          ...prev,
+                          [next.id]: true,
+                        };
+                      }, dateSelections);
 
-                  if (Object.keys(dateSelections).length > 0) {
-                    setSelections({
-                      ...selections,
-                      ...dateSelections,
-                    });
+                    if (Object.keys(dateSelections).length > 0) {
+                      setSelections({
+                        ...selections,
+                        ...dateSelections,
+                      });
 
-                    setDateSelections(dateSelections);
-                    setSelectionActive(true);
-                  }
-                }}
-              />,
-            ]}
-          />
-        </div>
-        <Separator className="mb-6" />
-        <Button variant="default" onClick={() => add.mutate()}>
-          <Download className="h-4 w-4 mr-2" />
-          {t("Tuo tiedostosta")}
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="my-10"
-          onClick={() => {
-            setMountDirection("left");
-            setView("initial");
-          }}
-        >
-          <ChevronLeft className="h-6 w-6" />
-        </Button>
-      </div>
-    );
-  }
+                      setDateSelections(dateSelections);
+                      setSelectionActive(true);
+                    }
+                  }}
+                />,
+              ]}
+            />
+          </div>
+          <Separator className="mb-6" />
+          <Button variant="default" onClick={() => add.mutate()}>
+            <Download className="h-4 w-4 mr-2" />
+            {t("Tuo tiedostosta")}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="my-10"
+            onClick={() => {
+              setMountDirection("left");
+              setView("initial");
+            }}
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+        </>
+      );
+    }
+  };
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col w-full items-center justify-center view-container"
+      )}
+    >
+      {content()}
+    </div>
+  );
 }

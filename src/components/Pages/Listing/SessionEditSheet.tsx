@@ -22,6 +22,8 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/hooks/useLanguage";
+import { Textarea } from "@/components/ui/textarea";
+import { Row } from "@/components/ui/rowcol";
 
 const locales = {
   fi: fi,
@@ -39,6 +41,7 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
     date.setHours(12, 0, 0, 0);
     return date;
   });
+  const [currentNotes, setCurrentNotes] = useState<string | undefined>();
   const [breakActive, setBreakActive] = useState(false);
   const [values, setValues] = useState({
     court: "",
@@ -66,6 +69,8 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
       setCurrentBreak(listing.break);
       setBreakActive(true);
     }
+
+    setCurrentNotes(listing.notes);
   };
 
   return (
@@ -130,6 +135,21 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
               />
             </div>
           </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">{t("Huomioita")}</Label>
+            <div className="col-span-3">
+              <Textarea
+                value={currentNotes}
+                onChange={(e) => setCurrentNotes(e.currentTarget.value)}
+              />
+            </div>
+          </div>
+
+          <Row className="items-center justify-end">
+            <Label className="text-left">Lisää huomiot juttulistaan</Label>
+            <Checkbox className="h-5 w-5" />
+          </Row>
         </div>
         <SheetFooter>
           <SheetClose asChild>
@@ -147,6 +167,7 @@ export function SessionEditSheet({ getListing }: SessionEditSheetProps) {
                     draft.room = values.room;
                     draft.date = currentDate;
                     draft.break = breakActive ? currentBreak : undefined;
+                    draft.notes = currentNotes;
                   })
                 );
               }}

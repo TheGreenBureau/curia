@@ -40,8 +40,9 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border-default: 214.3 31.8% 91.4%;
-    --border: var(--sy-base-03);
-    --input: 214.3 31.8% 91.4%;
+    --border: var(--sy-base-05);
+    --input_default: 214.3 31.8% 91.4%;
+    --input: var(--sy-base-05);
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
