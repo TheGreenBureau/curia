@@ -47,11 +47,9 @@ import { useStore } from "@/hooks/useStore";
 import { useResources } from "@/hooks/useResources";
 import { v4 as uuidv4 } from "uuid";
 import { Case } from "@/types/data/case";
-import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ComboCreate } from "@/components/ui/combocreate";
 import { optionsFromRecord } from "@/lib/dataFormat";
-import { isKey } from "@/lib/utils";
 import { Listing } from "@/types/data/listing";
 
 type CivilianSheetProps = {
@@ -118,18 +116,14 @@ function CivilianSheetContent({
 }: CivilianSheetContentProps) {
   const updateListing = useMutateCurrentListing();
 
-  const {
-    summons: summonsResult,
-    summonsStatus,
-    civilianPositions,
-  } = useResources();
+  const resources = useResources();
 
   const summonOptions = {
-    summons: optionsFromRecord(summonsResult.data),
-    summonsStatus: optionsFromRecord(summonsStatus.data),
+    summons: optionsFromRecord(resources.data?.summons),
+    summonsStatus: optionsFromRecord(resources.data?.summonsStatus),
   };
 
-  let positionOptions = optionsFromRecord(civilianPositions.data);
+  let positionOptions = optionsFromRecord(resources.data?.civilianPositions);
   if (currentCase.type === "criminal") {
     positionOptions = positionOptions.filter((o) => o.value !== "plaintiff");
   }
@@ -217,7 +211,7 @@ function CivilianSheetContent({
       case "defendant":
         return summonOptions.summons.filter((s) => {
           try {
-            DefendantSummonsSchema.parse(s);
+            DefendantSummonsSchema.parse(s.value);
             return true;
           } catch {
             return false;
@@ -226,7 +220,7 @@ function CivilianSheetContent({
       default:
         return summonOptions.summons.filter((s) => {
           try {
-            OtherSummonsSchema.parse(s);
+            OtherSummonsSchema.parse(s.value);
             return true;
           } catch {
             return false;

@@ -1,7 +1,6 @@
 import { Officer } from "@/types/data/persons";
 import { produce } from "immer";
 import { Col, Row } from "@/components/ui/rowcol";
-import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Case } from "@/types/data/case";
 import { OfficerSheet } from "./OfficerSheet";
@@ -67,14 +66,15 @@ type OfficerItemProps = {
 };
 
 export function OfficerItem({ officer, currentCase }: OfficerItemProps) {
-  const { positionAbbreviations } = useResources();
+  const resources = useResources();
 
   return (
     <Row className="gap-3">
       <Col className="w-12 items-end">
-        {positionAbbreviations.isSuccess && (
+        {resources.isSuccess && (
           <Badge variant={officer.type} className="m-0 w-12 justify-center">
-            {positionAbbreviations.data[`${officer.type}_abr`] ?? "???"}
+            {resources.data.positionAbbreviations[`${officer.type}_abr`] ??
+              "???"}
           </Badge>
         )}
       </Col>

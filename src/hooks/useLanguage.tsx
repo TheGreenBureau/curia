@@ -12,7 +12,9 @@ export const useLanguage = () => {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    i18n.changeLanguage(language);
+    if (i18n.resolvedLanguage !== language) {
+      i18n.changeLanguage(language);
+    }
 
     if (language !== localStorage.getItem(langKey)) {
       localStorage.setItem(langKey, language);

@@ -20,7 +20,7 @@ export type ListingData = {
 };
 
 export const useOpenListingsData = () => {
-  const { courts } = useResources();
+  const resources = useResources();
   const listingsQuery = useListings();
   const open = useMutateOpenListing();
 
@@ -28,7 +28,7 @@ export const useOpenListingsData = () => {
   const helper = createColumnHelper<ListingData>();
 
   const getCourt = (courtId: string) => {
-    return courts.data?.find((c) => c.id === courtId);
+    return resources.data?.courts.find((c) => c.id === courtId);
   };
 
   const getDepartment = (courtId: string, departmentId: string) => {
@@ -48,7 +48,7 @@ export const useOpenListingsData = () => {
     return (office && office.rooms.find((r) => r.id === roomId)?.name) ?? "-";
   };
 
-  const columns: ColumnDef<ListingData, any>[] = courts.isSuccess
+  const columns: ColumnDef<ListingData, any>[] = resources.isSuccess
     ? [
         {
           id: "select",

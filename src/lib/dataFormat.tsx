@@ -31,13 +31,13 @@ export const optionsFromData = <Data extends Base>(data: Data[]): Option[] => {
 
 export const formatListingName = (listing: Listing) => {
   const { t } = useTranslation();
-  const { courts } = useResources();
+  const resources = useResources();
 
   if (!listing.court) {
     return `${t("Juttuluettelo")} ${dateString(listing.creationDate)}`;
   }
 
-  const court = courts.data?.find((c) => c.id === listing.court);
+  const court = resources.data?.courts.find((c) => c.id === listing.court);
   const office = court && court.offices.find((o) => o.id === listing.court);
   const room =
     court && office && office.rooms.find((r) => r.id === listing.room);

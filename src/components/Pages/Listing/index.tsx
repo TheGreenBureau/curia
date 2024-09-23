@@ -9,8 +9,7 @@ import { cn, isKey } from "@/lib/utils";
 import { format } from "date-fns";
 import { ChevronLeft, CircleSlash2 } from "lucide-react";
 import { SessionEditSheet } from "./SessionEditSheet";
-import styles from "./listing.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useTranslation } from "react-i18next";
@@ -21,6 +20,8 @@ import { Officer } from "@/types/data/persons";
 import { CaseList } from "./CaseList";
 import { ListingMenu } from "@/components/Pages/Listing/ListingMenu";
 import { optionsFromRecord } from "@/lib/dataFormat";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
 
 const createNewCase = (defaults?: Defaults): Case => {
   const date = new Date();
@@ -54,13 +55,7 @@ export function Listing() {
   const currentListing = useStore((state) => state.currentListing);
   const setCurrentListing = useStore((state) => state.setCurrentListing);
 
-  const {
-    courts,
-    courtTitles,
-    prosecutorTitles,
-    laymanTitles,
-    isSuccess: resourcesIsSuccess,
-  } = useResources();
+  const resources = useResources();
   const crimes = useCrimes();
   const openCSV = useMutateOpenCSV();
 
@@ -79,8 +74,34 @@ export function Listing() {
     }
   }, []);
 
-  if (currentListing && courts.isSuccess) {
-    const court = courts.data.find((c) => c.id === currentListing.court);
+  const container = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.to(container.current, {
+        x: 0,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power2.inOut",
+      });
+    },
+    { dependencies: [view], scope: container }
+  );
+
+  if (currentListing && resources.isSuccess) {
+    useGSAP(() => {
+      gsap.to(".listings", {
+        x: 0,
+        opacity: 1,
+        scaleY: 1,
+        duration: 0.5,
+        ease: "power2.inOut",
+      });
+    });
+
+    const court = resources.data.courts.find(
+      (c) => c.id === currentListing.court
+    );
     const department = court?.departments.find(
       (d) => d.id === currentListing.department
     );
@@ -88,13 +109,18 @@ export function Listing() {
     const room = office?.rooms.find((r) => r.id === currentListing.room);
 
     const titles = {
-      court: optionsFromRecord(courtTitles.data),
-      prosecutor: optionsFromRecord(prosecutorTitles.data),
-      layman: optionsFromRecord(laymanTitles.data),
+      court: optionsFromRecord(resources.data.courtTitles),
+      prosecutor: optionsFromRecord(resources.data.prosecutorTitles),
+      layman: optionsFromRecord(resources.data.laymanTitles),
     };
 
     return (
-      <div className={cn("flex flex-col px-8 py-10 gap-4", styles.mountRight)}>
+      <div
+        className={cn(
+          "flex flex-col px-8 py-10 gap-4 translate-x-[100px] opacity-0"
+        )}
+        ref={container}
+      >
         <CaseSheet
           getCase={() => createNewCase()}
           open={caseSheetOpen}
@@ -141,7 +167,7 @@ export function Listing() {
                 </>
               )}
               {currentListing.cases.length > 0 &&
-                resourcesIsSuccess &&
+                resources.isSuccess &&
                 crimes.isSuccess &&
                 court && (
                   <ListingMenu
@@ -186,7 +212,9 @@ export function Listing() {
             </div>
           </Alert>
         ) : (
-          <CaseList />
+          <div className="-translate-x-[100px] opacity-0 scaleY-0 listings">
+            <CaseList />
+          </div>
         )}
       </div>
     );

@@ -58,16 +58,15 @@ export function OfficerSheet({
 
   const currentListing = useStore((state) => state.currentListing);
   const updateListing = useMutateCurrentListing();
-  const { courtTitles, prosecutorTitles, laymanTitles, officerPositions } =
-    useResources();
+  const resources = useResources();
 
   const titleOptions = {
-    court: optionsFromRecord(courtTitles.data),
-    prosecutor: optionsFromRecord(prosecutorTitles.data),
-    layman: optionsFromRecord(laymanTitles.data),
+    court: optionsFromRecord(resources.data?.courtTitles),
+    prosecutor: optionsFromRecord(resources.data?.prosecutorTitles),
+    layman: optionsFromRecord(resources.data?.laymanTitles),
   };
 
-  const positionOptions = optionsFromRecord(officerPositions.data);
+  const positionOptions = optionsFromRecord(resources.data?.officerPositions);
 
   const { t } = useTranslation();
 

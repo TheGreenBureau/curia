@@ -52,5 +52,12 @@
         }
       }
     }
+  ],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "class:list",
+    ".*Classes.*"
   ]
 }

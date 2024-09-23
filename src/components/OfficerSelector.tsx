@@ -22,9 +22,9 @@ type OfficerSelectorProps = {
 };
 
 export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
-  const { courtTitles } = useResources();
+  const resources = useResources();
 
-  const titleOptions = optionsFromRecord(courtTitles.data);
+  const titleOptions = optionsFromRecord(resources.data?.courtTitles);
 
   const { t } = useTranslation();
 
@@ -65,7 +65,7 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
     );
   };
 
-  if (courtTitles.isError) {
+  if (resources.isError) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -75,7 +75,7 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
     );
   }
 
-  if (courtTitles.isSuccess) {
+  if (resources.isSuccess) {
     return (
       <div className="flex flex-col items-center w-full gap-4">
         <div className="grid gap-4 w-full">
@@ -100,8 +100,8 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               className="col-span-3"
               options={titleOptions}
               disabled={
-                courtTitles.isPending ||
-                courtTitles.isFetching ||
+                resources.isPending ||
+                resources.isFetching ||
                 !values.presiding ||
                 values.presiding.name === ""
               }
@@ -138,8 +138,8 @@ export function OfficerSelector({ onChange, values }: OfficerSelectorProps) {
               className="col-span-3"
               options={titleOptions}
               disabled={
-                courtTitles.isPending ||
-                courtTitles.isFetching ||
+                resources.isPending ||
+                resources.isFetching ||
                 !values.secretary ||
                 values.secretary.name === ""
               }
