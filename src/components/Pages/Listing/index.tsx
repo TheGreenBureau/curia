@@ -89,16 +89,6 @@ export function Listing() {
   );
 
   if (currentListing && resources.isSuccess) {
-    useGSAP(() => {
-      gsap.to(".listings", {
-        x: 0,
-        opacity: 1,
-        scaleY: 1,
-        duration: 0.5,
-        ease: "power2.inOut",
-      });
-    });
-
     const court = resources.data.courts.find(
       (c) => c.id === currentListing.court
     );
@@ -184,6 +174,16 @@ export function Listing() {
                     laymanTitles={titles.layman}
                     sessionBrake={currentListing.break}
                     crimes={crimes.data}
+                    notes={currentListing.notes}
+                    notePublicity={currentListing.notePublicity}
+                    positionAbbreviations={resources.data.positionAbbreviations}
+                    civilianPositions={optionsFromRecord(
+                      resources.data.civilianPositions
+                    )}
+                    summons={optionsFromRecord(resources.data.summons)}
+                    summonsStatus={optionsFromRecord(
+                      resources.data.summonsStatus
+                    )}
                   />
                 )}
             </div>
@@ -212,7 +212,7 @@ export function Listing() {
             </div>
           </Alert>
         ) : (
-          <div className="-translate-x-[100px] opacity-0 scaleY-0 listings">
+          <div>
             <CaseList />
           </div>
         )}

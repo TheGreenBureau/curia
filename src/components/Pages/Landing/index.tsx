@@ -260,15 +260,14 @@ function LandingNew() {
       </p>
       <div className="flex flex-col w-full items-center justify-center gap-4 my-4">
         <CourtSelector
-          courtId={selections?.court ?? ""}
           values={selections}
-          onChange={(values) => {
+          onChange={(values, validated) => {
             setSelections({
               ...selections,
               ...values,
             });
+            setValid(validated);
           }}
-          isValid={setValid}
         />
         <div className="grid grid-cols-4 items-center w-full gap-4">
           <Label className="text-right">{t("Päivämäärä")}</Label>

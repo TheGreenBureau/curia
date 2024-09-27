@@ -1,4 +1,9 @@
-import { Case, CaseSchema } from "@/types/data/case";
+import {
+  Case,
+  CaseSchema,
+  NotePublicity,
+  NotePublicitySchema,
+} from "@/types/data/case";
 import { Court } from "@/types/data/court";
 import { Option } from "@/types/data/options";
 import { z } from "zod";
@@ -14,6 +19,7 @@ export const ListingSchema = z.object({
   cases: CaseSchema.array(),
   break: z.coerce.date().optional(),
   notes: z.string().optional(),
+  notePublicity: NotePublicitySchema.optional(),
 });
 
 export type Listing = z.infer<typeof ListingSchema>;
@@ -36,4 +42,13 @@ export type ListingDocumentProps = {
   prosecutorTitles: Option[];
   laymanTitles: Option[];
   crimes: Option[];
+  notes?: string;
+  notePublicity?: NotePublicity;
+};
+
+export type ProsecutorListingDocumentProps = ListingDocumentProps & {
+  positionAbbreviations: Record<string, string>;
+  civilianPositions: Option[];
+  summons: Option[];
+  summonsStatus: Option[];
 };

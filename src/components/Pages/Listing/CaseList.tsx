@@ -26,6 +26,8 @@ import { useCases } from "@/hooks/useCases";
 import { useState } from "react";
 import { Item } from "./Item";
 import { createPortal } from "react-dom";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
 
 export function CaseList() {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
@@ -37,6 +39,16 @@ export function CaseList() {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
+
+  useGSAP(() => {
+    gsap.to("#case-list", {
+      x: 0,
+      opacity: 1,
+      scaleY: 1,
+      duration: 0.5,
+      ease: "power2.inOut",
+    });
+  });
 
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
@@ -117,7 +129,7 @@ export function CaseList() {
   const rootElement = document.getElementById("app");
 
   return (
-    <div className="flex flex-col gap-4">
+    <div id="case-list" className="flex flex-col gap-4 opacity-0 scaleY-0">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

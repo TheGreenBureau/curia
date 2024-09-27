@@ -5,7 +5,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Listing, ListingDocumentProps } from "@/types/data/listing";
+import {
+  Listing,
+  ListingDocumentProps,
+  ProsecutorListingDocumentProps,
+} from "@/types/data/listing";
 import { Button } from "@/components/ui/button";
 import { isDateArraySortedByTime, sortDates } from "@/lib/utils";
 import { produce } from "immer";
@@ -19,7 +23,7 @@ import { format } from "date-fns";
 import { Office } from "@/types/data/court";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
-type ListingMenuProps = ListingDocumentProps & {
+type ListingMenuProps = ProsecutorListingDocumentProps & {
   listing: Listing;
   office: Office | null;
   onOpenCaseSheet: () => void;
@@ -116,6 +120,7 @@ export function ListingMenu({
         </DropdownMenuContent>
       </DropdownMenu>
       <DocumentDialog {...rest} />
+      <DocumentDialog prosecutor {...rest} />
     </Row>
   );
 }

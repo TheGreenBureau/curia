@@ -164,7 +164,7 @@ export function OfficerSheet({
                     <SelectContent>
                       <SelectGroup>
                         {positionOptions.map((option) => (
-                          <SelectItem value={option.value}>
+                          <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
                         ))}

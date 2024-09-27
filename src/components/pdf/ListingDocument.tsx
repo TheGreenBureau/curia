@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Page,
   Text,
@@ -29,19 +28,6 @@ Font.register({
     },
   ],
 });
-
-/*Font.register({
-  family: "Open Sans",
-  fonts: [
-    { src: "src/fonts/Open_Sans/static/OpenSans-Regular.ttf" },
-    { src: "src/fonts/Open_Sans/static/OpenSans-Bold.ttf", fontWeight: "bold" },
-    {
-      src: "src/fonts/Open_Sans/static/OpenSans-Italic.ttf",
-      fontStyle: "italic",
-      fontWeight: "normal",
-    },
-  ],
-});*/
 
 Font.registerHyphenationCallback((word) => [word]);
 
@@ -115,6 +101,8 @@ export const ListingDocument = ({
   prosecutorTitles,
   laymanTitles,
   crimes,
+  notes,
+  notePublicity,
 }: ListingDocumentProps) => {
   const { t } = useTranslation();
 
@@ -129,7 +117,7 @@ export const ListingDocument = ({
       <Page size="A4" style={styles.page}>
         <View style={[styles.section, { flexDirection: "row", marginTop: 0 }]}>
           <View
-            style={{ flexDirection: "column", width: "50%", marginRight: 20 }}
+            style={{ flexDirection: "column", width: "60%", marginRight: 20 }}
           >
             <Text style={styles.topTextUpper}>{court.name}</Text>
             {department.toLowerCase() !== "ei osastoja" &&
@@ -144,13 +132,25 @@ export const ListingDocument = ({
           </View>
         </View>
 
+        {notePublicity === "public" && notes && (
+          <View
+            style={[
+              styles.section,
+              { width: "100%", marginBottom: 20, marginTop: 0 },
+            ]}
+          >
+            <Text style={{ fontStyle: "italic" }}>{notes}</Text>
+          </View>
+        )}
+
         <OfficerView
           officerInfo={presidingInfo}
           presidingInfo={presidingInfo}
           titles={courtTitles}
-          title={t("strings:Oikeuden puheenjohtaja", "Oikeuden puheenjohtaja", {
+          title={t("Oikeuden puheenjohtaja", "Oikeuden puheenjohtaja", {
             count: presidingInfo.length,
           })}
+          caseCount={cases.length}
         />
 
         <OfficerView
@@ -158,6 +158,7 @@ export const ListingDocument = ({
           presidingInfo={presidingInfo}
           titles={courtTitles}
           title={t("Jäsenet")}
+          caseCount={cases.length}
         />
 
         <OfficerView
@@ -165,32 +166,36 @@ export const ListingDocument = ({
           presidingInfo={presidingInfo}
           titles={laymanTitles}
           title={t("Lautamiehet")}
+          caseCount={cases.length}
         />
 
         <OfficerView
           officerInfo={prosecutorInfo}
           presidingInfo={presidingInfo}
           titles={prosecutorTitles}
-          title={t("strings:Syyttäjä", "Syyttäjä", {
+          title={t("Syyttäjä", "Syyttäjä", {
             count: prosecutorInfo.length,
           })}
+          caseCount={cases.length}
         />
 
         <OfficerView
           officerInfo={secretaryInfo}
           presidingInfo={presidingInfo}
           titles={courtTitles}
-          title={t("strings:Pöytäkirjanpitäjä", "Pöytäkirjanpitäjä", {
+          title={t("Pöytäkirjanpitäjä", "Pöytäkirjanpitäjä", {
             count: secretaryInfo.length,
           })}
+          caseCount={cases.length}
         />
 
+        <View style={{ borderTop: 1, marginHorizontal: 30 }} />
+
         {sessionBrake && (
-          <View style={styles.section}>
-            <Text>{`${t("Tauko kello")} ${format(
-              sessionBrake,
-              "HH:mm"
-            )}`}</Text>
+          <View style={[styles.section, { marginTop: 10 }]}>
+            <Text style={{ marginHorizontal: 30 }}>{`${t(
+              "Tauko kello"
+            )} ${format(sessionBrake, "HH:mm")}.`}</Text>
           </View>
         )}
 
@@ -310,21 +315,49 @@ function CaseView({ currentCase, index, crimes }: CaseViewProps) {
         </Text>
       </View>
 
-      <View
-        style={{ flexDirection: "row", gap: 10, justifyContent: "flex-start" }}
-      >
-        <View style={{ width: "7%" }} />
-        <View style={{ width: "15%", maxWidth: "15%" }}></View>
-      </View>
+      {currentCase.notePublicity === "public" && currentCase.notes && (
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 10,
+            justifyContent: "flex-start",
+            marginTop: 10,
+            marginBottom: 0,
+          }}
+        >
+          <View style={{ width: "7%" }} />
+          <View style={{ width: "13%" }} />
+          <Text style={{ fontStyle: "italic", fontSize: 12, paddingTop: 5 }}>
+            {currentCase.notes}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
+
+type OfficerCaseLineProps = {
+  info: OfficerCaseNumbers;
+};
+
+const OfficerCaseLine = ({ info }: OfficerCaseLineProps) => {
+  const { t } = useTranslation();
+
+  const getText = () => {
+    return `${t("strings:Asiassa", "Asiassa", {
+      count: info.cases.length,
+    })} ${info.cases.join(", ")}`;
+  };
+
+  return <Text>{getText()}</Text>;
+};
 
 type OfficerViewProps = {
   officerInfo: OfficerCaseNumbers[];
   presidingInfo: OfficerCaseNumbers[];
   titles: Option[];
   title: string;
+  caseCount: number;
 };
 
 function OfficerView({
@@ -332,20 +365,13 @@ function OfficerView({
   presidingInfo,
   titles,
   title,
+  caseCount,
 }: OfficerViewProps) {
-  const { t } = useTranslation();
-
-  const getOfficerCasesLine = (info: OfficerCaseNumbers) => {
-    return `${t("strings:Asiassa", "Asiassa", {
-      count: info.cases.length,
-    })} ${info.cases.join(", ")}`;
-  };
-
   if (officerInfo.length > 0) {
     return (
       <View style={[styles.section, { flexDirection: "column", marginTop: 5 }]}>
         <View style={{ flexDirection: "row" }}>
-          <Text style={{ width: "25%", marginRight: 40 }}>{title}</Text>
+          <Text style={{ width: "25%", marginRight: 60 }}>{title}</Text>
 
           <View style={{ flexDirection: "column", gap: 10 }}>
             {officerInfo.map((info) => (
@@ -357,9 +383,13 @@ function OfficerView({
                       ?.label ?? info.officer.title}
                   </Text>
                 )}
-                {(officerInfo.length > 1 || presidingInfo.length > 1) && (
-                  <Text>{getOfficerCasesLine(info)}</Text>
-                )}
+                {caseCount > 1 &&
+                  (info.officer.type === "member" ||
+                    info.officer.type === "layman" ||
+                    officerInfo.length > 1 ||
+                    presidingInfo.length > 1) && (
+                    <OfficerCaseLine info={info} />
+                  )}
               </View>
             ))}
           </View>

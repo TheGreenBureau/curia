@@ -71,7 +71,6 @@ export function Settings() {
           <div className="flex flex-row justify-center gap-2">
             <CourtSelector
               hasTitle
-              courtId={defaults.data?.court ?? null}
               values={{
                 court: defaults.data?.court ?? "",
                 office: defaults.data?.office ?? "",

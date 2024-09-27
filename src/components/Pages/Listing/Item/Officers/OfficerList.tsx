@@ -5,46 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Case } from "@/types/data/case";
 import { OfficerSheet } from "./OfficerSheet";
 import { useResources } from "@/hooks/useResources";
+import { sortOfficers } from "@/lib/dataFormat";
+import { useResolvedLanguage } from "@/hooks/queries";
 
 type OfficerListProps = {
   currentCase: Case;
 };
 
-const sortOfficers = (a: Officer, b: Officer) => {
-  switch (a.type) {
-    case "presiding":
-      return -1;
-    case "secretary":
-      switch (b.type) {
-        case "presiding":
-          return 1;
-        case "secretary":
-          return 0;
-        default:
-          return -1;
-      }
-    case "member":
-      switch (b.type) {
-        case "member":
-          return 0;
-        case "prosecutor":
-          return -1;
-        default:
-          return 1;
-      }
-    default:
-      switch (b.type) {
-        case "prosecutor":
-          return 0;
-        default:
-          return 1;
-      }
-  }
-};
-
 export function OfficerList({ currentCase }: OfficerListProps) {
+  const lang = useResolvedLanguage();
+
   const sortedOfficers = produce(currentCase.officers, (draft) =>
-    draft.sort(sortOfficers)
+    draft.sort((a, b) => sortOfficers(a, b, lang))
   );
 
   return (

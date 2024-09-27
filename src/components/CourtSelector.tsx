@@ -16,19 +16,15 @@ type CourtValues = {
 };
 
 type CourtSelectorProps = {
-  courtId: string | null;
-  onChange: (values: CourtValues) => void;
+  onChange: (values: CourtValues, validated: boolean) => void;
   values: CourtValues;
   hasTitle?: boolean;
-  isValid?: (valid: boolean) => void;
 };
 
 export function CourtSelector({
-  courtId,
   onChange,
   values,
   hasTitle,
-  isValid,
 }: CourtSelectorProps) {
   const resources = useResources();
 
@@ -84,61 +80,57 @@ export function CourtSelector({
 
       const room = rooms && rooms.length === 1 ? rooms[0].id : "";
 
+      let newValues: CourtValues = values;
+
       switch (type) {
         case "court":
-          onChange(
-            produce(values, (draft) => {
-              draft.court = value;
-              draft.department = department;
-              draft.office = office;
-              draft.room = room;
-            })
-          );
+          newValues = produce(values, (draft) => {
+            draft.court = value;
+            draft.department = department;
+            draft.office = office;
+            draft.room = room;
+          });
           break;
         case "department":
           if (!currentCourt) break;
 
-          onChange(
-            produce(values, (draft) => {
-              draft.department = value;
-            })
-          );
+          newValues = produce(values, (draft) => {
+            draft.department = value;
+          });
           break;
         case "office":
-          onChange(
-            produce(values, (draft) => {
-              draft.office = value;
-              draft.room = room;
-            })
-          );
+          newValues = produce(values, (draft) => {
+            draft.office = value;
+            draft.room = room;
+          });
           break;
         default:
-          onChange(
-            produce(values, (draft) => {
-              draft.room = value;
-            })
-          );
+          newValues = produce(values, (draft) => {
+            draft.room = value;
+          });
           break;
       }
+
+      onChange(newValues, validated(newValues));
     };
 
-    const validated = () => {
+    const validated = (newValues: CourtValues) => {
       let valid = true;
 
-      if (values.court === "" || values.office === "" || values.room === "") {
+      if (
+        newValues.court === "" ||
+        newValues.office === "" ||
+        newValues.room === ""
+      ) {
         valid = false;
       }
 
-      if (values.department === "" && options.departments.length > 0) {
+      if (newValues.department === "" && options.departments.length > 0) {
         valid = false;
       }
 
       return valid;
     };
-
-    if (isValid) {
-      isValid(validated());
-    }
 
     return (
       <div className="flex flex-col gap-4 w-full items-center">

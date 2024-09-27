@@ -1,8 +1,12 @@
-import { Officer, Civilian, OfficerSchema, CivilianSchema } from "./persons";
+import { OfficerSchema, CivilianSchema } from "./persons";
 import { z } from "zod";
 
 export const caseType = ["criminal", "civil"] as const;
 export type CaseType = (typeof caseType)[number];
+
+export const notePublicityTypes = ["private", "public", "prosecutor"] as const;
+export const NotePublicitySchema = z.enum(notePublicityTypes);
+export type NotePublicity = z.infer<typeof NotePublicitySchema>;
 
 export const CaseSchema = z.object({
   id: z.string(),
@@ -16,6 +20,7 @@ export const CaseSchema = z.object({
   confidential: z.boolean().optional(),
   csv: z.boolean().optional(),
   notes: z.string().optional(),
+  notePublicity: NotePublicitySchema.optional(),
 });
 
 export type Case = z.infer<typeof CaseSchema>;

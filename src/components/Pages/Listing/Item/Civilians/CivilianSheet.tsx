@@ -258,7 +258,9 @@ function CivilianSheetContent({
               <SelectContent>
                 <SelectGroup>
                   {positionOptions.map((o) => (
-                    <SelectItem value={o.value}>{o.label}</SelectItem>
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>

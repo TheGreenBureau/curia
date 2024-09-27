@@ -5,49 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Case } from "@/types/data/case";
 import { CivilianSheet } from "@/components/Pages/Listing/Item/Civilians/CivilianSheet";
 import { useResources } from "@/hooks/useResources";
+import { sortCivilians } from "@/lib/dataFormat";
+import { useResolvedLanguage } from "@/hooks/queries";
 
 type CivilianListProps = {
   currentCase: Case;
 };
 
-const sortCivilians = (a: Civilian, b: Civilian) => {
-  if (a.type === b.type) {
-    return 0;
-  }
-
-  switch (a.type) {
-    case "defendant":
-      return -1;
-    case "plaintiff":
-      switch (b.type) {
-        case "defendant":
-          return 1;
-        default:
-          return -1;
-      }
-    case "injured":
-      switch (b.type) {
-        case "defendant":
-        case "plaintiff":
-          return 1;
-        default:
-          return -1;
-      }
-    case "witness":
-      switch (b.type) {
-        case "expert":
-          return -1;
-        default:
-          return 1;
-      }
-    default:
-      return 1;
-  }
-};
-
 export function CivilianList({ currentCase }: CivilianListProps) {
+  const lang = useResolvedLanguage();
+
   const sortedCivilians = produce(currentCase.civilians, (draft) =>
-    draft.sort(sortCivilians)
+    draft.sort((a, b) => sortCivilians(a, b, lang))
   );
 
   return (

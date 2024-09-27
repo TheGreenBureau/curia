@@ -30,7 +30,10 @@ export function Matter({
             currentCase.confidential && "text-rose-500"
           )}
         >
-          <Heading level="h4" className="m-0 transition-colors duration-100">
+          <Heading
+            level="h4"
+            className="m-0 transition-colors duration-100 select-none"
+          >
             {heading}
           </Heading>
           {currentCase.confidential ? (
@@ -57,7 +60,7 @@ export function Matter({
           <Heading
             level="h4"
             className={cn(
-              "m-0 uppercase transition-transform duration-100 scale-0 text-rose-500",
+              "m-0 uppercase transition-transform duration-100 scale-0 text-rose-500 select-none",
               currentCase.confidential && "scale-100"
             )}
           >

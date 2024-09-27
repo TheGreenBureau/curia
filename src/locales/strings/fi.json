@@ -130,5 +130,14 @@
   "Valitse päivämäärällä": "Valitse päivämäärällä",
   "Kirjoita...": "Kirjoita...",
   "Juttuluettelot": "Juttuluettelot",
-  "Avaa": "Avaa"
+  "Avaa": "Avaa",
+  "private": "Ei-julkinen",
+  "public": "Julkinen",
+  "prosecutor": "Syyttäjä",
+  "Vastaaja_one": "Vastaaja",
+  "Vastaaja_other": "Vastaajat",
+  "Asianomistaja_one": "Asianomistaja",
+  "Asianomistaja_other": "Asianomistajat",
+  "Todistaja_one": "Todistaja",
+  "Todistaja_other": "Todistajat"
 }
