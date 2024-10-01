@@ -5,7 +5,9 @@ import {
   Document,
   StyleSheet,
   Font,
-  Note,
+  Svg,
+  Circle,
+  Polyline,
 } from "@react-pdf/renderer";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
@@ -14,6 +16,8 @@ import { ProsecutorListingDocumentProps } from "@/types/data/listing";
 import FiraSansRegular from "@/fonts/Fira_Sans/FiraSans-Regular.ttf";
 import FiraSansBold from "@/fonts/Fira_Sans/FiraSans-Bold.ttf";
 import FiraSansItalic from "@/fonts/Fira_Sans/FiraSans-Italic.ttf";
+import FiraSansSemiBold from "@/fonts/Fira_Sans/FiraSans-SemiBold.ttf";
+import FiraSansMedium from "@/fonts/Fira_Sans/FiraSans-Medium.ttf";
 import {
   Civilian,
   Officer,
@@ -23,7 +27,6 @@ import {
 import { sortCivilians, sortOfficers } from "@/lib/dataFormat";
 import { useResolvedLanguage } from "@/hooks/queries";
 import { PropsWithChildren, ReactNode } from "react";
-import { keys } from "@/lib/utils";
 
 Font.register({
   family: "Fira Sans",
@@ -35,12 +38,14 @@ Font.register({
       fontStyle: "italic",
       fontWeight: "normal",
     },
+    { src: FiraSansSemiBold, fontWeight: "semibold" },
+    { src: FiraSansMedium, fontWeight: "medium" },
   ],
 });
 
 Font.registerHyphenationCallback((word) => [word]);
 
-const styles = StyleSheet.create({
+const commonStyles = StyleSheet.create({
   page: {
     flexDirection: "column",
     gap: 2,
@@ -171,36 +176,70 @@ export function ProsecutorListingDocument(
   const sharedAssembly = hasSharedOfficers.court;
   const sharedProsecutors = hasSharedOfficers.prosecutors;
 
+  const styles = StyleSheet.create({
+    page: {
+      flexDirection: "column",
+      gap: 2,
+      fontFamily: "Fira Sans",
+      fontSize: 14,
+      paddingBottom: 40,
+      paddingTop: 40,
+      paddingLeft: 40,
+      paddingRight: 40,
+    },
+    listingInfo: {
+      flexDirection: "row",
+    },
+    courtInfo: {
+      width: "60%",
+      flexDirection: "column",
+    },
+    titleAndDate: {
+      flexDirection: "row",
+      gap: 5,
+      fontWeight: "bold",
+      textTransform: "uppercase",
+    },
+    prosecutors: {
+      flexDirection: "column",
+    },
+    prosecutorsTitleText: {
+      fontWeight: "bold",
+      textTransform: "uppercase",
+    },
+    notes: {
+      marginTop: 20,
+    },
+    notesText: {
+      fontStyle: "italic",
+    },
+    sharedAssembly: {
+      marginTop: 20,
+    },
+    cases: {
+      flexDirection: "column",
+      gap: 20,
+      marginTop: 30,
+      marginBottom: 20,
+    },
+  });
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={{ flexDirection: "row" }}>
-          <View style={{ width: "60%", flexDirection: "column" }}>
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 5,
-                fontWeight: "bold",
-                textTransform: "uppercase",
-              }}
-            >
+        <View style={styles.listingInfo}>
+          <View style={styles.courtInfo}>
+            <View style={styles.titleAndDate}>
               <Text>{t("Juttuluettelo")}</Text>
               <Text>{format(date, "dd.MM.yyyy")}</Text>
             </View>
             <Text>{court.name}</Text>
             {department !== "" && <Text>{department}</Text>}
             <Text>{room}</Text>
-            {notes &&
-              (notePublicity === "public" ||
-                notePublicity === "prosecutor") && (
-                <View style={styles.section}>
-                  <Text style={{ fontStyle: "italic" }}>{notes}</Text>
-                </View>
-              )}
           </View>
 
-          <View style={{ flexDirection: "column" }}>
-            <Text style={{ fontWeight: "bold", textTransform: "uppercase" }}>
+          <View style={styles.prosecutors}>
+            <Text style={styles.prosecutorsTitleText}>
               {t("Syyttäjä", "Syyttäjä", { count: prosecutors.length })}
             </Text>
             {prosecutors.map((prosecutor) => (
@@ -209,8 +248,15 @@ export function ProsecutorListingDocument(
           </View>
         </View>
 
+        {notes &&
+          (notePublicity === "public" || notePublicity === "prosecutor") && (
+            <View style={styles.notes}>
+              <Text style={styles.notesText}>{notes}</Text>
+            </View>
+          )}
+
         {sharedAssembly && (
-          <View style={styles.section}>
+          <View style={styles.sharedAssembly}>
             <Assembly
               sortedOfficers={[...cases[0].officers].sort((a, b) =>
                 sortOfficers(a, b, lang)
@@ -220,7 +266,7 @@ export function ProsecutorListingDocument(
           </View>
         )}
 
-        <View style={[styles.section, { flexDirection: "column", gap: 40 }]}>
+        <View style={styles.cases}>
           {cases.map((current, index) => (
             <CaseView
               key={current.id}
@@ -248,18 +294,27 @@ function Assembly(props: AssemblyProps) {
 
   const sortedCourt = sortedOfficers.filter((o) => o.type !== "prosecutor");
 
+  const styles = StyleSheet.create({
+    assembly: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    assemblyTitleText: {
+      ...commonStyles.subtitle,
+    },
+    assemblyOfficers: {
+      flexDirection: "row",
+      rowGap: 5,
+      columnGap: 20,
+      flexWrap: "wrap",
+      maxWidth: 400,
+    },
+  });
+
   return (
-    <View style={{ flexDirection: "row", gap: 10 }}>
-      <Text style={styles.subtitle}>{t("Tuomioistuin")}</Text>
-      <View
-        style={{
-          flexDirection: "row",
-          rowGap: 5,
-          columnGap: 20,
-          flexWrap: "wrap",
-          maxWidth: 400,
-        }}
-      >
+    <View style={styles.assembly}>
+      <Text style={styles.assemblyTitleText}>{t("Tuomioistuin")}</Text>
+      <View style={styles.assemblyOfficers}>
         {sortedCourt.map((officer) => (
           <OfficerView key={officer.id} officer={officer} {...rest} />
         ))}
@@ -275,10 +330,25 @@ type CiviliansProps = ProsecutorListingDocumentProps & {
 function Civilians(props: PropsWithChildren<CiviliansProps>) {
   const { children, civilians, ...rest } = props;
 
+  const styles = StyleSheet.create({
+    civilians: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    civiliansTitleText: {
+      ...commonStyles.subtitle,
+    },
+    civiliansList: {
+      flexDirection: "row",
+      gap: 20,
+      flexWrap: "wrap",
+    },
+  });
+
   return (
-    <View style={{ flexDirection: "row", gap: 10 }}>
-      <Text style={styles.subtitle}>{children}</Text>
-      <View style={{ flexDirection: "row", gap: 20, flexWrap: "wrap" }}>
+    <View style={styles.civilians}>
+      <Text style={styles.civiliansTitleText}>{children}</Text>
+      <View style={styles.civiliansList}>
         {civilians.map((civilian) => (
           <CivilianView key={civilian.id} civilian={civilian} {...rest} />
         ))}
@@ -296,17 +366,26 @@ function CaseNotes(props: CaseNotesProps) {
 
   const { t } = useTranslation();
 
+  const styles = StyleSheet.create({
+    notes: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    notesTitleText: {
+      ...commonStyles.subtitle,
+    },
+    notesDisplay: {
+      flexDirection: "row",
+      gap: 20,
+      flexWrap: "wrap",
+      fontSize: 12,
+    },
+  });
+
   return (
-    <View style={{ flexDirection: "row", gap: 10 }}>
-      <Text style={styles.subtitle}>{t("Huomioita")}</Text>
-      <View
-        style={{
-          flexDirection: "row",
-          gap: 20,
-          flexWrap: "wrap",
-          fontSize: 12,
-        }}
-      >
+    <View style={styles.notes}>
+      <Text style={styles.notesTitleText}>{t("Huomioita")}</Text>
+      <View style={styles.notesDisplay}>
         <Text>{notes}</Text>
       </View>
     </View>
@@ -410,26 +489,7 @@ function CaseView(props: CaseViewProps) {
 
   const lang = useResolvedLanguage();
 
-  const rollingColors: { bg: string; border: string }[] = [
-    {
-      bg: "#a855f7",
-      border: "#6b21a8",
-    },
-    {
-      bg: "#0ea5e9",
-      border: "#075985",
-    },
-    {
-      bg: "#f59e0b",
-      border: "#92400e",
-    },
-    {
-      bg: "#14b8a6",
-      border: "#115e59",
-    },
-  ];
-
-  const colorIndex = index <= 3 ? index : (index % 3) - 1;
+  const topbarBorderColor = "black";
 
   return (
     <View
@@ -437,8 +497,9 @@ function CaseView(props: CaseViewProps) {
         flexDirection: "column",
         paddingBottom: 5,
         gap: 5,
-        border: 2,
-        borderRadius: 10,
+        border: 1,
+        borderTop: 5,
+        borderRadius: 5,
       }}
     >
       <View
@@ -446,30 +507,87 @@ function CaseView(props: CaseViewProps) {
           flexDirection: "column",
           marginHorizontal: 10,
           maxWidth: 510,
-          gap: 2,
+          gap: 5,
           position: "relative",
         }}
       >
         <View
           style={{
-            width: 470,
+            width: 460,
+            height: 32,
             position: "absolute",
             top: -30,
-            left: 40,
-            border: 2,
-            borderRadius: 10,
-            backgroundColor: "white",
+            left: 20,
+            backgroundColor: "transparent",
+            borderColor: topbarBorderColor,
             textAlign: "left",
             flexDirection: "row",
+            justifyContent: "flex-start",
             alignItems: "center",
             paddingRight: 10,
-            paddingVertical: 5,
-            maxWidth: 470,
+            maxWidth: 465,
             fontSize: 13,
             gap: 10,
           }}
+        ></View>
+        <View
+          style={{
+            flexDirection: "row",
+            maxWidth: 560,
+            marginTop: 10,
+            fontWeight: "medium",
+          }}
         >
-          <Text style={{ fontWeight: "bold", marginLeft: 20 }}>
+          <Text style={{ width: 20 }}>{index + 1}.</Text>
+          <Text
+            style={{
+              textTransform: "uppercase",
+              fontWeight: "medium",
+              maxWidth: 540,
+              flexWrap: "wrap",
+            }}
+          >
+            {crimes.find((o) => o.value === currentCase.matter)?.label ??
+              currentCase.matter}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            maxWidth: 560,
+            gap: 10,
+            alignItems: "center",
+            marginTop: 5,
+          }}
+        >
+          <View style={{ alignItems: "center", flexDirection: "row", gap: 5 }}>
+            <Svg
+              style={{ marginTop: 1 }}
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <Circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="black"
+                strokeWidth="2"
+              />
+              <Polyline points="12 6 12 12 16 14" fill="none" strokeWidth="2" />
+            </Svg>
+            <Text style={{ fontWeight: "medium" }}>
+              {format(currentCase.time, "HH:mm")}
+            </Text>
+          </View>
+          <Text>|</Text>
+          <Text style={{ fontWeight: "medium" }}>
             {currentCase.prosecutorCaseNumber}
           </Text>
           <Text>|</Text>
@@ -484,65 +602,6 @@ function CaseView(props: CaseViewProps) {
                 ))}
             </>
           )}
-        </View>
-        <View
-          style={{
-            width: 70,
-            height: 31,
-            position: "absolute",
-            top: -30,
-            left: -15,
-            border: 2,
-            borderRadius: 10,
-            backgroundColor: "white",
-            textAlign: "center",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            fontStyle: "italic",
-            paddingRight: 10,
-          }}
-        >
-          <Text style={{ width: 40, textAlign: "right" }}>
-            {format(currentCase.time, "HH:mm")}
-          </Text>
-        </View>
-        <View
-          style={{
-            width: 35,
-            height: 35,
-            position: "absolute",
-            top: -32,
-            left: -28,
-            border: 2,
-            borderRadius: "50%",
-            backgroundColor: "white",
-            textAlign: "center",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            fontWeight: "bold",
-          }}
-        >
-          <Text>{index + 1}</Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            maxWidth: 560,
-            marginTop: 10,
-          }}
-        >
-          <Text
-            style={{
-              textTransform: "uppercase",
-              maxWidth: 550,
-              flexWrap: "wrap",
-            }}
-          >
-            {crimes.find((o) => o.value === currentCase.matter)?.label ??
-              currentCase.matter}
-          </Text>
         </View>
       </View>
       <View style={{ borderBottom: 1, marginHorizontal: 10 }} />

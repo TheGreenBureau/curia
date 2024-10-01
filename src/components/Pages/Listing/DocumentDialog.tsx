@@ -9,33 +9,29 @@ import {
 import { ListingDocument } from "@/components/pdf/ListingDocument";
 import { useTranslation } from "react-i18next";
 import { PDFViewer } from "@react-pdf/renderer";
-import {
-  ListingDocumentProps,
-  ProsecutorListingDocumentProps,
-} from "@/types/data/listing";
+import { ProsecutorListingDocumentProps } from "@/types/data/listing";
 import { PropsWithChildren } from "react";
 import { ProsecutorListingDocument } from "@/components/pdf/ProsecutorListingDocument";
 
 type DocumentDialogProps = ProsecutorListingDocumentProps & {
   prosecutor?: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
-export function DocumentDialog(props: PropsWithChildren<DocumentDialogProps>) {
-  const { children, prosecutor, ...rest } = props;
+export function DocumentDialog(props: DocumentDialogProps) {
+  const { prosecutor, open, onOpenChange, ...rest } = props;
   const { t } = useTranslation();
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        {children ? (
-          children
-        ) : (
-          <Button variant="outline">{t("Esikatselu")}</Button>
-        )}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
-          <DialogTitle>{t("Esikatselu")}</DialogTitle>
+          <DialogTitle>{`${t("Esikatselu")} ${
+            prosecutor
+              ? t("Syyttäjä").toLowerCase()
+              : t("Julkinen").toLowerCase()
+          }`}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-row justify-center h-[80vh]">
           <PDFViewer showToolbar={false} className="w-full h-full rounded-lg ">

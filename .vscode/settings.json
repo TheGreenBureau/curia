@@ -1,6 +1,6 @@
 {
   "workbench.editor.customLabels.patterns": {
-    "src/components/**/index.tsx": "${dirname}.${extname}"
+    "src/**/index.tsx": "${dirname}.${extname}"
   },
   "workbench.editor.customLabels.enabled": true,
   "json.schemas": [
