@@ -5,7 +5,7 @@ import { useMutateOpenCSV } from "@/hooks/mutations";
 import { useCrimes } from "@/hooks/queries";
 import { useResources } from "@/hooks/useResources";
 import { useStore } from "@/hooks/useStore";
-import { cn, isKey } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ChevronLeft, CircleSlash2 } from "lucide-react";
 import { SessionEditSheet } from "./SessionEditSheet";

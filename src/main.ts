@@ -15,6 +15,8 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
+console.log(process.argv);
+
 createListingsDir();
 
 const createWindow = () => {

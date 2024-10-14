@@ -48,6 +48,7 @@ import { ListingDateSelector } from "./ListingDateSelector";
 import { RowSelectionState } from "@tanstack/react-table";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
+import { optionsFromCourtValues, validateCourtChoices } from "@/lib/dataFormat";
 
 export function Landing() {
   const view = useStore((state) => state.welcomeView);
@@ -215,6 +216,7 @@ function LandingNew() {
     presiding: null,
     secretary: null,
     break: null,
+    prosecutors: "",
   });
   const [valid, setValid] = useState(false);
 
@@ -224,9 +226,15 @@ function LandingNew() {
   const setView = useStore((state) => state.setWelcomeView);
   const setMountDirection = useStore((state) => state.setMountDirection);
 
+  const resources = useResources();
+
   useEffect(() => {
     if (data) {
       setSelections(data);
+      if (resources.isSuccess) {
+        const { options } = optionsFromCourtValues(data, resources.data);
+        setValid(validateCourtChoices(data, options.departments));
+      }
     }
   }, [data]);
 

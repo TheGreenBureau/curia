@@ -5,6 +5,8 @@ import { useResources } from "@/hooks/useResources";
 import { Option } from "@/types/data/options";
 import { Base } from "@/types/data/queries";
 import { Civilian, Officer } from "@/types/data/persons";
+import { CourtValues } from "@/types/data/court";
+import { Resources } from "@/types/data/resources";
 
 export const optionsFromRecord = (
   data: Record<string, string> | undefined | null
@@ -130,4 +132,41 @@ export const sortCivilians = (a: Civilian, b: Civilian, lang: string) => {
     default:
       return 1;
   }
+};
+
+export const optionsFromCourtValues = (
+  values: CourtValues,
+  resources: Resources
+) => {
+  const currentCourt = resources.courts.find((c) => c.id === values.court);
+
+  const currentOffice = currentCourt
+    ? currentCourt.offices.find((o) => o.id === values.office)
+    : null;
+
+  const options = {
+    courts: optionsFromData(resources.courts),
+    departments: currentCourt ? optionsFromData(currentCourt.departments) : [],
+    offices: currentCourt ? optionsFromData(currentCourt.offices) : [],
+    rooms: currentOffice ? optionsFromData(currentOffice.rooms) : [],
+  };
+
+  return { options, currentCourt, currentOffice };
+};
+
+export const validateCourtChoices = (
+  values: CourtValues,
+  departments: Option[]
+) => {
+  let valid = true;
+
+  if (values.court === "" || values.office === "" || values.room === "") {
+    valid = false;
+  }
+
+  if (values.department === "" && departments.length > 0) {
+    valid = false;
+  }
+
+  return valid;
 };

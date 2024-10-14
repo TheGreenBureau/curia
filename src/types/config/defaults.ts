@@ -8,4 +8,5 @@ export type Defaults = {
   presiding: Officer | null;
   secretary: Officer | null;
   break: Date | null;
+  prosecutors: string;
 };

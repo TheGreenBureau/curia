@@ -63,7 +63,7 @@ export function ComboCreateCrime({
       options={crimes.data ?? []}
       onQueryChange={setQuery}
       triggerClassName={cn(
-        props.value && props.value !== "" && "text-lg uppercase font-medium"
+        props.value && props.value !== "" && "uppercase font-medium"
       )}
       minQueryLength={3}
     />

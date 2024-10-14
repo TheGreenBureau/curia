@@ -24,7 +24,6 @@ import {
   Globe,
   Section,
   FilePen,
-  FilePenLine,
   Eye,
 } from "lucide-react";
 import { ListingDocument } from "@/components/pdf/ListingDocument";
@@ -80,7 +79,7 @@ export function ListingMenu({
 
   const formatSaveName = (prosecutor?: boolean) => {
     const type = prosecutor
-      ? (t("Syyttäjä") as string).toUpperCase()
+      ? (t("Syyttäjä", { count: 1 }) as string).toUpperCase()
       : (t("Julkinen") as string).toUpperCase();
 
     return `${[
@@ -144,7 +143,7 @@ export function ListingMenu({
           <Button variant="outline" className={buttonClasses}>
             <Eye className="h-5 w-5" />
             <span className="hidden actionmenu:inline-block actionmenu:ml-2">
-              {t("Tarkasta")}
+              {t("Tarkista")}
             </span>
           </Button>
         </DropdownMenuTrigger>
@@ -162,7 +161,7 @@ export function ListingMenu({
             className="cursor-pointer"
           >
             <Section className="mr-2 h-4 w-4" />
-            <span>{t("Syyttäjä")}</span>
+            <span>{t("Syyttäjä", "Syyttäjä", { count: 1 })}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -192,7 +191,7 @@ export function ListingMenu({
               document={<ProsecutorListingDocument {...rest} />}
               fileName={formatSaveName(true)}
             >
-              {t("Syyttäjä")}
+              {t("Syyttäjä", "Syyttäjä", { count: 1 })}
             </PDFDownloadLink>
           </DropdownMenuItem>
         </DropdownMenuContent>

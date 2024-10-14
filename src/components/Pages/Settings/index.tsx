@@ -19,6 +19,7 @@ import { produce } from "immer";
 import { Separator } from "@/components/ui/separator";
 import { useStore } from "@/hooks/useStore";
 import { cn } from "@/lib/utils";
+import { ProsecutorTitleSelector } from "@/components/Pages/Settings/ProsecutorTitleSelector";
 
 export function Settings() {
   const defaults = useDefaults();
@@ -88,20 +89,33 @@ export function Settings() {
               }}
             />
             <Separator orientation="vertical" className="ml-6 mr-4" />
-            <OfficerSelector
-              values={{
-                presiding: defaults.data?.presiding ?? null,
-                secretary: defaults.data?.secretary ?? null,
-              }}
-              onChange={(values) => {
-                setDefaults.mutate(
-                  produce(defaults.data, (draft) => {
-                    draft.presiding = values.presiding;
-                    draft.secretary = values.secretary;
-                  })
-                );
-              }}
-            />
+            <div className="flex flex-col justify-start gap-4 w-full">
+              <OfficerSelector
+                values={{
+                  presiding: defaults.data?.presiding ?? null,
+                  secretary: defaults.data?.secretary ?? null,
+                }}
+                onChange={(values) => {
+                  setDefaults.mutate(
+                    produce(defaults.data, (draft) => {
+                      draft.presiding = values.presiding;
+                      draft.secretary = values.secretary;
+                    })
+                  );
+                }}
+              />
+              <Separator />
+              <ProsecutorTitleSelector
+                value={defaults.data.prosecutors}
+                onChange={(value) =>
+                  setDefaults.mutate(
+                    produce(defaults.data, (draft) => {
+                      draft.prosecutors = value;
+                    })
+                  )
+                }
+              />
+            </div>
           </div>
         </DialogContent>
       </Dialog>

@@ -38,8 +38,6 @@
   "Puheenjohtaja": "Puheenjohtaja",
   "Oletus": "Oletus",
   "Istunto": "Istunto",
-  "Curia": "Curia",
-  "Tervetuloa!": "Tervetuloa!",
   "Tervetuloa Curiaan!": "Tervetuloa Curiaan!",
   "Aloita luomalla uusi tai valitsemalla aiemmin luotu juttuluettelo.": "Aloita luomalla uusi tai valitsemalla aiemmin luotu juttuluettelo.",
   "Luo uusi": "Luo uusi",
@@ -64,7 +62,7 @@
   "Seuraava": "Seuraava",
   "Tuntematon": "Tuntematon",
   "Juttuluetteloita ei voitu noutaa": "Juttuluetteloita ei voitu noutaa",
-  "Suodata juttulistoja": "Suodata...",
+  "Suodata juttulistoja": "Suodata juttulistoja",
   "Poista valitut": "Poista valitut",
   "Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?": "Tätä toimintoa ei voi peruuttaa. Valitut kohteet poistetaan pysyvästi. Haluatko varmasti jatkaa?",
   "Peruuta": "Peruuta",
@@ -131,6 +129,7 @@
   "Kirjoita...": "Kirjoita...",
   "Juttuluettelot": "Juttuluettelot",
   "Avaa": "Avaa",
+  "Tervetuloa!": "Tervetuloa!",
   "private": "Ei-julkinen",
   "public": "Julkinen",
   "prosecutor": "Syyttäjä",
@@ -141,6 +140,6 @@
   "Todistaja_one": "Todistaja",
   "Todistaja_other": "Todistajat",
   "Järjestä": "Järjestä",
-  "Tarkasta": "Tarkasta",
+  "Tarkista": "Tarkista",
   "Asiat": "Asiat"
 }

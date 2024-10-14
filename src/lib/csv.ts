@@ -28,7 +28,7 @@ export const parseCSV = (
 
   for (let line of parsed) {
     if (isCaseCSV(line)) {
-      cases.push(processCSVLine(line, type));
+      cases.push(processCSVLine(line, type, defaults));
       continue;
     }
 
@@ -43,7 +43,11 @@ export const parseCSV = (
   };
 };
 
-const processCSVLine = (line: CaseCSV, type: CaseType): Case => {
+const processCSVLine = (
+  line: CaseCSV,
+  type: CaseType,
+  defaults: Defaults
+): Case => {
   const dateparts = line.päiväys.trim().split(".");
   const timeparts = line.alkamiskelloaika.trim().split(":");
 
@@ -55,7 +59,7 @@ const processCSVLine = (line: CaseCSV, type: CaseType): Case => {
   );
   date.setHours(parseInt(timeparts[0]), parseInt(timeparts[1]), 0, 0);
 
-  const { prosecutors, plaintiffs } = processBearers(line.esittäjät);
+  const { prosecutors, plaintiffs } = processBearers(line.esittäjät, defaults);
 
   const current: Case = {
     id: uuidv4(),
@@ -73,7 +77,8 @@ const processCSVLine = (line: CaseCSV, type: CaseType): Case => {
 };
 
 const processBearers = (
-  plaints: string
+  plaints: string,
+  defaults: Defaults
 ): { prosecutors: Officer[]; plaintiffs: Civilian[] } => {
   const prosecutors: Officer[] = [];
   const plaintiffs: Civilian[] = [];
@@ -96,7 +101,7 @@ const processBearers = (
         id: uuidv4(),
         name: parts.join(" "),
         type: "prosecutor",
-        title: "Aluesyyttäjä",
+        title: defaults.prosecutors,
       });
     } else if (plaintiffPos.includes(positionString.toLowerCase())) {
       plaintiffs.push({

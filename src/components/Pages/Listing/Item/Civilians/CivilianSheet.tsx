@@ -51,6 +51,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ComboCreate } from "@/components/ui/combocreate";
 import { optionsFromRecord } from "@/lib/dataFormat";
 import { Listing } from "@/types/data/listing";
+import { useCrimes } from "@/hooks/queries";
 
 type CivilianSheetProps = {
   getCivilian: () => Civilian;
@@ -117,6 +118,7 @@ function CivilianSheetContent({
   const updateListing = useMutateCurrentListing();
 
   const resources = useResources();
+  const crimes = useCrimes();
 
   const summonOptions = {
     summons: optionsFromRecord(resources.data?.summons),
@@ -229,12 +231,15 @@ function CivilianSheetContent({
     }
   };
 
+  const matter = crimes.isSuccess
+    ? crimes.data.find((crime) => crime.value === currentCase.matter)?.label ??
+      ""
+    : "";
+
   const descriptionArray: string[] = !civilian
     ? []
     : [
-        ...(currentCase.matter !== ""
-          ? [currentCase.matter.toUpperCase()]
-          : []),
+        ...(currentCase.matter !== "" ? [matter] : []),
         ...(currentCase.caseNumber !== "" ? [currentCase.caseNumber] : []),
         ...(originalName !== "" ? [originalName] : []),
       ];

@@ -29,7 +29,9 @@ export function DocumentDialog(props: DocumentDialogProps) {
         <DialogHeader>
           <DialogTitle>{`${t("Esikatselu")} ${
             prosecutor
-              ? t("Syyttäjä").toLowerCase()
+              ? (
+                  t("Syyttäjä", "Syyttäjä", { count: 1 }) as string
+                ).toLowerCase()
               : t("Julkinen").toLowerCase()
           }`}</DialogTitle>
         </DialogHeader>

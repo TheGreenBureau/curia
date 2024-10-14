@@ -1,6 +1,3 @@
-import courtTitles from "@/locales/fi/courtTitles.json";
-import prosecutorTitles from "@/locales/fi/prosecutorTitles.json";
-import laymanTitles from "@/locales/fi/laymanTitles.json";
 import { z } from "zod";
 
 export const PersonBaseSchema = z.object({

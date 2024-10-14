@@ -37,6 +37,7 @@ const createEmptyDefaults = (): Defaults => {
       type: "secretary",
     },
     break: null,
+    prosecutors: "prosecutor",
   };
 };
 

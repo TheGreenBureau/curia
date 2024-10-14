@@ -1911,6 +1911,10 @@
   },
   "prosecutorTitles": {
     "prosecutor": "Aluesyyttäjä",
-    "specialProsecutor": "Erikoissyyttäjä"
+    "provincialProsecutor": "Maakunnansyyttäjä",
+    "specialProsecutor": "Erikoissyyttäjä",
+    "stateProsecutor": "Valtionsyyttäjä",
+    "deputyProsecutorGeneral": "Apulaisvaltakunnansyyttäjä",
+    "prosecutorGeneral": "Valtakunnansyyttäjä"
   }
 }

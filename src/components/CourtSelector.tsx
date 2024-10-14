@@ -1,19 +1,17 @@
 import { useResources } from "@/hooks/useResources";
-import { optionsFromData } from "@/lib/dataFormat";
+import {
+  optionsFromCourtValues,
+  optionsFromData,
+  validateCourtChoices,
+} from "@/lib/dataFormat";
 import { produce } from "immer";
 import { useTranslation } from "react-i18next";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { Heading } from "@/components/ui/headings";
-import { Label } from "./ui/label";
-
-type CourtValues = {
-  court: string;
-  office: string;
-  department: string;
-  room: string;
-};
+import { Label } from "@/components/ui/label";
+import { CourtValues } from "@/types/data/court";
 
 type CourtSelectorProps = {
   onChange: (values: CourtValues, validated: boolean) => void;
@@ -41,21 +39,10 @@ export function CourtSelector({
   }
 
   if (resources.isSuccess) {
-    const currentCourt = resources.data.courts.find(
-      (c) => c.id === values.court
+    const { options, currentCourt, currentOffice } = optionsFromCourtValues(
+      values,
+      resources.data
     );
-    const currentOffice = currentCourt
-      ? currentCourt.offices.find((o) => o.id === values.office)
-      : null;
-
-    const options = {
-      courts: optionsFromData(resources.data.courts),
-      departments: currentCourt
-        ? optionsFromData(currentCourt.departments)
-        : [],
-      offices: currentCourt ? optionsFromData(currentCourt.offices) : [],
-      rooms: currentOffice ? optionsFromData(currentOffice.rooms) : [],
-    };
 
     const handleSelectionChange = (
       type: "court" | "office" | "department" | "room",
@@ -111,25 +98,7 @@ export function CourtSelector({
           break;
       }
 
-      onChange(newValues, validated(newValues));
-    };
-
-    const validated = (newValues: CourtValues) => {
-      let valid = true;
-
-      if (
-        newValues.court === "" ||
-        newValues.office === "" ||
-        newValues.room === ""
-      ) {
-        valid = false;
-      }
-
-      if (newValues.department === "" && options.departments.length > 0) {
-        valid = false;
-      }
-
-      return valid;
+      onChange(newValues, validateCourtChoices(newValues, options.departments));
     };
 
     return (
