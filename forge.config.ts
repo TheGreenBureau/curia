@@ -25,7 +25,8 @@ const config: ForgeConfig = {
     }),
     new MakerSquirrel({
       setupIcon: "src/img/installer-icon.ico",
-      name: "curia",
+      name: "Curia",
+      authors: "Willowfang",
     }),
   ],
   plugins: [
