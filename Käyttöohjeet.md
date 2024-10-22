@@ -19,9 +19,42 @@
 
 Tervetuloa lukemaan Curian käyttöohjetta! Curia on juttuluetteloiden laatimiseen hallinnonalan sisäisesti kehitetty avoimen lähdekoodin sovellus. Sovelluksella pyritään helpottamaan juttuluetteloiden laatimista AIPAn tuottamien CSV-tiedostojen ja Sakari-tietojen perusteella sekä mahdollistamaan luetteloiden järjestelmällisempi hallitseminen. Lisäksi sovellus yhdenmukaistaa juttuluetteloita ulkonäöltään ja asetteluiltaan.
 
+Curian lähdekoodi löytyy osoitteesta: https://github.com/TheGreenBureau/curia.
+
 Sovelluksen käyttäminen on varsin helppoa! Seuraavissa osioissa selostetaan toimintojen pääpiirteet.
 
 ## Sisällys <!-- omit in toc -->
+
+- [1. Asentaminen](#1-asentaminen)
+- [2. Päänäkymä](#2-päänäkymä)
+  - [2.1. Asetukset](#21-asetukset)
+    - [2.1.1. Juttuluetteloiden sijainti](#211-juttuluetteloiden-sijainti)
+    - [2.1.2. Oletustiedot](#212-oletustiedot)
+- [3. Juttuluetteloiden selaaminen](#3-juttuluetteloiden-selaaminen)
+  - [3.1. Juttulistojen suodattaminen](#31-juttulistojen-suodattaminen)
+  - [3.2. Valitseminen päivämäärällä](#32-valitseminen-päivämäärällä)
+  - [3.3. Lista löydetyistä juttuluetteloista](#33-lista-löydetyistä-juttuluetteloista)
+  - [3.4. Tuominen tiedostosta](#34-tuominen-tiedostosta)
+- [4. Uuden juttuluettelon luominen](#4-uuden-juttuluettelon-luominen)
+- [5. Juttuluettelonäkymä ilman juttuja](#5-juttuluettelonäkymä-ilman-juttuja)
+  - [5.1. Tuomioistuimen tietojen muokkaaminen](#51-tuomioistuimen-tietojen-muokkaaminen)
+  - [5.2. Uusi juttu](#52-uusi-juttu)
+  - [5.3. Tuo CSV](#53-tuo-csv)
+- [6. Juttuluettelonäkymä jutuilla](#6-juttuluettelonäkymä-jutuilla)
+  - [6.1. Näkymässä suoraan toteutettavat toiminnot](#61-näkymässä-suoraan-toteutettavat-toiminnot)
+    - [6.1.1. Juttujen uudelleen järjestäminen](#611-juttujen-uudelleen-järjestäminen)
+    - [6.1.2. Asian merkitseminen salaiseksi](#612-asian-merkitseminen-salaiseksi)
+    - [6.1.3. Huomioiden lisääminen ja näkyvyys](#613-huomioiden-lisääminen-ja-näkyvyys)
+  - [6.2. Näkymältä erikseen aukevat toiminnot](#62-näkymältä-erikseen-aukevat-toiminnot)
+    - [6.2.1. Henkilöiden lisääminen ja tietojen muokkaaminen](#621-henkilöiden-lisääminen-ja-tietojen-muokkaaminen)
+    - [6.2.2. Jutun poistaminen](#622-jutun-poistaminen)
+    - [6.2.3. Juttujen asettaminen aikajärjestykseen](#623-juttujen-asettaminen-aikajärjestykseen)
+    - [6.2.4. Uuden asian luominen ja CSV-tiedoston tuominen](#624-uuden-asian-luominen-ja-csv-tiedoston-tuominen)
+    - [6.2.5. Esikatselu](#625-esikatselu)
+    - [6.2.6. Juttuluetteloiden tallentaminen PDF-muodossa](#626-juttuluetteloiden-tallentaminen-pdf-muodossa)
+- [7. Muutosten tallentuminen](#7-muutosten-tallentuminen)
+- [8. Kielivalinnoista ja käännöksistä](#8-kielivalinnoista-ja-käännöksistä)
+
 
 ## 1. Asentaminen
 
