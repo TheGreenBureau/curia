@@ -3,7 +3,7 @@
 
     body {
         background-color: #0f1014;
-        color: white;
+        color: #e3e4e8;
         font-family: "Fira Sans";
     }
 
@@ -41,19 +41,23 @@
     p > code {
       background-color: #282c39 !important;
     }
+
+    .markdown-body img {
+      background-color: transparent;
+    }
+
+    .highlight {
+      background-color: transparent;
+    }
 </style>
 
-<img src="img/icon.png" style="width: 120px; margin-left: 0; border: none !important;"/>
-
-# CURIA <!-- omit in toc -->
-
-> Käyttöohjeet
+<img src="img/icon.png" style="width: 120px; border: none !important;"/>
 
 ## Johdanto <!-- omit in toc -->
 
 Tervetuloa lukemaan Curian käyttöohjetta! Curia on juttuluetteloiden laatimiseen hallinnonalan sisäisesti kehitetty avoimen lähdekoodin sovellus. Sovelluksella pyritään helpottamaan juttuluetteloiden laatimista AIPAn tuottamien CSV-tiedostojen ja Sakari-tietojen perusteella sekä mahdollistamaan luetteloiden järjestelmällisempi hallitseminen. Lisäksi sovellus yhdenmukaistaa juttuluetteloita ulkonäöltään ja asetteluiltaan.
 
-Curian lähdekoodi löytyy osoitteesta: https://github.com/TheGreenBureau/curia.
+Curian lähdekoodi löytyy [täältä](https://github.com/TheGreenBureau/curia).
 
 Sovelluksen käyttäminen on varsin helppoa! Seuraavissa osioissa selostetaan toimintojen pääpiirteet.
 
