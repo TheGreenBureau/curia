@@ -1,13 +1,19 @@
 <style>
     @import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Kablammo&family=Teko:wght@300..700&display=swap");
+
     body {
-        background-color: #1b1d27;
+        background-color: #0f1014;
         color: white;
         font-family: "Fira Sans";
     }
+
     h1, h2, h3, h4, h5, h6 {
         font-family: Dosis;
+        text-transform: uppercase;
+        font-weight: bold !important;
+        margin-top: 30px !important;
     }
+
     img {
         display: block;
         margin-left: auto;
@@ -15,10 +21,29 @@
         margin-top: 30px;
         margin-bottom: 30px;
         border-radius: 20px;
+        background-color: transparent;
+        border: 2px solid #59607d !important;
+    }
+
+    a {
+      color: #06b6d4 !important;
+    }
+
+    a:hover {
+      color: #14b8a6 !important;
+      text-decoration: none !important;
+    }
+
+    pre {
+      background-color: #282c39 !important;
+    }
+
+    p > code {
+      background-color: #282c39 !important;
     }
 </style>
 
-<img src="img/icon.png" style="width: 100px; margin-left: 0;"/>
+<img src="img/icon.png" style="width: 120px; margin-left: 0; border: none !important;"/>
 
 # CURIA <!-- omit in toc -->
 
@@ -63,7 +88,6 @@ Sovelluksen käyttäminen on varsin helppoa! Seuraavissa osioissa selostetaan to
     - [6.2.6. Juttuluetteloiden tallentaminen PDF-muodossa](#626-juttuluetteloiden-tallentaminen-pdf-muodossa)
 - [7. Muutosten tallentuminen](#7-muutosten-tallentuminen)
 - [8. Kielivalinnoista ja käännöksistä](#8-kielivalinnoista-ja-käännöksistä)
-
 
 ## 1. Asentaminen
 
