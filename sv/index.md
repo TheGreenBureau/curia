@@ -53,323 +53,323 @@
 
 <img src="img/icon.png" style="width: 120px; border: none !important;"/>
 
-## Johdanto <!-- omit in toc -->
+## Inledning <!-- omit in toc -->
 
-Tervetuloa lukemaan Curian käyttöohjetta! Curia on juttuluetteloiden laatimiseen hallinnonalan sisäisesti kehitetty avoimen lähdekoodin sovellus. Sovelluksella pyritään helpottamaan juttuluetteloiden laatimista AIPAn tuottamien CSV-tiedostojen ja Sakari-tietojen perusteella sekä mahdollistamaan luetteloiden järjestelmällisempi hallitseminen. Lisäksi sovellus yhdenmukaistaa juttuluetteloita ulkonäöltään ja asetteluiltaan.
+Välkommen att läsa Curias bruksanvisning! Curia är en applikation med öppen källkod som utvecklats internt inom förvaltningsområdet för att utarbeta uppropslistor. Syftet med applikationen är att underlätta utarbetandet av uppropslistor på basis av de CSV-filer och Sakari-uppgifter som AIPA producerar samt att möjliggöra en mer systematisk hantering av listorna. Applikationen förenhetligar dessutom uppropslistorna i fråga om utseende och layout.
 
-Curian lähdekoodi löytyy [täältä](https://github.com/TheGreenBureau/curia).
+Källkoden för Curia finns [här](https://github.com/TheGreenBureau/curia).
 
-Sovelluksen käyttäminen on varsin helppoa! Seuraavissa osioissa selostetaan toimintojen pääpiirteet.
+Det är ganska lätt att använda applikationen! I följande avsnitt beskrivs huvuddragen i funktionerna.
 
-## Sisällys <!-- omit in toc -->
+## Innehåll <!-- omit in toc -->
 
-- [1. Asentaminen](#1-asentaminen)
-- [2. Päänäkymä](#2-päänäkymä)
-  - [2.1. Asetukset](#21-asetukset)
-    - [2.1.1. Juttuluetteloiden sijainti](#211-juttuluetteloiden-sijainti)
-    - [2.1.2. Oletustiedot](#212-oletustiedot)
-- [3. Juttuluetteloiden selaaminen](#3-juttuluetteloiden-selaaminen)
-  - [3.1. Juttulistojen suodattaminen](#31-juttulistojen-suodattaminen)
-  - [3.2. Valitseminen päivämäärällä](#32-valitseminen-päivämäärällä)
-  - [3.3. Lista löydetyistä juttuluetteloista](#33-lista-löydetyistä-juttuluetteloista)
-  - [3.4. Tuominen tiedostosta](#34-tuominen-tiedostosta)
-- [4. Uuden juttuluettelon luominen](#4-uuden-juttuluettelon-luominen)
-- [5. Juttuluettelonäkymä ilman juttuja](#5-juttuluettelonäkymä-ilman-juttuja)
-  - [5.1. Tuomioistuimen tietojen muokkaaminen](#51-tuomioistuimen-tietojen-muokkaaminen)
-  - [5.2. Uusi juttu](#52-uusi-juttu)
-  - [5.3. Tuo CSV](#53-tuo-csv)
-- [6. Juttuluettelonäkymä jutuilla](#6-juttuluettelonäkymä-jutuilla)
-  - [6.1. Näkymässä suoraan toteutettavat toiminnot](#61-näkymässä-suoraan-toteutettavat-toiminnot)
-    - [6.1.1. Juttujen uudelleen järjestäminen](#611-juttujen-uudelleen-järjestäminen)
-    - [6.1.2. Asian merkitseminen salaiseksi](#612-asian-merkitseminen-salaiseksi)
-    - [6.1.3. Huomioiden lisääminen ja näkyvyys](#613-huomioiden-lisääminen-ja-näkyvyys)
-  - [6.2. Näkymältä erikseen aukevat toiminnot](#62-näkymältä-erikseen-aukevat-toiminnot)
-    - [6.2.1. Henkilöiden lisääminen ja tietojen muokkaaminen](#621-henkilöiden-lisääminen-ja-tietojen-muokkaaminen)
-    - [6.2.2. Jutun poistaminen](#622-jutun-poistaminen)
-    - [6.2.3. Juttujen asettaminen aikajärjestykseen](#623-juttujen-asettaminen-aikajärjestykseen)
-    - [6.2.4. Uuden asian luominen ja CSV-tiedoston tuominen](#624-uuden-asian-luominen-ja-csv-tiedoston-tuominen)
-    - [6.2.5. Esikatselu](#625-esikatselu)
-    - [6.2.6. Juttuluetteloiden tallentaminen PDF-muodossa](#626-juttuluetteloiden-tallentaminen-pdf-muodossa)
-- [7. Muutosten tallentuminen](#7-muutosten-tallentuminen)
-- [8. Kielivalinnoista ja käännöksistä](#8-kielivalinnoista-ja-käännöksistä)
+- [1. Installation](#1-installation)
+- [2. Huvudvy](#2-huvudvy)
+  - [2.1. Inställningar](#21-inställningar)
+    - [2.1.1. Uppropslistelagring](#211-uppropslistelagring)
+    - [2.1.2. Förvalda uppgifter](#212-förvalda-uppgifter)
+- [3. Att bläddra i uppropslistor](#3-att-bläddra-i-uppropslistor)
+  - [3.1. Filtrering av uppropslistor](#31-filtrering-av-uppropslistor)
+  - [3.2. Att välja med datum](#32-att-välja-med-datum)
+  - [3.3. Lista över upptäckta uppropslistor](#33-lista-över-upptäckta-uppropslistor)
+  - [3.4. Att hämta från filer](#34-att-hämta-från-filer)
+- [4. Att skapa nya uppropslistor](#4-att-skapa-nya-uppropslistor)
+- [5. Vy för uppropslista utan ärenden](#5-vy-för-uppropslista-utan-ärenden)
+  - [5.1. Redigering av domstolsuppgifter](#51-redigering-av-domstolsuppgifter)
+  - [5.2. Nytt ärende](#52-nytt-ärende)
+  - [5.3. Hämta CSV](#53-hämta-csv)
+- [6. Vy för uppropslista i ärendena](#6-vy-för-uppropslista-i-ärendena)
+  - [6.1. Åtgärder som kan utföras direkt i vyn](#61-åtgärder-som-kan-utföras-direkt-i-vyn)
+    - [6.1.1. Omordnande av ärenden](#611-omordnande-av-ärenden)
+    - [6.1.2. Att anteckna ett ärende som hemligt](#612-att-anteckna-ett-ärende-som-hemligt)
+    - [6.1.3. Att lägga till observationer och hur de syns](#613-att-lägga-till-observationer-och-hur-de-syns)
+  - [6.2. Funktioner som öppnas separat i vyn](#62-funktioner-som-öppnas-separat-i-vyn)
+    - [6.2.1. Att lägga till personer och att redigera uppgifterna](#621-att-lägga-till-personer-och-att-redigera-uppgifterna)
+    - [6.2.2. Radering av ett ärende](#622-radering-av-ett-ärende)
+    - [6.2.3. Kronologisk ordning av ärenden](#623-kronologisk-ordning-av-ärenden)
+    - [6.2.4. Att skapa ett nytt ärende och att importera en CSV-fil](#624-att-skapa-ett-nytt-ärende-och-att-importera-en-csv-fil)
+    - [6.2.5. Förhandsgranskning](#625-förhandsgranskning)
+    - [6.2.6. Sparande av uppropslistor i PDF-format](#626-sparande-av-uppropslistor-i-pdf-format)
+- [7. Hur ändringar sparas](#7-hur-ändringar-sparas)
+- [8. Om språkval och översättningar](#8-om-språkval-och-översättningar)
 
-## 1. Asentaminen
+## 1. Installation
 
-Curia löytyy asennettavana sovelluksena Software Centeristä. Helpoiten löydät sen kirjoittamalla Software Centerin hakukenttään "curia" ja painamalla Enter. Varsinainen asennus tapahtuu, kuten muillakin Software Centeristä asennettavilla sovelluksilla.
+Applikationen Curia finns i Software Center och du kan installera den därifrån. Den går lättast att hitta genom att skriva ”curia” i sökrutan i Software Center och trycka på Retur. Den egentliga installationen sker på samma sätt som med andra applikationer som installeras via Software Center.
 
-Asennuksen jälkeen Curia käynnistyy. Sille luodaan pikakuvakkeet työpöydälle ja käynnistysvalikkoon.
+Efter installationen startar Curia. Genvägar/ikoner för Curia skapas på skrivbordet och startmenyn.
 
-## 2. Päänäkymä
+## 2. Huvudvy
 
-Curia avautuu ensimmäisenä seuraavaan päänäkymään:
+Curia öppnas först i följande huvudvy:
 
 <img src="img/alkunaytto.png" style="width: 600px;"/>
 
-Päänäkymässä on mahdollista tehdä seuraavat toimenpiteet:
+I huvudvyn kan följande åtgärder vidtas:
 
-1. Siirtyä uuden juttuluettelon luomiseen
-2. Selata ja poistaa aikaisempia juttuluetteloja
-3. Avata jokin viimeisimmästä viidestä käsitellystä juttuluettelosta
-4. Muuttaa asetuksia (hammasrataspainike)
+1. Börja skapa en ny uppropslista
+2. Bläddra och ta bort tidigare uppropslistor
+3. Öppna någon en av de senaste fem uppropslistorna
+4. Ändra inställningar (kugghjulsknappen)
 
-Lisäksi on mahdollista tehdä seuraavat, muissakin näkymissä näkyvät toimenpiteet:
+Dessutom är det möjligt att vidta följande åtgärder som också syns i andra vyer:
 
-1. Muuttaa sovelluksen teemaa (tumma, vaalea tai järjestelmä)
-2. Muuttaa sovelluksen kieltä (suomi tai ruotsi)
+1. Ändra tema för appen (mörkt, ljust eller system)
+2. Ändra applikationens språk (finska eller svenska)
 
-### 2.1. Asetukset
+### 2.1. Inställningar
 
-Sovelluksen asetukset näyttävät seuraavilta:
+Inställningarna i appen ser ut på följande sätt:
 
 <img src="img/asetukset.png" style="width: 800px;"/>
 
-#### 2.1.1. Juttuluetteloiden sijainti
+#### 2.1.1. Uppropslistelagring
 
-Tässä voit valita sen, mihin tekemäsi juttuluettelot tallennetaan ja mistä tallennettuja juttuluetteloita etsitään. Kuvassa kyseessä on oletuskansion sijainti Linux-käyttöjärjestelmässä. Windowsissa oletussijainti on suurin piirtein jotain seuraavaa:
+Här kan du välja var de uppropslistor du utarbetat ska sparas och var man ska söka de sparade uppropslistorn. Bilden visar standardmappens placering i Linux-operativsystemet. I Windows är standardplatsen i stort sett någon av följande:
 
 ```
 C:\Käyttäjät\[KIEKU-TUNNUS]\AppData\curia\listings
 ```
 
-Sijaintia voi vaihtaa esimerkiksi yhteisesti sovittuun verkkolevykansioon, johon juttuluettelotiedostot tallennetaan. Tällöin kaikki saman toimipaikan käyttäjät pääsevät käsiksi samoihin luetteloihin.
+Platsen kan ändras till exempel till en gemensamt överenskommen nätverksdisk där uppropslistefiler sparas. Då har alla användare på samma verksamhetsställe åtkomst till samma listor.
 
-Juttuluettelot ovat, ennen viemistä PDF-muotoon, tallennettuna JSON-muodossa. Kyseinen muoto on ennen kaikkea tarkoitettu koneen luettavaksi. Lisäksi juttuluettelot tallennetaan yksilöllisillä, automaattisesti luoduilla nimillä (esim. `11ffd37c-c743-43f1-83ae-4b2da56e17ab.jtl`). Juttuluettelokansiota ei olekaan tarkoitettu selattavaksi esimerkiksi resurssinhallinnassa, vaan tarkasteltavaksi suoraan sovelluksessa.
+Uppropslistorna är sparade i JSON-format innan de exporteras till PDF-format. Detta format är framför allt avsett för maskinläsning. Dessutom sparas uppropslistorna med unika, automatiskt genererade namn (t.ex. `11ffd37c-c743-43f1-83ae-4b2da56e17ab.jtl`). Det är inte meningen att uppropslistemappen ska bläddras till exempel i Utforskaren, utan den ska granskas direkt i applikationen.
 
-#### 2.1.2. Oletustiedot
+#### 2.1.2. Förvalda uppgifter
 
-Tässä voit valita tiedot, jotka uusille juttuluetteloille annetaan oletusarvoisesti.
+Här kan du mata in förvalda uppgifter för nya uppropslistor och mål.
 
-AIPAn tuottamassa CSV-tiedostossa ei ole tuomioistuinta tai kokoonpanoa koskevia tietoja, vaan ne on syötettävä käyttäjän toimesta erikseen. Tähän on kuitenkin mahdollista määrittää oletukset, jotta joka kerta juttuluetteloa luotaessa ei tarvitse kirjoittaa samoja tietoja. Oletustietoja voi muuttaa juttuluettelokohtaisesti.
+Den CSV-fil som produceras av AIPA innehåller inga uppgifter om domstol eller sammansättning, utan uppgifterna ska matas in separat av användaren. Här är det dock möjligt att göra förval så att samma uppgifter inte behöver skrivas varje gång en uppropslista skapas. Standardinformationen dvs. de förvalda uppgifterna kan ändras från fall till fall.
 
-Tuomioistuimia koskevat valinnat perustuvat kyselyyn, joka tuomioistuimille tehtiin vuoden 2024 aikana ja jossa tiedusteltiin muun muassa kunkin tuomioistuimen ruotsin kielistä nimeä, osastoja, saleja ja istuntopaikkoja.
+Valen som gäller domstolarna baserar sig på en enkät som gjordes till domstolarna under 2024. I enkäten frågades bland annat om varje domstols svenskspråkiga namn, avdelningar, salar och sammanträdesplatser.
 
-Virkanimikkeet sisältävät valmiita valintoja, joita voi käyttää. Nämä valinnat käännetään automaattisesti ruotsiksi tai suomeksi sen mukaan, minkä kielinen juttuluettelo ollaan viemässä PDF-muotoon. Virkanimikkeeseen on mahdollista syöttää myös vapaata tekstiä. Tällöin käännöstä ei kuitenkaan voida automaattisesti tehdä.
+Titlarna dvs. tjänstebeteckningarna innehåller färdiga val som kan användas. Dessa val översätts automatiskt till svenska eller finska beroende på vilket språk uppropslistan ska exporteras till PDF-format. Det är också möjligt att mata in fri text i titlarna. I sådana fall kan översättningen dock inte göras automatiskt.
 
-## 3. Juttuluetteloiden selaaminen
+## 3. Att bläddra i uppropslistor
 
-Juttuluetteloiden selausnäkymä näyttää seuraavalta:
+Vyn för bläddring i uppropslistor ser ut på följande sätt:
 
 <img src="img/selaus.png" style="width: 900px;"/>
 
-Selausnäkymästä löydät seuraavat toiminnot:
+I vyn för blddring i uppropslistorna hittar du följande funktioner:
 
-### 3.1. Juttulistojen suodattaminen
+### 3.1. Filtrering av uppropslistor
 
-Kyseessä on vapaa merkkihaku, joka hakee annettua merkkijonoa kaikista taulukon kentistä. Esimerkiksi "15.10." löytää kaikki juttuluettelot, joiden päivämäärä tai luomisaika on 15.10.
+Det är en fritextsökning som hämtar den angivna strängen från alla fält i tabellen. Till exempel ”15.10.” hittar alla uppropslistor med datumet eller tidpunkten då de skapats är 15.10.
 
-### 3.2. Valitseminen päivämäärällä
+### 3.2. Att välja med datum
 
-Tämän toiminnon avulla voi valita kaikki kansiosta löytyvät juttuluettelot, joiden _päivämäärä_ (ei siis luomisaika) on ennen tai jälkeen valitun päivämäärän. Toiminnolla on siis mahdollista esimerkiksi poistaa kerralla kaikki tietyn iän ylittäneet juttuluettelot.
+Med den här funktionen kan du välja alla uppropslistor i mappen med _datum_ (dvs. inte tidpunkt för skapande) före eller efter det valda datumet. Med funktionen är det alltså möjligt att till exempel på en gång radera alla uppropslistor som är äldre än en viss ålder.
 
-Tätä kannattaa käyttää varovasti, ettei tule poistaneeksi vahingossa sellaisia luetteloita, joita ei ole ollut tarkoitus poistaa. Poisto on pysyvä - poistettuja luetteloita ei voi palauttaa!
+Använd detta försiktigt för att undvika oavsiktlig radering av listor som inte det inte är meningen att du ska radera. Raderingen är permanent - raderade listor kan inte återställas!
 
-Poisto kuitenkin pyydetään vahvistamaan, ennen kuin se toteutetaan. Poistaminen täytyy lisäksi valita erikseen. Pelkää päiväämäärällä valitseminen ei vielä tee muuta, kuin kyseisen valinnan. Otsikko "Valitse päivämäärällä" muuttaa väriään, kun asioita on valittuna nimenomaan kyseisen toiminnon perusteella.
+Raderingen ska dock bekräftas innan den genomförs. Dessutom måste radering väljas separat. När du väljer bara med datum gör det inget annat än väljer det datumet. Rubriken ”Välj datum” ändrar färg när ärenden har valts just med hjälp av denna funktion.
 
-### 3.3. Lista löydetyistä juttuluetteloista
+### 3.3. Lista över upptäckta uppropslistor
 
-Tässä listataan kaikki asetuksissa valitusta juttuluettelokansiosta löydetyt juttuluettelot tietoineen. Näkymässä näytetään kerrallaan 10 juttuluetteloa. Seuraavalle ja edelliselle sivulle pääsee siirtymään "Edellinen" ja "Seuraava" -painikkeilla. Käytännössä juttulistan löytää helpoiten hakemalla sitä.
+Här listas alla uppropslistor inklusive uppgifter som finns i den uppropslistemapp som valts i inställningarna. I vyn visas 10 uppropslistor åt gången. Du kan navigera till följande och föregående sida med knapparna ”Föregående” och ”Nästa”. I praktiken är det lättast att hitta en lista genom att hämta den.
 
-Listanäkymän otsikot ovat klikattavia. Otsikkoa klikkaamalla lista järjestetään kyseisen tiedon perusteella joko nousevaan tai laskevaan järjestykseen.
+Man kan klicka på rubrikerna i listvyn. Genom att klicka på en rubrik ordnas listan utifrån uppgifterna i fråga antingen i stigande eller fallande ordning.
 
-Yksittäisen juttulistan saa avattua klikkaamalla rivin viimeisenä olevaan kansion kuvaa.
+Du kan öppna en enskild uppropslista genom att klicka på bilden av mappen till sist på raden.
 
-Yksittäisiä juttuluetteloita saa valittua vasemman laidan tikkibokseista. Otsikkorivin laatikosta saa valittua kaikki juttuluettelot. Kun yksi tai useampi juttuluettelo on valittu, näytetään "Poista" -painike. Sitä klikkaamalla voi poistaa valitut juttuluettelot.
+Du kan välja enskilda uppropslistor genom att kryssa för rutan till vänster. Du kan välja alla uppropslistor via rutan i rubrikraden. När en eller flera uppropslistor har valts visas knappen ”Radera”. Genom att klicka på den kan du radera de valda uppropslistorna.
 
-Kuten ylempänä on mainittu, juttuluetteloiden poistaminen on pysyvä toimenpide! Ole siis tarkkana siinä, mitä juttuluetteloita poistat. Poistaminen pyydetään varmistamaan, ennen kuin se toteutetaan.
+Som nämnts ovan är raderingen av uppropslistor en permanent åtgärd! Var därför försiktig med vilka listor du raderar. Raderingen ska bekräftas innan den genomförs.
 
-### 3.4. Tuominen tiedostosta
+### 3.4. Att hämta från filer
 
-Mikäli sinulla on juttuluettelotiedosto (.jtl) jossakin muualla, kuin asetuksissa valitussa juttukansiossa, voit tuoda sen Curiaan klikkaamalla "Tuo tiedostosta" -painiketta. Juttuluettelotiedostoja voi lähettää esimerkiksi sähköpostilla, jos siihen on tarvetta.
+Om du har en uppropslistefil (.jtl) någon annanstans än i den uppropslistemapp som valts i inställningarna, kan du importera den till Curia genom att klicka på knappen ”Hämta från filer”. Uppropslistefiler kan skickas till exempel per e-post, om det finns behov för detta.
 
-## 4. Uuden juttuluettelon luominen
+## 4. Att skapa nya uppropslistor
 
-Uuden juttuluettelon luomisnäkymä näyttää seuraavalta:
+Vyn för skapande av en ny uppropslista ser ut på följande sätt:
 
 <img src="img/uusi.png" style="width: 600px;"/>
 
-Valintoihin syötetään tuomioistuimen tiedot. Valinnoiksi tuodaan asetuksissa annetut oletustiedot, mutta niitä on mahdollista tässä muuttaa (ja vielä myöhemminkin).
+Uppgifterna om domstolen matas in i valen. De standarduppgifter som anges i inställningarna ges som valmöjligheter, men de kan ändras här (och även senare).
 
-Lisäksi annetaan juttuluettelon päivämäärä. Oletusarvoksi annetaan nykyhetki.
+Dessutom anges datum för uppropslistan. Dagen i fråga anges som standard för datumet.
 
-## 5. Juttuluettelonäkymä ilman juttuja
+## 5. Vy för uppropslista utan ärenden
 
-Uusi juttuluettelo avautuu seuraavaan näkymään:
+En ny uppropslista öppnas i följande vy:
 
 <img src="img/uusi_luettelo.png" style="width: 900px;"/>
 
-### 5.1. Tuomioistuimen tietojen muokkaaminen
+### 5.1. Redigering av domstolsuppgifter
 
-Tuomioistuinta koskevia tietoja on mahdollista muokata klikkaamalla kynänkuvaa tuomioistuimen nimen vieressä. Kyseinen valikko avautuu näin:
+Uppgifterna om domstolen kan redigeras genom att klicka på pennbilden bredvid domstolens namn. Menyn som öppnas ser ut så här:
 
 <img src="img/tuomioistuimen_tiedot.png" style="width: 700px;"/>
 
-Valikossa voit muuttaa tietoja, kuten aikaisemmin juttuluetteloa luodessasi. Lisäksi voit lisätä tiedon tauon ajankohdasta.
+I menyn kan du ändra uppgifterna, som tidigare när du skapade en uppropslista. Dessutom kan du lägga till information om tidpunkten för pausen.
 
-Koko juttulistaa koskevat huomiot (joita tässä siis voi lisätä) voidaan näyttää kolmella eri tavalla.
+Observationer om hela uppropslistan (som alltså kan läggas till här) kan visas på tre olika sätt.
 
-1. Ei-julkiset huomiot näkyvät vain Curian sisällä. Niitä voi siis käyttää omina muistiinpanoina, joita _ei näytetä_ juttulistan PDF-versioissa (julkisessa tai syyttäjäkappaleessa).
+1. Icke-offentliga observationer syns bara inom Curia. De kan alltså användas som egna anteckningar som _inte visas_ i PDF-versionerna av uppropslistan (den offentliga eller åklagarexemplaret).
 
-2. Julkiset huomiot näkyvät sekä julkisessa juttulistassa että sen syyttäjäkappaleessa. Kyseessä voi olla mikä tahansa yleinen merkintä, joka syystä tai toisesta halutaan juttulistaan (esim. "Huom! Sali vaihtunut.").
+2. De offentliga observationerna syns både i den offentliga uppropslistan och i åklagarexemplaret av den. Det kan vara fråga om vilken allmän anteckning som helst som man av någon anledning vill ha i uppropslistan (t.ex. ”Obs! Salen har ändrats.”).
 
-3. Syyttäjää koskevat huomiot näytetään ainoastaan juttulistan syyttäjäkappaleessa, mutta _ei_ julkisessa versiossa.
+3. Observationer som gäller åklagaren visas endast i åklagarexemplaret av uppropslistan, men _inte_ i den offentliga versionen.
 
-Muutokset pysyvät, kun klikkaat "Tallenna" -painiketta. Jos klikkaat avautuneen ikkunan ulkopuolelle tai oikean yläkulman sulkupainiketta, ikkuna suljetaan ja muutoksia ei tallenneta.
+Ändringarna behålls när du klickar på knappen ”Spara”. Om du klickar utanför det öppnade fönstret eller på slutaren i det övre högra hörnet stängs fönstret och ändringarna sparas inte.
 
-### 5.2. Uusi juttu
+### 5.2. Nytt ärende
 
-Klikkaamalla tätä painiketta voit luoda manuaalisesti uuden asian (esim. Sakarin tietojen perusteella). Uuden jutun tietojen ikkuna aukeaa seuraavan näköisenä:
+Genom att klicka på den här knappen kan du skapa ett nytt ärende manuellt (t.ex. utifrån uppgifter från Sakari). Fönstret för uppgifter om ett nytt ärende ser ut så här när det öppnas:
 
 <img src="img/uusi_asia.png" style="width: 700px;"/>
 
-Aukeavaan ikkunaan voit syöttää asian tiedot.
+I fönstret som öppnas kan du mata in uppgifterna om ärendet.
 
-Asialuettelossa listataan kaikki rikosnimikkeet Tilastokeskuksen rikosnimikekoodiston mukaisesti ja kielivalinnan mukaan suomeksi tai ruotsiksi. Nimikkeitä voi hakea ja ne käännetään automaattisesti sen mukaan, onko kielivalinta kulloinkin suomi vai ruotsi. Kenttään on myös mahdollista syöttää vapaata tekstiä, mutta sitä ei voida automaattisesti kääntää.
+I uppropslistan listas alla brottsrubriker i enlighet med Statistikcentralens kod för brottsrubriceringar och enligt språkvalet på finska eller svenska. Rubriceringar kan sökas och de översätts automatiskt beroende på om språkvalet är finska eller svenska. Det är också möjligt att mata in fri text i fältet, men den kan inte översättas automatiskt.
 
-Puheenjohtajan ja pöytäkirjanpitäjän tiedot (kyseiselle asialle) tuodaan asetuksissa annetuista oletustiedoista, mutta niitä voi vaihtaa tässä (ja vielä myöhemminkin).
+Ordförandens och protokollförarens uppgifter (för ärendet i fråga) hämtas från de standarduppgifter (förval) som angetts i inställningarna, men de kan bytas ut här (och även senare).
 
-Kun tiedot ovat valmiit, klikkaa "Tallenna" -painiketta, niin juttu lisätään juttulistaan. Jos klikkaat ikkunan ulkopuolelle tai yläkulman sulkupainiketta, ikkuna suljetaan tietoja tallentamatta ja lisäämättä juttua listaan.
+När uppgifterna är klara klickar du på knappen ”Spara”, så läggs ärendet till i uppropslistan. Om du klickar utanför fönstret eller på slutaren i det övre hörnet stängs fönstret utan att uppgifterna sparas och utan att ärendet läggs till i listan.
 
-### 5.3. Tuo CSV
+### 5.3. Hämta CSV
 
-Klikkaamalla tätä painiketta saat etsittyä koneeltasi .csv -muotoisen juttulistan, jonka olet tallentanut AIPAsta. Kyseisen CSV-tiedoston tiedot tuodaan juttulistaan ominta juttuinaan ja seuraavilla asetuksissa syötetyillä oletustiedoilla (joita CSV-tiedostosta ei löydy):
+Genom att klicka på den här knappen kan du söka en sådan uppropslista i .csv-format på din dator som du har hämtat från AIPA till din dator. Uppgifterna i den aktuella CSV-filen förs in i uppropslistan som separata ärenden och med följande standarduppgifter som matats in i inställningarna (som inte finns i CSV-filen):
 
-1. Puheenjohtaja
-2. Pöytäkirjanpitäjä
-3. Syyttäjän (tai syyttäjien) virkanimike
+1. Ordföranden
+2. Protokollförare
+3. Åklagarens (eller åklagarnas) titel
 
-Jutuille tuodaan CSV-tiedostosta seuraavat tiedot:
+Följande uppgifter hämtas från CSV-filen till ärendena:
 
-1. Kellonaika
-2. Asianimike
-3. Asianumerot
-4. Syyttäjä(t)
-5. Vastaajat
+1. Klockslag
+2. Ärende
+3. Ärendenummer
+4. Åklagare
+5. Svarande
 
-AIPAn rikosnimikkeet vastaavat Tilastokeskuksen rikosnimikekoodistoa, joten ne ovat suoraan käännettävissä ruotsiksi tai suomeksi juttuluettelossa.
+Brottsrubriceringarna i AIPA motsvarar Statistikcentralens kod för brottsrubriceringar, så de kan översättas direkt till svenska eller finska i uppropslistan.
 
-Tuodut jutut järjestetään juttuluetteloon siinä järjestyksessä, kuin ne on sisällytetty CSV-tiedostoon.
+De ärenden som hämtats ordnas i uppropslistan i den ordning de har förts in i CSV-filen.
 
-Juttulistalle voi tuoda niin monta CSV-tiedostoa, kuin haluaa. Mikäli tuotavan CSV-tiedoston asioissa on sellaisia asioita, joiden tuomioistuimen asianumero löytyy jo juttulistalta, lisäämisen sijaan olemassaoleva juttu päivitetään.
+Man kan inkludera så många CSV-filer man vill i uppropslistan. Om det i ärenden som finns i den CSV-fil som ska hämtas finns sådana ärenden där domstolens ärendenummer redan finns i uppropslistan, uppdateras det befintliga ärendet i stället för att det läggs till.
 
-Tämä mahdollistaa sen, että jo kerran tuodun CSV-tiedoston tiedot päivitetään juttuluettelolle AIPAssa muokattujen tietojen perusteella. Se tapahtuu tallentamalla AIPAsta uusi CSV-tiedosto ja tuomalla se Curiaan. Mikäli näin toimitaan, AIPAssa päivältä poistuneet jutut poistetaan myös Curian juttuluettelosta, uudet jutut lisätään ja olemassaolevat päivitetään (esim. kellonaika ja vastaajat). Manuaalisesti luotuihin asioihin tällä ei ole vaikutusta. Listaan kirjatut Sakari-asiat säilyvät siis muuttumattomina, vaikka listalle tuotaisiinkin uusi CSV-tiedosto.
+Detta gör det möjligt att de uppgifter i en CSV-fil som redan har hämtats en gång uppdateras i uppropslistan utifrån de uppgifter som har redigerats i AIPA. Det sker genom att man sparar en ny CSV-fil från AIPA och hämtar den till Curia. Om man gör så stryks de ärenden som inte längre är aktuella i AIPA också ur Curias uppropslista, nya ärenden läggs till och befintliga uppdateras (t.ex. klockslag och svarande). Manuellt skapade ärenden påverkas inte av detta. Sakariärendena på listan förblir alltså oförändrade, även om en ny CSV-fil skulle hämtas till listan.
 
-## 6. Juttuluettelonäkymä jutuilla
+## 6. Vy för uppropslista i ärendena
 
-Kun juttuluetteloon on luotu tai tuotu asioita, se näyttää seuraavalta:
+När ärenden har skapats i eller hämtats till en uppropslista ser den ut så här:
 
 <img src="img/juttuluettelo_jutuilla.png"/>
 
-Tässä näkymässä on mahdollista suoraan:
+I den här vyn är det möjligt att direkt:
 
-1. Järjestää juttuja uudelleen
-2. Muokata kellonaikaa, asianimikettä sekä asianumeroita
-3. Lisätä huomioita jutulle
-4. Merkitä asia salaiseksi
+1. Ordna om ärenden
+2. Redigera klockslag, ärende och ärendenummer
+3. Lägga till observationer till ärendet
+4. Anteckna ett ärende som hemligt
 
-### 6.1. Näkymässä suoraan toteutettavat toiminnot
+### 6.1. Åtgärder som kan utföras direkt i vyn
 
-#### 6.1.1. Juttujen uudelleen järjestäminen
+#### 6.1.1. Omordnande av ärenden
 
-Juttujen uudelleen järjestäminen onnistuu nappaamalla kiinni jutun järjestysnumeron vieressä olevista kuudesta pisteestä ja raahaamalla juttua ylös tai alas listalla. Numero päivittyy järjestyksen mukaan.
+Det går att ordna om ärenden genom att ta tag i de sex punkter bredvid ärendets ordningsnummer och släpa upp eller ner ärendet i listan. Numret uppdateras enligt ordningsföljd.
 
-#### 6.1.2. Asian merkitseminen salaiseksi
+#### 6.1.2. Att anteckna ett ärende som hemligt
 
-Asian saa merkittyä salaiseksi klikkaamalla "Asia" -otsikon vieressä olevaa kilpikuvaketta. Salaisissa asioissa on näkymässä teksti "Salainen" sekä punainen reunus. Tällaisiin asioihin laitetaan juttuluetteloon näkyviin merkintä "Salainen".
+Ärendet kan antecknas som hemligt genom att man klickar på sköldikonen bredvid rubriken ”Ärende”. I hemliga ärenden syns texten ”Hemligt” och en röd kant. I sådana ärenden ska anteckningen ”Hemligt” sättas upp på uppropslistan.
 
-#### 6.1.3. Huomioiden lisääminen ja näkyvyys
+#### 6.1.3. Att lägga till observationer och hur de syns
 
-Huomioiden näkyvyyteen pätee sama, mitä on todettu kohdassa "7.1. Tuomioistuimen tietojen muokkaaminen". Nämä kyseiset huomiot näytetään, sikäli kuin näkyvyydeksi on valittu "Julkinen" tai "Syyttäjä", juttuluettelolla kyseisen jutun yhteydessä. Näiden avulla on siis mahdollista merkitä joitain huomioita koskien nimenomaan kyseistä juttua, eikä istuntopäivää yleisesti.
+För det hur observationerna syns gäller detsamma som i punkten ”7.1. Redigering av domstolens uppgifter”. Dessa observationer visas, i den mån man har har valt att de ska synas som ”Offentlig” eller ”Åklagare”, i en uppropslista i samband med ärendet i fråga. Med hjälp av dessa kan man alltså anteckna vissa observationer som gäller just ärendet i fråga och inte sammanträdesdagen i allmänhet.
 
-### 6.2. Näkymältä erikseen aukevat toiminnot
+### 6.2. Funktioner som öppnas separat i vyn
 
-Näkymältä erikseen aukeavissa ikkunoissa voi:
+I de fönster som öppnas separat i vyn kan du:
 
-1. Lisätä virkamiehiä tai siviileitä
-2. Muokata olemassaolevien virkamiesten ja siviilien tietoja
-3. Poistaa jutun
-4. Järjestää jutut aikajärjestykseen
-5. Luoda uuden asian
-6. Tuoda CSV-tiedoston
-7. Esikatsella julkista versiota tai syyttäjäkappaletta
-8. Tallentaa julkisen version tai syyttäjäkappaleen
+1. Lägga till tjänstemän och parter
+2. Redigera befintliga tjänstemäns och parters uppgifter
+3. Radera ett ärende
+4. Ordna ärenden i kronologisk ordning
+5. Skapa ett nytt ärende
+6. Importera CSV-fil
+7. Förhandsgranska den offentliga versionen eller åklagarexemplaret
+8. Spara en offentlig version eller ett åklagarexemplar
 
-#### 6.2.1. Henkilöiden lisääminen ja tietojen muokkaaminen
+#### 6.2.1. Att lägga till personer och att redigera uppgifterna
 
-Henkilöt asialla on jaettu virkamiehiin (oikeushallinnon alalla työskentelevät) ja siviileihin (kaikki muut). "Siviilit" on valittu otsikoksi, koska ryhmä sisältää muun muassa todistajat. Henkilöiden nimen vieressä näytetään lyhenteenä ja värikoodattuna kyseisen henkilön asema asiassa.
+Personerna i ett ärende har indelats i tjänstemän (personer som arbetar inom justitieförvaltningen) och parter (alla andra). ”Parter” har valts som rubrik, trots att gruppen bland annat också innehåller vittnen. Bredvid personernas namn visas personens ställning i ärendet med förkortning och färgkod.
 
-Julkisessa juttulistassa näytetään ainoastaan tuomioistuimen kokoonpano, syyttäjät sekä vastaajat. Syyttäjän kappaleessa näytetään myös muut jutulle mahdollisesti lisätyt henkilöt, kuten asianomistajat, sekä näille mahdollisesti lisätyt haastamis- ja muut tiedot.
+I den offentliga uppropslistan visas endast domstolens sammansättning, åklagarna och svarandena. I åklagarexemplaret visas också andra personer som eventuellt lagts till i ärendet, såsom målsägande, samt eventuella stämningsuppgifter och andra uppgifter som lagts till dem.
 
-Uuden henkilön saa lisättyä asialle klikkaamalla otsikon vieressä olevaa +-painiketta. Vastaavasti olemassaolevan henkilön tietoja saa muokattua klikkaamalla henkilön nimeä. Kummassakin tapauksessa aukeva ikkuna on saman näköinen.
+Man kan lägga till en ny person genom att du klickar på +-knappen bredvid rubriken. På motsvarande sätt kan du ändra uppgifterna om en befintlig person genom att klicka på personens namn. I båda fallen ser fönstret likadant ut.
 
-Virkamiehen muokkaamisen ikkuna näyttää seuraavalta:
+Fönstret för redigering av uppgifter om en tjänsteman ser ut så här:
 
 <img src="img/virkamies.png" style="width: 600px;"/>
 
-Virkamiehen aseman perusteella valitaan mahdolliset virkanimikkeet. Kuten todettu, virkanimikkeeseen voi syöttää vapaatakin tekstiä, mutta sitä ei käännetä automaattisesti toiselle kielelle.
+På basis av tjänstemannens ställning väljs eventuella titlar. Som sagt kan fri text matas in i titeln, men den översätts inte automatiskt till det andran språket.
 
-Vastaavasti siviilin muokkaamisen ikkuna näyttää tältä:
+På motsvarande sätt ser fönstret för redigering av "parter" ut så här:
 
 <img src="img/siviili.png" style="width: 600px;"/>
 
-Kuten virkamiehenkin kohdalla, näytettävät kentät ja niihin annettavat valinnat riippuvat siviilille annetusta asemasta.
+Precis som för en tjänsteman beror de fält som visas och de val som görs i dem på den ställning som getts en "part".
 
-Uuden henkilön tai henkilölle tehdyt muokkaukset voi tallentaa klikkaamalla "Tallenna" -painiketta. Jos klikkaat ikkunan ulkopuolelle tai yläreunan sulkupainiketta, muutoksia tai uutta henkilöä ei tallenneta. Henkilön voi poistaa kokonaan jutulta klikkaamalla "Poista" -painiketta.
+Ändringar som du gjort för en ny person eller för en person kan du spara genom att klicka på knappen ”Spara”. Om du klickar utanför fönstret eller på slutaren överst, sparas inga ändringar eller ingen ny person. Du kan radera en person helt och hållet från ett ärende genom att klicka på "Radera”-knappen.
 
-#### 6.2.2. Jutun poistaminen
+#### 6.2.2. Radering av ett ärende
 
-Juttu on mahdollista poistaa klikkaamalla yksittäisen juttumerkinnän oikeassa laidassa olevaa hampurilaisvalikkoa ja valitsemalla sitten "Poista".
+Det går att radera ett ärende genom att du klickar på hamburgermenyn till höger om anteckningen av ett enskilt ärende och sedan klickar på ”Radera”.
 
 <img src="img/jutun_poistaminen.png" style="width: 400px;"/>
 
-#### 6.2.3. Juttujen asettaminen aikajärjestykseen
+#### 6.2.3. Kronologisk ordning av ärenden
 
-Jutun on mahdollista järjestää automaattisesti alkamiskellonajan mukaiseen aikajärjestykseen juttuluettelolla. Valinta löytyy klikkaamalla "Muokkaa" ja sitten "Aikajärjestys", seuraavasti:
+Ett ärende kan ordnas automatiskt i kronologisk ordning enligt begynnelsetidpunkten i uppropslistan. Valet görs genom att klicka på ”Redigera” och sedan på ”Kronologisk ordning” enligt följande:
 
 <img src="img/aikajarjestys.png" style="width: 400px;"/>
 
-Mikäli jutut ovat jo listalla aikajärjestyksessä, mainittu painike on harmaana eikä sitä voi painaa.
+Om ärendena redan finns på listan i kronologisk ordning, är den nämnda knappen grå och man kan inte klicka på den.
 
-Jos useammalle jutulle on asetettu sama alkamiskellonaika, nämä jutut järjestetään asialle siinä järjestyksessä, jossa ne jo valmiiksi ovat keskinäisessä suhteessaan. Käytännössä siis lähes sattumanvaraisesti. Näiden järjestystä voi sitten muuttaa käsin raahamalla, mikäli se on tarpeen.
+Om man har satt ut samma begynnelseklockslag för flera ärenden, ordnas dessa ärenden i ärendet i den ordning de redan står i sitt inbördes förhållande. Praktiskt taget nästan godtyckligt. Ordningsföljden för dessa kan sedan ändras genom att släpa dem manuellt, om det behövs.
 
-#### 6.2.4. Uuden asian luominen ja CSV-tiedoston tuominen
+#### 6.2.4. Att skapa ett nytt ärende och att importera en CSV-fil
 
-Näistä pätee se, mitä on todettu kohdissa "7.2. Uusi juttu" ja "7.3. Tuo CSV". Painikkeet löytyvät "Muokkaa" -painikkeen takaa:
+Här gäller vad som sägs i punkterna ”7.2. Nytt ärende” och ”7.3. Hämta CSV”. Knapparna finns bakom knappen ”Redigera”:
 
 <img src="img/uusi_ja_csv.png" style="width: 400px;"/>
 
-#### 6.2.5. Esikatselu
+#### 6.2.5. Förhandsgranskning
 
-Sekä julkisen kappaleen että syyttäjäkappaleen PDF-tulosteen esikatselu on mahdollista "Tarkista" -painikkeesta:
+Både det offentliga exemplaret och åklagarexemplarets PDF-utskrift kan förhandsgranskas via knappen ”Granska”:
 
 <img src="img/esikatselu.png" style="width: 400px;"/>
 
-Esikatseltava asiakirja avataan erilliseen ponnahdusikkunaa. Kyseinen esikatselu vastaa yksi yhteen sitä asiakirjaa, joka valittaessa myös tallennettaisiin. Mikäli juttuluetteloon tehdään muutoksia, esikatselu päivittyy.
+Dokumentet som du vill förhandsgranska öppnas i ett separat popup-fönster. Förhandsgranskningen i fråga motsvarar helt det dokument som också sparas vid valet. Om det görs ändringar i uppropslistan uppdateras förhandsgranskningen.
 
-#### 6.2.6. Juttuluetteloiden tallentaminen PDF-muodossa
+#### 6.2.6. Sparande av uppropslistor i PDF-format
 
-Lopulliset juttuluettelot tallennetaan PDF:nä klikkaamalla "Tallenna" -painiketta ja valitsemalla sitten, halutaanko tallentaa julkinen kappale vai syyttäjän kappale:
+De slutliga uppropslistorna sparas i PDF-format genom att du klickar på knappen ”Spara” och sedan välja om man vill spara ett offentligt exemplar eller åklagarens exemplar:
 
 <img src="img/tallenna.png" style="width: 400px;"/>
 
-Tallennussijaintia kysytään valinnan jälkeen erikseen. Tallennettavalle tiedostolle annetaan oletusnimi, joka sisältää:
+Efter valet frågar appen separat om var du vill att uppropslistan ska sparas. Filen som sparas får ett standardnamn som innehåller:
 
-1. Tiedon päivämäärästä (muodossa vuosi-kuukausi-päivä, jotta tiedosto järjestyy resurssinhallinnassa oikein)
-2. Tuomioistuimen lyhenne
-3. Salitieto
-4. Tieto siitä, onko kyseessä julkinen kappale vai syyttäjän versio
+1. Uppgift om datum (i formen år-månad-dag för att filen ska vara korrekt ordnad i utforskaren)
+2. Domstolens förkortning
+3. Information om salen
+4. Uppgift om huruvida det är fråga om ett offentligt exemplar eller åklagarens version
 
-Tallennettavan tiedoston nimeä voi halutessaan muuttaa.
+Om du vill, kan du ändra namnet på den fil som du vill spara.
 
-## 7. Muutosten tallentuminen
+## 7. Hur ändringar sparas
 
-Juttuluetteloon tehtävät muutokset tallennetaan pääasiassa automaattisesti. Jos siten muutat esimerkiksi jutun asianumeroita, ei muutosta tarvitse mitenkään erikseen tallentaa.
+Ändringar i uppropslistan sparas huvudsakligen automatiskt. Om du således ändrar till exempel ärendenumren i ett mål, behöver ändringen inte på något sätt sparas separat.
 
-Sikäli, kuin jotkin muutokset tulee erikseen hyväksyä, niitä koskien sovelluksessa on näkyvästi esillä "Tallenna" -painike tai niistä muuten ilmoitetaan näkyvästi.
+Till den del vissa ändringar ska godkännas separat visas knappen ”Spara” synligt i applikationen eller så anges detta på annat sätt synligt.
 
-## 8. Kielivalinnoista ja käännöksistä
+## 8. Om språkval och översättningar
 
-Kaikki käännökset sekä sovellukseen että juttuluetteloon toteutaan, kun valitaan toinen kieli. Siten juttuluettelot on mahdollista suoraan kääntää esimerkiksi suomesta ruotsiksi valitsemalla sovelluksen kieleksi ruotsin.
+Alla översättningar i både appen och uppropslistan görs när man väljer det andra språket. På så sätt är det möjligt att översätta uppropslistorna direkt t.ex. från finska till svenska genom att välja svenska som applikationsspråk.
 
-Tällöin käännetään muun muassa juttuluettelon otsikot, tuomioistuimen tiedot (sikäli kuin ne on ruotsiksi ilmoitettu) sekä muut kuin vapaana tekstinä syötetyt asianimikkeet ja virkanimikkeet. Lisäksi käännetään muut, valmiina sisältönä juttuluetteloon sisällytettävät tekstit.
+Då översätts bland annat uppropslistans rubriker, domstolens uppgifter (till den del de har meddelats på svenska) samt andra ärenden och titlar än de som angetts i fri text. Dessutom översätts andra texter som ska ingå som färdigt innehåll i uppropslistan.
 
-Curia ei siis tuota niin sanottuja kaksikielisiä juttuluetteloja, mutta yhdellä painikkeella koko juttuluettelon saa käännettyä toiselle kielelle. Juttuluettelosta voi tallentaa sitten kaksi versiota, joista toinen on suomen ja toinen ruotsin kielinen. Nämä voidaan myös tulostaa asetettavaksi näytille vierekkäin.
+Curia producerar alltså inte så kallade tvåspråkiga uppropslistor, men via en knapp kan hela uppropslistan översättas till det andra språket. Två versioner av uppropslistan kan sedan sparas, den ena på finska och den andra på svenska. Dessa kan också skrivas ut för att läggas fram bredvid varandra.
