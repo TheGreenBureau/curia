@@ -51,8 +51,8 @@
     }
 </style>
 
-<div style="width: 100%; display: flex; justify-content: end;">
-  <a style="margin-left: 100px;" href="https://thegreenbureau.github.io/curia/">FI</a>
+<div style="width: 100%; display: flex; justify-content: start;">
+  <a href="https://thegreenbureau.github.io/curia/">FI</a>
 </div>
 
 <img src="img/icon.png" style="width: 120px; border: none !important;"/>
