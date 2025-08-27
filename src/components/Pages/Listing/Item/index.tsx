@@ -29,6 +29,8 @@ import { CaseNumbers } from "./CaseNumbers";
 import { Matter } from "./Matter";
 import { Time } from "./Time";
 import { DeleteCaseDialog } from "./DeleteCaseDialog";
+import { cx } from "class-variance-authority";
+import { useStore } from "@/hooks/useStore";
 
 type ItemProps = {
   item: Case;
@@ -45,6 +47,18 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
 
     const caseQuery = useCase(item);
     const { currentCase } = caseQuery;
+
+    const sharedTypes = useStore((state) => state.sharedCaseTypes);
+
+    const getTypeStyles = () => {
+      if (sharedTypes) {
+        return "";
+      }
+
+      return currentCase.type === "criminal"
+        ? "text-purple-700 dark:text-purple-400"
+        : "text-amber-700 dark:text-amber-400";
+    };
 
     const { t } = useTranslation();
 
@@ -72,6 +86,24 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
                     {...attributes}
                     {...listeners}
                   />
+                  <Heading
+                    level="h3"
+                    className={cx(
+                      "m-0 cursor-pointer hover:opacity-80 transition-opacity duration-150",
+                      getTypeStyles()
+                    )}
+                    onClick={() => {
+                      caseQuery.saveCase({
+                        ...currentCase,
+                        type:
+                          currentCase.type === "criminal"
+                            ? "civil"
+                            : "criminal",
+                      });
+                    }}
+                  >
+                    {currentCase.type === "criminal" ? "R" : "S"}
+                  </Heading>
                 </Row>
               </Col>
               <Row className="gap-10 justify-start mr-10 w-full">

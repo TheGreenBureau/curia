@@ -4,7 +4,6 @@ import { Textarea } from "@/components/ui/textarea";
 import type { UseCaseValues } from "@/hooks/useCases";
 import { NotePublicity, notePublicityTypes } from "@/types/data/case";
 import { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
 import { PublicityButton } from "@/components/Pages/Listing/PublicityButton";
 
 type NotesProps = UseCaseValues & {
@@ -19,8 +18,6 @@ export function Notes({
   updateCase,
   saveCase,
 }: NotesProps) {
-  const { t } = useTranslation();
-
   const publicityStatus: NotePublicity = currentCase.notePublicity ?? "private";
 
   const onPublicityClick = () => {

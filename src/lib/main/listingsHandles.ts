@@ -231,11 +231,11 @@ const listingsHandles: ListingsAPI = {
   clearRecents: clearRecents,
   recents: listRecent,
 
-  openCSV: async ({ type, currentListing }) => {
+  openCSV: async ({ currentListing }) => {
     const { defaults } = await getConfig();
 
     const csv = await importCSV();
-    const parseResult = parseCSV(csv, type, defaults, currentListing);
+    const parseResult = parseCSV(csv, defaults, currentListing);
 
     const updatedListing = produce(currentListing, (draft) => {
       draft.cases = parseResult.cases;

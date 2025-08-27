@@ -16,7 +16,6 @@ export function Matter({
   className,
   heading,
   currentCase,
-  updateCase,
   saveCase,
 }: MatterProps) {
   const { t } = useTranslation();

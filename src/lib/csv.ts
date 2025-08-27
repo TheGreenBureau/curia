@@ -9,7 +9,6 @@ import { produce } from "immer";
 
 export const parseCSV = (
   csv: string,
-  type: CaseType,
   defaults: Defaults,
   currentListing: Listing
 ) => {
@@ -28,7 +27,7 @@ export const parseCSV = (
 
   for (let line of parsed) {
     if (isCaseCSV(line)) {
-      cases.push(processCSVLine(line, type, defaults));
+      cases.push(processCSVLine(line, defaults));
       continue;
     }
 
@@ -43,11 +42,7 @@ export const parseCSV = (
   };
 };
 
-const processCSVLine = (
-  line: CaseCSV,
-  type: CaseType,
-  defaults: Defaults
-): Case => {
+const processCSVLine = (line: CaseCSV, defaults: Defaults): Case => {
   const dateparts = line.päiväys.trim().split(".");
   const timeparts = line.alkamiskelloaika.trim().split(":");
 
@@ -61,13 +56,15 @@ const processCSVLine = (
 
   const { prosecutors, plaintiffs } = processBearers(line.esittäjät, defaults);
 
+  const prosecutorCaseNumber = line["syyttäjän asia ID"].trim();
+
   const current: Case = {
     id: uuidv4(),
     caseNumber: line["asia ID"].trim(),
-    prosecutorCaseNumber: line["syyttäjän asia ID"].trim(),
+    prosecutorCaseNumber: prosecutorCaseNumber,
     matter: line.asianimike.trim(),
     time: date,
-    type: type,
+    type: prosecutorCaseNumber === "" ? "civil" : "criminal",
     officers: [...prosecutors],
     civilians: [...processCivilians(line.kohteet), ...plaintiffs],
     csv: true,

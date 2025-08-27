@@ -64,6 +64,8 @@ export function Listing() {
   const view = useStore((state) => state.welcomeView);
   const setView = useStore((state) => state.setWelcomeView);
 
+  const sharedCaseTypes = useStore((state) => state.sharedCaseTypes);
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -156,6 +158,16 @@ export function Listing() {
                   </Heading>
                 </>
               )}
+              {sharedCaseTypes && sharedCaseTypes !== "empty" && (
+                <>
+                  <Separator orientation="vertical" className="h-8" />
+                  <Heading level="h4" className="mt-0">
+                    {sharedCaseTypes === "criminal"
+                      ? "Rikosasiat"
+                      : "Siviiliasiat"}
+                  </Heading>
+                </>
+              )}
               {currentListing.cases.length > 0 &&
                 resources.isSuccess &&
                 crimes.isSuccess &&
@@ -203,9 +215,7 @@ export function Listing() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() =>
-                  openCSV.mutate({ type: "criminal", currentListing })
-                }
+                onClick={() => openCSV.mutate({ currentListing })}
               >
                 {t("Tuo CSV")}
               </Button>

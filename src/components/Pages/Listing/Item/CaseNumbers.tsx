@@ -34,7 +34,7 @@ export function CaseNumbers({
         )}
         <Input
           className={cn(
-            "text-base transition-all duration-200 outline-none text-ellipsis w-52",
+            "text-base transition duration-200 outline-none text-ellipsis w-52",
             currentCase.caseNumber === "" && "border-rose-500",
             currentCase.type === "civil" && "w-[15.25rem]"
           )}

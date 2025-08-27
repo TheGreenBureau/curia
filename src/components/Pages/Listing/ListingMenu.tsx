@@ -129,9 +129,7 @@ export function ListingMenu({
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() =>
-              openCSV.mutate({ type: "criminal", currentListing: listing })
-            }
+            onClick={() => openCSV.mutate({ currentListing: listing })}
           >
             <Text className="mr-2 h-4 w-4" />
             <span>{t("Tuo CSV")}</span>

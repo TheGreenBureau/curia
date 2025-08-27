@@ -1,7 +1,5 @@
 import type { Defaults } from "./defaults";
-import type { AllCourts, Court } from "@/types/data/court";
 import type { Listing } from "@/types/data/listing";
-import { CaseType } from "@/types/data/case";
 import type { Option } from "@/types/data/options";
 
 export interface ConfigResult {
@@ -39,7 +37,7 @@ export type ListingsAPI = {
   recents: Action<Listing[]>;
   openCSV: ActionWithArg<
     { listing: Listing; errors: string[] },
-    { type: CaseType; currentListing: Listing }
+    { currentListing: Listing }
   >;
 };
 
