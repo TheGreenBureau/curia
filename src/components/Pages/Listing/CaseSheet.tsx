@@ -76,7 +76,7 @@ export function CaseSheet({ getCase, open, onOpenChange }: CaseSheetProps) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
         {currentCase && (
-          <SheetContent side="right" className="sm:max-w-md">
+          <SheetContent side="right" className="sm:max-w-md overflow-y-auto">
             <SheetHeader>
               <SheetTitle>
                 {currentCase.id === "" ? t("Uusi juttu") : t("Muokkaa tietoja")}
