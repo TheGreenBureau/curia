@@ -22,8 +22,8 @@ createListingsDir();
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1200,  //muutettu 800
-    height: 800,  //muutettu 600
+    width: 800,
+    height: 600,
     minWidth: 600,
     minHeight: 300,
     webPreferences: {
