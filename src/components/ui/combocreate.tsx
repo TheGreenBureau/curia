@@ -38,13 +38,18 @@ type ComboCreateProps = {
   onQueryChange?: (query: string) => void;
   triggerClassName?: string;
   minQueryLength?: number;
+
+  /** UUSI: mahdollistaa listakontin tyylien säätämisen käyttöpaikassa */
+  listClassName?: string;
 };
 
 export function ComboCreateCrime({
   ...props
-}: Omit<ComboCreateProps, "options" | "onQueryChange" | "minQueryLength">) {
+}: Omit<
+  ComboCreateProps,
+  "options" | "onQueryChange" | "minQueryLength"
+>) {
   const [query, setQuery] = useState("");
-
   const lang = useResolvedLanguage();
 
   useEffect(() => {
@@ -82,16 +87,14 @@ export function ComboCreate({
   onQueryChange,
   triggerClassName,
   minQueryLength,
+  listClassName, // UUSI
 }: ComboCreateProps) {
   const isControlled = propValue !== undefined;
-
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState(defaultValue ?? "");
   const [query, setQuery] = useState("");
-
   const divRef = useRef<HTMLDivElement | null>(null);
   const spanRef = useRef<HTMLSpanElement | null>(null);
-
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -101,27 +104,22 @@ export function ComboCreate({
         onQueryChange("");
       }
     }
-  }, [open]);
+  }, [open, onQueryChange]);
 
   const onValueChanged = (currentValue: string) => {
     if (onChange) {
       onChange(currentValue);
     }
-
     setInternalValue(currentValue);
   };
 
   const value = () => {
     const foundValue = isControlled ? propValue ?? "" : internalValue;
-
     if (foundValue === "") return foundValue;
-
     const foundOption = options.find((opt) => opt.value === foundValue);
-
     if (foundOption) {
       return foundOption.label ?? "";
     }
-
     return foundValue;
   };
 
@@ -129,7 +127,6 @@ export function ComboCreate({
     if (disabled) {
       return placeholderDisabled ?? t("Valitse");
     }
-
     if (value() === "") {
       return placeholderSelect ?? t("Valitse");
     }
@@ -154,14 +151,11 @@ export function ComboCreate({
       if (labelA.startsWith(lowQuery) && !labelB.startsWith(lowQuery)) {
         return -1;
       }
-
       if (labelB.startsWith(lowQuery) && !labelA.startsWith(lowQuery)) {
         return 1;
       }
-
       return 0;
     });
-
     return sorted;
   };
 
@@ -197,6 +191,7 @@ export function ComboCreate({
                 </Button>
               </PopoverTrigger>
             </TooltipTrigger>
+
             {triggerHasOverflow() && (
               <TooltipContent>
                 <p>{value()}</p>
@@ -204,6 +199,7 @@ export function ComboCreate({
             )}
           </Tooltip>
         </TooltipProvider>
+
         <PopoverContent
           className="p-0"
           style={{ width: `${divRef.current?.offsetWidth ?? 500}px` }}
@@ -218,7 +214,9 @@ export function ComboCreate({
                   onQueryChange(value);
                 }
               }}
-              icon={<TextSearch className="mr-2 h-4 w-4 shrink-0 opacity-50" />}
+              icon={
+                <TextSearch className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+              }
               onClear={() => {
                 setQuery("");
                 if (onQueryChange) {
@@ -226,10 +224,19 @@ export function ComboCreate({
                 }
               }}
             />
+
+            {/* TÄRKEÄ: rajoitettu korkeus + vieritys + wheel-capture */}
             <CommandList
               className={cn(
-                "scrollbar scrollbar-thumb-slate-500 scrollbar-w-2"
+                // vieritys ja vuodon esto
+                "max-h-60 overflow-y-auto overscroll-contain",
+                // valinnainen skrollipalkin ulkoasu, säilytetty
+                "scrollbar scrollbar-thumb-slate-500 scrollbar-w-2",
+                // mahdollistaa lisätyylit käyttöpaikassa
+                listClassName
               )}
+              onWheelCapture={(e) => e.stopPropagation()}
+              tabIndex={0}
             >
               {!minQueryLength || query.length >= minQueryLength ? (
                 <CommandGroup>
@@ -247,7 +254,6 @@ export function ComboCreate({
                                 option.label.toLowerCase() ===
                                 query.toLowerCase()
                             );
-
                             if (found) {
                               setQuery(found.label);
                               if (onQueryChange) {
@@ -257,10 +263,8 @@ export function ComboCreate({
                               setOpen(false);
                               return;
                             }
-
                             onValueChanged(query);
                           }
-
                           setOpen(false);
                         }}
                       >
@@ -273,6 +277,7 @@ export function ComboCreate({
                         {query}
                       </CommandItem>
                     )}
+
                   {filteredSortedOptions.map((option) => (
                     <CommandItem
                       key={option.value}
