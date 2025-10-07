@@ -1,8 +1,48 @@
-@import "fonts.css";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* 1) Tuo Tailwind v4 */
+@import "tailwindcss";
 
+/* (valinnainen) Tuo fontit – pidä erillisenä Tailwindista */
+/*@import "fonts.css";*/
+@import "./fonts.css" layer(base);
+
+@plugin "tailwind-scrollbar";
+
+/* 2) Julkaise Tailwindille väri-/token-arvot @theme inline -blokissa.
+      Tämä luo bg-*, text-*, border-* utilit, mm. bg-background, text-foreground, border-border. */
+@theme inline {
+  /* Värit — mapataan sinun CSS-muuttujista */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  /* Esim. kaaviovärit jos käytät luokkia kuten bg-chart-1 jne. */
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  /* Border radius -tokenit (jos haluat käyttää esim. rounded-radius) */
+  --radius-default: var(--radius);
+}
+
+/* 3) Teemasi raakamuuttujat (valosta ja darkista) pysyvät kuten ennen */
 @layer base {
   :root {
     /* SY base colors */
@@ -90,6 +130,7 @@
   }
 }
 
+/* 4) Omien utilityjen käyttö säilyy */
 @layer base {
   * {
     @apply border-border;
