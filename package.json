@@ -1,7 +1,7 @@
 {
   "name": "curia",
   "productName": "curia",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Työpöytäsovellus juttuluetteloiden hallintaan",
   "main": ".vite/build/main.js",
   "scripts": {
